@@ -38,11 +38,16 @@
 }
 
 .nav {
-  min-width: 269px;
+  min-width: 260px;
 }
 
 .root {
   overflow: hidden;
   display: flex;
   height: 1500px;
+}
+
+.content {
+  margin: 5px;
+  padding: 16px;
 }
