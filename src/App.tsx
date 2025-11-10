@@ -1,4 +1,7 @@
 import React from 'react';
+import Posts from './Posts';
+import Search from './Search';
+import SavedPosts from './SavedPosts';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import {
@@ -8,20 +11,28 @@ import {
   NavDrawerHeader,
   NavItem,
   NavSectionHeader,
-  Title1,
-  Button
+  NavDivider,
+  MenuItemLink,
+  MenuTrigger,
+  MenuPopover,
+  MenuList,
+  Menu
 } from "@fluentui/react-components";
 
 import {
-  Home24Color,
+  Home20Color,
   Person32Color,
-  SearchSparkle24Color, 
-  AddCircleColor
+  SearchSparkle20Color,
+  Document20Color,
+  ClipboardTextEdit20Color,
+  PersonColor,
+  SettingsColor
 } from "@fluentui/react-icons";
 
 const POSTSMENU = '1';
 const SEARCHMENU = '2';
 const SAVEDPOSTSMENU = '3';
+const YOURPOSTSMENU = '4';
 
 function App() {
   const location = useLocation();
@@ -29,7 +40,8 @@ function App() {
   // Determine which nav item should be active
   let selectedValue = POSTSMENU;
   if (location.pathname === '/search') selectedValue = SEARCHMENU;
-  else if (location.pathname === '/saved-posts') selectedValue = SAVEDPOSTSMENU;
+  else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
+  else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
 
   return (
     <div className="App">
@@ -42,29 +54,39 @@ function App() {
           selectedValue={selectedValue}
         >
           <NavDrawerHeader>
-            <AppItem
-              icon={<Person32Color />}
-              as="a"
-            >
-              Person Name
-            </AppItem>
+            <Menu>
+              <MenuTrigger disableButtonEnhancement>
+                <AppItem icon={<Person32Color />} as="a">Person Name</AppItem>
+              </MenuTrigger>
+              <MenuPopover>
+                <MenuList>
+                  <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
+                  <MenuItemLink icon={<SettingsColor />} href='/settings'>Settings</MenuItemLink>
+                </MenuList>
+              </MenuPopover>
+            </Menu>
           </NavDrawerHeader>
 
           <NavDrawerBody>
+            <NavDivider />
             <NavSectionHeader>Menu</NavSectionHeader>
 
-            <NavItem as="a" href="/posts" value={POSTSMENU} icon={<Home24Color />}>
+            <NavItem as="a" href="/posts" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
 
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle24Color />}>
+            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
 
+            <NavDivider />
             <NavSectionHeader>Saved</NavSectionHeader>
 
-            <NavItem as="a" href="/saved-posts" value={SAVEDPOSTSMENU} icon={<Home24Color />}>
-              Saved Posts
+            <NavItem as="a" href="/saved/posts" value={SAVEDPOSTSMENU} icon={<Document20Color />}>
+              Posts
+            </NavItem>
+            <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
+              Your Posts
             </NavItem>
           </NavDrawerBody>
         </NavDrawer>
@@ -73,35 +95,12 @@ function App() {
           <Routes>
             <Route path="/posts" element={<Posts />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/saved-posts" element={<SavedPosts />} />
+            <Route path="/saved/posts" element={<SavedPosts />} />
           </Routes>
         </div>
       </div>
     </div>
   );
-}
-
-function Search() {
-  return <div>Search Page</div>;
-}
-
-function SavedPosts() {
-  return <div>Saved Posts Page</div>;
-}
-
-function Posts() {
-  return (
-    <div>
-      <Title1>Posts</Title1>
-      <Button appearance='primary' style={{ marginLeft: "16px"}} icon={<AddCircleColor />}>Create Post</Button>
-      <CSPosts />
-    </div>
-  );
-}
-
-function CSPosts() {
-  // This is a placeholder for Community Service Posts component
-  return <div>CS Posts Component</div>;
 }
 
 export default App;
