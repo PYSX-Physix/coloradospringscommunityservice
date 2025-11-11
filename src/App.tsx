@@ -2,6 +2,7 @@ import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
 import SavedPosts from './SavedPosts';
+import YourPosts from './YourPosts';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import {
@@ -23,10 +24,10 @@ import {
   Home20Color,
   Person32Color,
   SearchSparkle20Color,
-  Document20Color,
   ClipboardTextEdit20Color,
   PersonColor,
-  SettingsColor
+  SettingsColor,
+  Library20Color
 } from "@fluentui/react-icons";
 
 const POSTSMENU = '1';
@@ -69,7 +70,7 @@ function App() {
 
           <NavDrawerBody>
             <NavDivider />
-            <NavSectionHeader>Menu</NavSectionHeader>
+            <NavSectionHeader>General</NavSectionHeader>
 
             <NavItem as="a" href="/posts" value={POSTSMENU} icon={<Home20Color />}>
               Posts
@@ -78,11 +79,9 @@ function App() {
             <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
-
-            <NavDivider />
             <NavSectionHeader>Saved</NavSectionHeader>
 
-            <NavItem as="a" href="/saved/posts" value={SAVEDPOSTSMENU} icon={<Document20Color />}>
+            <NavItem as="a" href="/saved/posts" value={SAVEDPOSTSMENU} icon={<Library20Color />}>
               Posts
             </NavItem>
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
@@ -96,7 +95,7 @@ function App() {
             <Route path="/posts" element={<Posts />} />
             <Route path="/search" element={<Search />} />
             <Route path="/saved/posts" element={<SavedPosts />} />
-            <Route path="/saved/your-posts" element={<SavedPosts />} />
+            <Route path="/saved/your-posts" element={<YourPosts />} />
           </Routes>
         </div>
       </div>
