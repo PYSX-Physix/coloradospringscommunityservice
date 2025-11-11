@@ -3,6 +3,8 @@ import Posts from './Posts';
 import Search from './Search';
 import SavedPosts from './SavedPosts';
 import YourPosts from './YourPosts';
+import About from './About'
+import Policies from './Policies';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import {
@@ -27,7 +29,9 @@ import {
   ClipboardTextEdit20Color,
   PersonColor,
   SettingsColor,
-  Library20Color
+  Library20Color,
+  Info20Filled,
+  DocumentMultiple20Filled
 } from "@fluentui/react-icons";
 
 const POSTSMENU = '1';
@@ -45,6 +49,8 @@ function App() {
   if (location.pathname === '/search') selectedValue = SEARCHMENU;
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
   else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
+  else if (location.pathname === '/about') selectedValue = ABOUTMENU;
+  else if (location.pathname === '/about/policies') selectedValue = POLICIESMENU;
 
   return (
     <div className="App">
@@ -89,6 +95,14 @@ function App() {
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
               Your Posts
             </NavItem>
+            <NavDivider/>
+            <NavSectionHeader>About Us</NavSectionHeader>
+            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
+              About Us
+            </NavItem>
+            <NavItem as='a' href='/about/policies' value={POLICIESMENU} icon={<DocumentMultiple20Filled/>}>
+              Policies
+            </NavItem>
           </NavDrawerBody>
         </NavDrawer>
 
@@ -98,6 +112,8 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/saved/posts" element={<SavedPosts />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />
+            <Route path="/about" element={<About/>}/>
+            <Route path="/about/policies" element={<Policies/>}/>
           </Routes>
         </div>
       </div>
