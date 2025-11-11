@@ -34,6 +34,8 @@ const POSTSMENU = '1';
 const SEARCHMENU = '2';
 const SAVEDPOSTSMENU = '3';
 const YOURPOSTSMENU = '4';
+const ABOUTMENU = '5'
+const POLICIESMENU = '6'
 
 function App() {
   const location = useLocation();
