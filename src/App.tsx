@@ -80,7 +80,7 @@ function App() {
             <NavDivider />
             <NavSectionHeader>General</NavSectionHeader>
 
-            <NavItem as="a" href="/posts" value={POSTSMENU} icon={<Home20Color />}>
+            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
 
@@ -108,7 +108,7 @@ function App() {
 
         <div className="content">
           <Routes>
-            <Route path="/posts" element={<Posts />} />
+            <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
             <Route path="/saved/posts" element={<SavedPosts />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />
