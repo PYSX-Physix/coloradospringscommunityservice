@@ -96,6 +96,7 @@ function App() {
             <Route path="/posts" element={<Posts />} />
             <Route path="/search" element={<Search />} />
             <Route path="/saved/posts" element={<SavedPosts />} />
+            <Route path="/saved/your-posts" element={<SavedPosts />} />
           </Routes>
         </div>
       </div>
