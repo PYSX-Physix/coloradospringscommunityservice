@@ -8,7 +8,7 @@ function YourPosts() {
   const [location, setLocation] = React.useState("");
   const [date, setDate] = React.useState<string>("");
 
-  const API_URL = "https://cospringscs-api-preview.varomicgames.workers.dev/api/posts";
+  const API_URL = "./api/posts";
 
   const handlePostSubmit = async () => {
     const newPost = {
