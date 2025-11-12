@@ -8,27 +8,20 @@ function YourPosts() {
   const [location, setLocation] = React.useState("");
   const [date, setDate] = React.useState<string>("");
 
-  const API_URL = "./api/posts";
-
   const handlePostSubmit = async () => {
-    const newPost = {
-      title,
-      desc,
-      location,
-      date: date?.toString(),
-      createdBy: "currentUser"
-    };
+    const newPost = { title, desc, location, date: date?.toString() };
 
-    const res = await fetch(API_URL, {
+    const res = await fetch("/api/posts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newPost)
+      body: JSON.stringify(newPost),
     });
 
     if (res.ok) {
       console.log("Post submitted!");
     }
   };
+
 
   return (
     <div>
