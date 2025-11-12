@@ -24,7 +24,6 @@ function Posts() {
 }
 
 function CSPosts() {
-  // This is a placeholder for Community Service Posts component
   return (
     <div>
         <Title1>New Posts</Title1>
@@ -38,6 +37,13 @@ function CSPosts() {
 function PostCard({ title, desc, img }: { title: string; desc: string; img?: string; }) {
   const [isReportModalOpen, setReportModalOpen] = React.useState(false);
   const [isReportConfirmModalOpen, setReportConfirmModalOpen] = React.useState(false);
+
+  const handleReportSubmit = (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setReportConfirmModalOpen(true);
+    setReportModalOpen(false);
+  };
+
     return (
         <div className='postCard'>
             <Image width="100%" src={img} alt="Post Image" fit='contain' style={{borderRadius: '5px'}}/>
@@ -59,44 +65,46 @@ function PostCard({ title, desc, img }: { title: string; desc: string; img?: str
                 </Menu>
                 <Dialog open={isReportModalOpen} onOpenChange={(event, data) => setReportModalOpen(data.open)}>
                   <DialogSurface>
-                    <DialogBody>
-                      <DialogTitle>Report Post</DialogTitle>
-                      <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                        <Text>Reporting this post will require us to review this report. Any reports that aren't legit will cause your account to be flagged and blocked from sending reports.</Text>
-                        <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
-                        <Field label={"Select a category"} required>
-                          <RadioGroup>
-                            <Radio value={"spam"} label={"Spam"}/>
-                            <Radio value={"offensive"} label={"Offensive or Harmful Content"}/>
-                            <Radio value={"misinformation"} label={"Misinformation"}/>
-                            <Radio value={"dangerous event"} label={"Safety Concerns"}/>
-                            <Radio value={"duplicate"} label={"Duplicate Post"}/>
-                            <Radio value={"other"} label={"Other"}/>
-                          </RadioGroup>
-                        </Field>
-                        <Field label={"Additional Details (Optional)"}>
-                          <Textarea placeholder='Details...'>
-                          </Textarea>
-                        </Field>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button appearance='primary' onClick={() => { setReportModalOpen(false); setReportConfirmModalOpen(true); }}>Report</Button>
-                        <Button appearance='secondary' onClick={() => setReportModalOpen(false)}>Cancel</Button>
-                      </DialogActions>
-                    </DialogBody>
+                    <form onSubmit={handleReportSubmit}>
+                      <DialogBody>
+                        <DialogTitle>Report Post</DialogTitle>
+                        <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
+                          <Text>Reporting this post will require us to review this report. Any reports that aren't legit will cause your account to be flagged and blocked from sending reports.</Text>
+                          <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
+                          <Field label={"Select a category"} required>
+                            <RadioGroup required>
+                              <Radio value={"spam"} label={"Spam"}/>
+                              <Radio value={"offensive"} label={"Offensive or Harmful Content"}/>
+                              <Radio value={"misinformation"} label={"Misinformation"}/>
+                              <Radio value={"safety concerns"} label={"Safety Concerns"}/>
+                              <Radio value={"duplicate"} label={"Duplicate Post"}/>
+                              <Radio value={"other"} label={"Other"}/>
+                            </RadioGroup>
+                          </Field>
+                          <Field label={"Additional Details (Optional)"}>
+                            <Textarea placeholder='Details...'>
+                            </Textarea>
+                          </Field>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button appearance='primary' type='submit'>Report</Button>
+                          <Button appearance='secondary' onClick={() => setReportModalOpen(false)}>Cancel</Button>
+                        </DialogActions>
+                      </DialogBody>
+                    </form>
                   </DialogSurface>  
                 </Dialog>
                 <Dialog open={isReportConfirmModalOpen} onOpenChange={(event, data) => setReportConfirmModalOpen(data.open)}>
                   <DialogSurface>
                     <DialogBody>
                       <DialogTitle>Report Sent</DialogTitle>
-                      <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                        <CheckmarkCircle48Color/>
-                        <Text style={{marginTop: '15px'}}>Your report has been succesfully sent and will be under review shortly.</Text>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button appearance='primary' onClick={() => { setReportConfirmModalOpen(false); }}>Close</Button>
-                      </DialogActions>
+                        <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
+                          <CheckmarkCircle48Color/>
+                          <Text style={{marginTop: '15px'}}>Your report has been succesfully sent and will be under review shortly.</Text>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button appearance='primary' onClick={() => { setReportConfirmModalOpen(false); }}>Close</Button>
+                        </DialogActions>
                     </DialogBody>
                   </DialogSurface>  
                 </Dialog>
