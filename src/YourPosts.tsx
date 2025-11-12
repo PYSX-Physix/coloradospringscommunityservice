@@ -19,13 +19,7 @@ function YourPosts() {
 
     if (res.ok) {
       console.log("Post submitted!");
-      fetchPosts();
     }
-  };
-
-  const fetchPosts = async () => {
-    const res = await fetch("/api/posts");
-    const data = await res.json();
   };
 
 
