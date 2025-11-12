@@ -12,7 +12,7 @@ import { Title1, Title3, Text, Button, Image, Menu, MenuTrigger, MenuPopover, Me
   Divider,
   Textarea
  } from "@fluentui/react-components";
-import { Library20Regular, Warning20Regular, Options20Regular, CheckmarkCircle48Color} from "@fluentui/react-icons";
+import { BookmarkAdd20Regular, Warning20Regular, Options20Regular, CheckmarkCircle48Color} from "@fluentui/react-icons";
 import './App.css';
 
 function Posts() {
@@ -58,7 +58,7 @@ function PostCard({ title, desc, img }: { title: string; desc: string; img?: str
                   </MenuTrigger>
                   <MenuPopover>
                     <MenuList>
-                      <MenuItem icon={<Library20Regular />}>Save Post</MenuItem>
+                      <MenuItem icon={<BookmarkAdd20Regular />}>Save Post</MenuItem>
                       <MenuItem icon={<Warning20Regular />} onClick={() => setReportModalOpen(!isReportModalOpen)}>Report Post</MenuItem>
                     </MenuList>
                   </MenuPopover>
