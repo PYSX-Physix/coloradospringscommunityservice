@@ -3,6 +3,7 @@ import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, Dialo
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1, Title2,
   TableCellLayout} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
+import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular } from "@fluentui/react-icons";
 
 function YourPosts() {
@@ -93,8 +94,17 @@ function YourPosts() {
                 <Field label={"Location:"} required>
                   <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                 </Field>
-                <Field label={"Date of Event"} required>
-                  <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(newDate) => setDate(newDate ? newDate.toDateString() : "")} required></DatePicker>
+                <Field label={"Start Day"} required>
+                  <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
+                </Field>
+                <Field label={"Start Time"} required>
+                  <TimePicker placeholder="Select a Time..." required/>
+                </Field>
+                <Field label={"End Day"} required>
+                  <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
+                </Field>
+                <Field label={"End Time"} required>
+                  <TimePicker placeholder="Select a Time..." required/>
                 </Field>
               </DialogContent>
               <DialogActions>
