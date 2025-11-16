@@ -62,14 +62,6 @@ function YourPosts() {
     {columnKey: "visable", label: "Visability"}
   ]
 
-  const ShowTable = () => {
-    if (TempItems == null) {
-      document.getElementById("yourpoststable")?.style.setProperty("display", "none");
-    }
-  };
-
-  ShowTable();
-
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
       <Title1>Your Events</Title1>
