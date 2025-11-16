@@ -1,6 +1,9 @@
 import React from "react";
-import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea } from "@fluentui/react-components";
+import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
+  Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1, Title2,
+  TableCellLayout} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
+import { EditRegular, EyeRegular } from "@fluentui/react-icons";
 
 function YourPosts() {
   const [title, setTitle] = React.useState("");
@@ -22,13 +25,57 @@ function YourPosts() {
     }
   };
 
+  const TempItems = [
+    {
+      postTitle: {label: "Service Event 1"},
+      desc: {label: "This is a test description of a the test event"},
+      created: {label: "11/12/2025", timeStamp: 1},
+      eventStart: {label: "2:30pm"},
+      eventEnd: {label: "3:30pm"},
+      visable: {label: "Visable"}
+    },
+    {
+      postTitle: {label: "Service Event 2"},
+      desc: {label: "This is a test description of a the test event"},
+      created: {label: "11/12/2025", timeStamp: 1},
+      eventStart: {label: "2:30pm"},
+      eventEnd: {label: "3:30pm"},
+      visable: {label: "Visable"}
+    },
+    {
+      postTitle: {label: "Service Event 3"},
+      desc: {label: "This is a test description of a the test event"},
+      created: {label: "11/12/2025", timeStamp: 1},
+      eventStart: {label: "2:30pm"},
+      eventEnd: {label: "3:30pm"},
+      visable: {label: "Visable"}
+    }    
+  ]
 
+  const columns = [
+    {columnKey: "title", label: "Title"},
+    {columnKey: "description", label: "Description"},
+    {columnKey: "created", label: "Created On"},
+    {columnKey: "start", label: "Starts"},
+    {columnKey: "ends", label: "Ends"},
+    {columnKey: "visable", label: "Visability"}
+  ]
+
+  const ShowTable = () => {
+    if (TempItems == null) {
+      document.getElementById("yourpoststable")?.style.setProperty("display", "none");
+    }
+  };
+
+  ShowTable();
 
   return (
-    <div>
+    <div style={{display: "flex", flexDirection: "column"}}>
+      <Title1>Your Events</Title1>
+      <Divider style={{marginTop: "15px", marginBottom: "15px"}}/>
       <Dialog modalType="non-modal">
         <DialogTrigger disableButtonEnhancement>
-          <Button>Create Post</Button>
+          <Button style={{alignSelf: "start"}}>Create Post</Button>
         </DialogTrigger>
         <DialogSurface>
           <form onSubmit={handlePostSubmit} method="post">
@@ -60,6 +107,49 @@ function YourPosts() {
           </form>
         </DialogSurface>
       </Dialog>
+
+      <Title2>Manage Events</Title2>
+      <Table aria-label="Your Posts Table" id="yourpoststable" sortable>
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => (
+              <TableHeaderCell key={column.columnKey}>
+                {column.label}
+              </TableHeaderCell>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {TempItems.map ((item) => (
+            <TableRow key={item.postTitle.label}>
+              <TableCell>
+                {item.postTitle.label}
+              </TableCell>
+              <TableCell>
+                {item.desc.label}
+              </TableCell>
+              <TableCell>
+                {item.created.label}
+              </TableCell>
+              <TableCell>
+                {item.eventStart.label}
+              </TableCell>
+              <TableCell>
+                {item.eventEnd.label}
+              </TableCell>
+              <TableCell>
+                {item.visable.label}
+              </TableCell>
+              <TableCell role="gridcell">
+                <TableCellLayout>
+                  <Button icon={<EditRegular/>}>Edit</Button>
+                  <Button icon={<EyeRegular/>}>View</Button>
+                </TableCellLayout>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
