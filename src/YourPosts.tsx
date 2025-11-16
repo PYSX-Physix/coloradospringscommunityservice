@@ -117,7 +117,8 @@ function YourPosts() {
           </form>
         </DialogSurface>
       </Dialog>
-
+      
+      <Divider style={{marginTop: "15px", marginBottom: "15px"}}/>
       <Title2>Manage Events</Title2>
       <Table aria-label="Your Posts Table" id="yourpoststable" sortable>
         <TableHeader>
