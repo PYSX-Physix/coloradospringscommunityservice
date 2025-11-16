@@ -81,7 +81,7 @@ function PostCard({ title, desc, img }: { title: string; desc: string; img?: str
           </Menu>
         </CardFooter>
       </Card>
-      <Dialog open={reportState === "form"}>
+      <Dialog open={reportState === "form"} modalType='non-modal'>
         <DialogSurface>
           <form onSubmit={handleReportSubmit}>
             <DialogBody>
