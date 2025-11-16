@@ -1,9 +1,11 @@
 import React from 'react';
-import { SearchBox } from '@fluentui/react-components';
+import { Divider, SearchBox, Title1 } from '@fluentui/react-components';
 
 function Search() {
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Title1>Search</Title1>
+      <Divider style={{marginTop: '15px', marginBottom: '15px'}}/>
       <SearchBox placeholder="Search posts..." />
     </div>
   );
