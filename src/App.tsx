@@ -31,6 +31,7 @@ import {
   Info20Filled,
   DocumentMultiple20Filled
 } from "@fluentui/react-icons";
+import Post from './Post';
 
 const POSTSMENU = '1';
 const SEARCHMENU = '2';
@@ -107,6 +108,7 @@ function App() {
             <Route path="/saved/your-posts" element={<YourPosts />} />
             <Route path="/about" element={<About/>}/>
             <Route path="/about/policies" element={<Policies/>}/>
+            <Route path='/post' element={<Post/>}/>
           </Routes>
         </div>
       </div>
