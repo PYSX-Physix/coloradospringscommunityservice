@@ -36,7 +36,7 @@ function Posts() {
     <div>
       <Title1>New Posts</Title1>
       <div style={{ paddingTop: '16px' }}>
-        <PostCard title='Test Card 1' desc='This is a test card to make sure that the input is working (kind of) as intended.' img='https://cdn.varomicgames.com/images/ProjectZ-Promo.webp' />
+        <PostCard title='Test Card 1' desc='This is a test card to make sure that the input is working (kind of) as intended.' img='https://www.colorado.com/_next/image?url=https%3A%2F%2Fapi.colorado.com%2F%2Fsites%2Fdefault%2Ffiles%2Flegacy_drupal_7_images%2F8_Pikes%2520Peak-Garden%2520of%2520the%2520Gods.jpg&w=2048&q=75' />
       </div>
     </div>
   );
