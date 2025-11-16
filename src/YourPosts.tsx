@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
-  Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1, Title2,
+  Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color } from "@fluentui/react-icons";
 
 function YourPosts() {
   const [title, setTitle] = React.useState("");
@@ -64,54 +64,55 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1>Your Events</Title1>
-      <Divider style={{marginTop: "15px", marginBottom: "15px"}}/>
-      <Dialog modalType="non-modal">
-        <DialogTrigger disableButtonEnhancement>
-          <Button style={{alignSelf: "start"}}>Create Post</Button>
-        </DialogTrigger>
-        <DialogSurface>
-          <form onSubmit={handlePostSubmit} method="post">
-            <DialogBody>
-              <DialogTitle>Create Community Service Event</DialogTitle>
-              <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                <Text></Text>
-                <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
-                <Field label={"Event Name:"} required>
-                  <Input id="titlebox" placeholder="ex: Swim Competition Volunteer" value={title} onChange={ (_, data) => setTitle(data.value) } required/>
-                </Field>
-                <Field label={"Description:"} required>
-                  <Textarea placeholder="Be descriptive about the event here." value={desc} onChange={ (_, data) => setDesc(data.value)} required />
-                </Field>
-                <Field label={"Location:"} required>
-                  <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
-                </Field>
-                <Field label={"Start Day"} required>
-                  <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
-                </Field>
-                <Field label={"Start Time"} required>
-                  <TimePicker placeholder="Select a Time..." required/>
-                </Field>
-                <Field label={"End Day"} required>
-                  <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
-                </Field>
-                <Field label={"End Time"} required>
-                  <TimePicker placeholder="Select a Time..." required/>
-                </Field>
-              </DialogContent>
-              <DialogActions>
-                <Button appearance="primary" type="submit">Create</Button>
-                <DialogTrigger>
-                  <Button appearance="secondary">Cancel</Button>
-                </DialogTrigger>
-              </DialogActions>
-            </DialogBody>
-          </form>
-        </DialogSurface>
-      </Dialog>
-      
-      <Divider style={{marginTop: "15px", marginBottom: "15px"}}/>
-      <Title2>Manage Events</Title2>
+      <Title1>Saved Events</Title1>
+      <Text>Saved posts will go here</Text>
+      <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>
+      <div style={{display: "flex", flexDirection: "row"}}>
+        <Title1>Manage Events</Title1>
+        <Dialog modalType="non-modal">
+          <DialogTrigger disableButtonEnhancement>
+            <Button size="small" appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}><AddCircle32Color/></Button>
+          </DialogTrigger>
+          <DialogSurface>
+            <form onSubmit={handlePostSubmit} method="post">
+              <DialogBody>
+                <DialogTitle>Create Community Service Event</DialogTitle>
+                <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
+                  <Text></Text>
+                  <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
+                  <Field label={"Event Name:"} required>
+                    <Input id="titlebox" placeholder="ex: Swim Competition Volunteer" value={title} onChange={ (_, data) => setTitle(data.value) } required/>
+                  </Field>
+                  <Field label={"Description:"} required>
+                    <Textarea placeholder="Be descriptive about the event here." value={desc} onChange={ (_, data) => setDesc(data.value)} required />
+                  </Field>
+                  <Field label={"Location:"} required>
+                    <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
+                  </Field>
+                  <Field label={"Start Day"} required>
+                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
+                  </Field>
+                  <Field label={"Start Time"} required>
+                    <TimePicker placeholder="Select a Time..." required/>
+                  </Field>
+                  <Field label={"End Day"} required>
+                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
+                  </Field>
+                  <Field label={"End Time"} required>
+                    <TimePicker placeholder="Select a Time..." required/>
+                  </Field>
+                </DialogContent>
+                <DialogActions>
+                  <Button appearance="primary" type="submit">Create</Button>
+                  <DialogTrigger>
+                    <Button appearance="secondary">Cancel</Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </form>
+          </DialogSurface>
+        </Dialog>
+      </div>
       <Table aria-label="Your Posts Table" id="yourpoststable" sortable>
         <TableHeader>
           <TableRow>

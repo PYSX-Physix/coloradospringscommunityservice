@@ -1,7 +1,6 @@
 import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
-import SavedPosts from './SavedPosts';
 import YourPosts from './YourPosts';
 import About from './About'
 import Policies from './Policies';
@@ -29,7 +28,6 @@ import {
   ClipboardTextEdit20Color,
   PersonColor,
   SettingsColor,
-  Library20Color,
   Info20Filled,
   DocumentMultiple20Filled
 } from "@fluentui/react-icons";
@@ -88,10 +86,6 @@ function App() {
               Search
             </NavItem>
             <NavSectionHeader>Saved</NavSectionHeader>
-
-            <NavItem as="a" href="/saved/posts" value={SAVEDPOSTSMENU} icon={<Library20Color />}>
-              Posts
-            </NavItem>
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
               Your Posts
             </NavItem>
@@ -110,7 +104,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/saved/posts" element={<SavedPosts />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />
             <Route path="/about" element={<About/>}/>
             <Route path="/about/policies" element={<Policies/>}/>
