@@ -12,7 +12,6 @@ import {
   NavDrawerBody,
   NavDrawerHeader,
   NavItem,
-  NavSectionHeader,
   NavDivider,
   MenuItemLink,
   MenuTrigger,
