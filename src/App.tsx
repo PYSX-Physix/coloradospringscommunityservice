@@ -101,7 +101,7 @@ function App() {
           </NavDrawerBody>
         </NavDrawer>
 
-        <div className="content">
+        <div className="content" style={{width: '100%'}}>
           <Routes>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
