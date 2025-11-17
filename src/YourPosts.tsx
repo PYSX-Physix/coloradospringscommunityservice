@@ -64,7 +64,7 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1>Saved Events</Title1>
+      <Title1 style={{marginBottom: '16px'}}>Saved Events</Title1>
       <Text>Saved posts will go here</Text>
       <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>
       <div style={{display: "flex", flexDirection: "row"}}>
@@ -113,7 +113,7 @@ function YourPosts() {
           </DialogSurface>
         </Dialog>
       </div>
-      <Table aria-label="Your Posts Table" id="yourpoststable" sortable>
+      <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
         <TableHeader>
           <TableRow>
             {columns.map((column) => (

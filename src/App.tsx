@@ -17,7 +17,11 @@ import {
   MenuTrigger,
   MenuPopover,
   MenuList,
-  Menu
+  Menu,
+  NavSectionHeader,
+  MessageBar,
+  MessageBarTitle,
+  MessageBarBody
 } from "@fluentui/react-components";
 
 import {
@@ -28,10 +32,13 @@ import {
   PersonColor,
   SettingsColor,
   Info20Filled,
-  DocumentMultiple20Filled
+  DocumentMultiple20Filled,
+  MegaphoneLoud20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
+import Announcements from './Announcements';
 
+const ANNOUCEMENTS = '0'
 const POSTSMENU = '1';
 const SEARCHMENU = '2';
 const SAVEDPOSTSMENU = '3';
@@ -49,6 +56,9 @@ function App() {
   else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
   else if (location.pathname === '/about') selectedValue = ABOUTMENU;
   else if (location.pathname === '/about/policies') selectedValue = POLICIESMENU;
+  else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
+  else if (location.pathname === '/') selectedValue = POSTSMENU;
+  else selectedValue = '10'
 
   return (
     <div className="App">
@@ -76,11 +86,13 @@ function App() {
 
           <NavDrawerBody>
             <NavDivider />
-
+            <NavSectionHeader>General</NavSectionHeader>
+            <NavItem as="a" href="/announcements" value={ANNOUCEMENTS} icon={<MegaphoneLoud20Color/>}>
+              Announcements
+            </NavItem>
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
-
             <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
@@ -88,6 +100,7 @@ function App() {
               Your Posts
             </NavItem>
             <NavDivider/>
+            <NavSectionHeader>Info</NavSectionHeader>
             <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
               About Us
             </NavItem>
@@ -98,6 +111,12 @@ function App() {
         </NavDrawer>
 
         <div className="content" style={{width: '100%'}}>
+          <MessageBar intent='warning'>
+            <MessageBarBody>
+              <MessageBarTitle>Warning:</MessageBarTitle>
+              This application is in development and not a complete product. Expect rapid changes since this application is in prototyping. Changes may lead to unexpected bugs and issues because this application is unstable.
+            </MessageBarBody>
+          </MessageBar>
           <Routes>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
@@ -105,6 +124,7 @@ function App() {
             <Route path="/about" element={<About/>}/>
             <Route path="/about/policies" element={<Policies/>}/>
             <Route path='/post' element={<Post/>}/>
+            <Route path='/announcements' element={<Announcements/>}/>
           </Routes>
         </div>
       </div>

@@ -39,12 +39,13 @@
 
 .nav {
   min-width: 260px;
+  min-height: 100%;
 }
 
 .root {
   overflow: hidden;
   display: flex;
-  height: 1500px;
+  height: 100vh;
   text-align: left;
 }
 
