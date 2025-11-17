@@ -77,7 +77,6 @@ function App() {
 
           <NavDrawerBody>
             <NavDivider />
-            <NavSectionHeader>General</NavSectionHeader>
 
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
@@ -86,12 +85,10 @@ function App() {
             <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
-            <NavSectionHeader>Saved</NavSectionHeader>
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
               Your Posts
             </NavItem>
             <NavDivider/>
-            <NavSectionHeader>About Us</NavSectionHeader>
             <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
               About Us
             </NavItem>
