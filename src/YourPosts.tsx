@@ -124,11 +124,7 @@ function YourPosts() {
           </DialogSurface>
         </Dialog>
       </div>
-<<<<<<< HEAD
       <Table style={{marginTop: '15px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
-=======
-      <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
->>>>>>> 9c2b0b87ad1692ac39060614a9a86e41bb5168f9
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
