@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
-  TableCellLayout, Menu, MenuItem, MenuTrigger, MenuList, MenuPopover} from "@fluentui/react-components";
+  TableCellLayout} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, Delete20Regular } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color } from "@fluentui/react-icons";
 
 function YourPosts() {
   const [title, setTitle] = React.useState("");
@@ -16,17 +16,32 @@ function YourPosts() {
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState("");
 
+  // Helper function to combine date and time
+  const combineDateAndTime = (date: Date | null, time: Date | null): string => {
+    if (!date || !time) return '';
+    
+    const combined = new Date(date);
+    combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
+    return combined.toISOString();
+  };
+
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const startDateTime = combineDateAndTime(startDate, startTime);
+    const endDateTime = combineDateAndTime(endDate, endTime);
+
+    if (!startDateTime || !endDateTime) {
+      alert('Please select both date and time for start and end');
+      return;
+    }
     
     const newPost = { 
       title, 
       desc, 
       location, 
-      startDate: startDate?.toString(),
-      startTime: startTime?.toString(),
-      endDate: endDate?.toString(),
-      endTime: endTime?.toString(),
+      startDateTime,
+      endDateTime,
       participants
     };
 
@@ -37,7 +52,8 @@ function YourPosts() {
     });
 
     if (res.ok) {
-      console.log("Post submitted!");
+      const data = await res.json();
+      console.log("Post created with ID:", data.id);
       // Reset form
       setTitle("");
       setDesc("");
@@ -47,6 +63,9 @@ function YourPosts() {
       setEndDate(null);
       setEndTime(null);
       setParticipants("");
+    } else {
+      const error = await res.json();
+      alert(`Error: ${error.error}`);
     }
   };
 
@@ -55,29 +74,18 @@ function YourPosts() {
       postTitle: {label: "Service Event 1"},
       desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
-      eventStart: {label: "2:30pm"},
-      eventEnd: {label: "3:30pm"},
-      participants: {label: "3/5"},
+      eventStart: {label: "November 12, 2025 at 2:30 PM"},
+      eventEnd: {label: "November 12, 2025 at 3:30 PM"},
       visible: {label: "Visible"}
     },
     {
       postTitle: {label: "Service Event 2"},
       desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
-      eventStart: {label: "2:30pm"},
-      eventEnd: {label: "3:30pm"},
-      participants: {label: "3/5"},
+      eventStart: {label: "November 12, 2025 at 2:30 PM"},
+      eventEnd: {label: "November 12, 2025 at 3:30 PM"},
       visible: {label: "Visible"}
-    },
-    {
-      postTitle: {label: "Service Event 3"},
-      desc: {label: "This is a test description of the test event"},
-      created: {label: "11/12/2025", timeStamp: 1},
-      eventStart: {label: "2:30pm"},
-      eventEnd: {label: "3:30pm"},
-      participants: {label: "3/5"},
-      visible: {label: "Visible"}
-    }    
+    }
   ];
 
   const columns = [
@@ -86,7 +94,6 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
-    {columnKey: "participants", label: "Participants"},
     {columnKey: "visible", label: "Visibility"}
   ];
 
@@ -99,7 +106,7 @@ function YourPosts() {
         <Title1>Manage Events</Title1>
         <Dialog modalType="non-modal">
           <DialogTrigger disableButtonEnhancement>
-            <Button size="large" appearance="secondary" style={{alignSelf: "start", marginLeft: '16px'}} icon={<AddCircle32Color/>}/>
+            <Button size="small" appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}><AddCircle32Color/></Button>
           </DialogTrigger>
           <DialogSurface>
             <form onSubmit={handlePostSubmit} method="post">
@@ -116,9 +123,9 @@ function YourPosts() {
                   <Field label={"Location:"} required>
                     <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                   </Field>
-                  <div style={{display: "flex", flexDirection: 'row', width: '100vh'}}>
+                  <div style={{display: "flex", flexDirection: 'row'}}>
                     <Field label={"Start Day"} required>
-                      <DatePicker
+                      <DatePicker 
                         placeholder="Select a Date..." 
                         value={startDate} 
                         onSelectDate={(date) => setStartDate(date || null)} 
@@ -190,23 +197,11 @@ function YourPosts() {
               <TableCell>{item.created.label}</TableCell>
               <TableCell>{item.eventStart.label}</TableCell>
               <TableCell>{item.eventEnd.label}</TableCell>
-              <TableCell>{item.participants.label}</TableCell>
               <TableCell>{item.visible.label}</TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
-                  <Menu>
-                    <MenuTrigger>
-                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                    </MenuTrigger>
-                    <MenuPopover>
-                      <MenuList>
-                        <MenuItem icon={<EditRegular />}>Edit</MenuItem>
-                        <MenuItem icon={<EyeRegular />}>View</MenuItem>
-                        <MenuItem icon={<Delete20Regular/>}>Delete</MenuItem>
-                        <MenuItem icon={<EyeRegular/>}>Hide/Show</MenuItem>
-                      </MenuList>
-                    </MenuPopover>
-                  </Menu>
+                  <Button icon={<EditRegular/>}>Edit</Button>
+                  <Button as="a" href="/post" icon={<EyeRegular/>}>View</Button>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
