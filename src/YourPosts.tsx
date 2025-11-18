@@ -48,7 +48,7 @@ function YourPosts() {
       setEndTime(null);
       setParticipants("");
     }
-  };
+  }; // <-- This was missing!
 
   const TempItems = [
     {
@@ -57,7 +57,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     },
     {
       postTitle: {label: "Service Event 2"},
@@ -65,7 +65,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     },
     {
       postTitle: {label: "Service Event 3"},
@@ -73,7 +73,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     }    
   ];
 
@@ -83,8 +83,8 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
-    {columnKey: "visable", label: "Visability"}
-  ]
+    {columnKey: "visible", label: "Visibility"}
+  ];
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
@@ -112,17 +112,49 @@ function YourPosts() {
                   <Field label={"Location:"} required>
                     <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                   </Field>
-                  <Field label={"Start Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"Start Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
-                  </Field>
-                  <Field label={"End Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"End Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
+                  <div style={{display: "flex", flexDirection: 'row'}}>
+                    <Field label={"Start Day"} required>
+                      <DatePicker 
+                        placeholder="Select a Date..." 
+                        value={startDate} 
+                        onSelectDate={(date) => setStartDate(date || null)} 
+                        required
+                      />
+                    </Field>
+                    <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
+                      <TimePicker 
+                        placeholder="Select a Time..." 
+                        selectedTime={startTime}
+                        onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
+                        required
+                      />
+                    </Field>
+                  </div>
+                  <div style={{display: "flex", flexDirection: 'row'}}>
+                    <Field label={"End Day"} required>
+                      <DatePicker 
+                        placeholder="Select a Date..." 
+                        value={endDate} 
+                        onSelectDate={(date) => setEndDate(date || null)} 
+                        required
+                      />
+                    </Field>
+                    <Field style={{marginLeft: '16px'}} label={"End Time"} required>
+                      <TimePicker 
+                        placeholder="Select a Time..." 
+                        selectedTime={endTime}
+                        onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
+                        required
+                      />
+                    </Field>
+                  </div>
+                  <Field label={"Number of Participants"} required>
+                    <Input 
+                      type="number" 
+                      value={participants}
+                      onChange={(_, data) => setParticipants(data.value)}
+                      required
+                    />
                   </Field>
                 </DialogContent>
                 <DialogActions>
@@ -136,7 +168,7 @@ function YourPosts() {
           </DialogSurface>
         </Dialog>
       </div>
-      <Table style={{marginTop: '15px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
+      <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
@@ -149,28 +181,16 @@ function YourPosts() {
         <TableBody>
           {TempItems.map((item) => (
             <TableRow key={item.postTitle.label}>
-              <TableCell>
-                {item.postTitle.label}
-              </TableCell>
-              <TableCell>
-                {item.desc.label}
-              </TableCell>
-              <TableCell>
-                {item.created.label}
-              </TableCell>
-              <TableCell>
-                {item.eventStart.label}
-              </TableCell>
-              <TableCell>
-                {item.eventEnd.label}
-              </TableCell>
-              <TableCell>
-                {item.visable.label}
-              </TableCell>
+              <TableCell>{item.postTitle.label}</TableCell>
+              <TableCell>{item.desc.label}</TableCell>
+              <TableCell>{item.created.label}</TableCell>
+              <TableCell>{item.eventStart.label}</TableCell>
+              <TableCell>{item.eventEnd.label}</TableCell>
+              <TableCell>{item.visible.label}</TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
                   <Button icon={<EditRegular/>}>Edit</Button>
-                  <Button icon={<EyeRegular/>}>View</Button>
+                  <Button as="a" href="/post" icon={<EyeRegular/>}>View</Button>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
