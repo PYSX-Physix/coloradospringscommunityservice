@@ -1,0 +1,7 @@
+name = "coloradospringscommunityservice"
+compatibility_date = "2025-11-11"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cospringscs-db"
+database_id = "b6f7fd1c-55a4-44a8-b571-cbbd10d3ce47"
