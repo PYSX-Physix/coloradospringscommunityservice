@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
-  TableCellLayout} from "@fluentui/react-components";
+  TableCellLayout, Menu, MenuItem, MenuTrigger, MenuList, MenuPopover} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, Delete20Regular } from "@fluentui/react-icons";
 
 function YourPosts() {
   const [title, setTitle] = React.useState("");
@@ -57,6 +57,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "3/5"},
       visible: {label: "Visible"}
     },
     {
@@ -65,6 +66,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "3/5"},
       visible: {label: "Visible"}
     },
     {
@@ -73,6 +75,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "3/5"},
       visible: {label: "Visible"}
     }    
   ];
@@ -83,6 +86,7 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
+    {columnKey: "participants", label: "Participants"},
     {columnKey: "visible", label: "Visibility"}
   ];
 
@@ -186,11 +190,23 @@ function YourPosts() {
               <TableCell>{item.created.label}</TableCell>
               <TableCell>{item.eventStart.label}</TableCell>
               <TableCell>{item.eventEnd.label}</TableCell>
+              <TableCell>{item.participants.label}</TableCell>
               <TableCell>{item.visible.label}</TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
-                  <Button icon={<EditRegular/>}>Edit</Button>
-                  <Button as="a" href="/post" icon={<EyeRegular/>}>View</Button>
+                  <Menu>
+                    <MenuTrigger>
+                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                    </MenuTrigger>
+                    <MenuPopover>
+                      <MenuList>
+                        <MenuItem icon={<EditRegular />}>Edit</MenuItem>
+                        <MenuItem icon={<EyeRegular />}>View</MenuItem>
+                        <MenuItem icon={<Delete20Regular/>}>Delete</MenuItem>
+                        <MenuItem icon={<EyeRegular/>}>Hide/Show</MenuItem>
+                      </MenuList>
+                    </MenuPopover>
+                  </Menu>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
