@@ -1,5 +1,5 @@
-import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona } from "@fluentui/react-components";
-import { Calendar16Color } from "@fluentui/react-icons";
+import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, Button } from "@fluentui/react-components";
+import { Calendar16Color, LocationRipple16Color } from "@fluentui/react-icons";
 import React  from "react";
 
 export default function Post()
@@ -23,6 +23,9 @@ export default function Post()
                             <div style={{marginLeft: '16px'}}>
                                 <Text><strong>Ends</strong>: November 25, 2025, 12:00pm</Text>
                             </div>
+                        </div>
+                        <div style={{marginTop: '16px'}}>
+                            <Text><LocationRipple16Color style={{marginRight: '16px'}}/><strong>Location:</strong> 1234, Main Street, Colorado Springs, Colorado</Text>
                         </div>
                         <Persona name="Test User" style={{marginTop: '16px'}}/>
                     </div>

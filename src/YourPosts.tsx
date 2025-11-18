@@ -10,10 +10,25 @@ function YourPosts() {
   const [title, setTitle] = React.useState("");
   const [desc, setDesc] = React.useState("");
   const [location, setLocation] = React.useState("");
-  const [date, setDate] = React.useState<string>("");
+  const [startDate, setStartDate] = React.useState<Date | null>(null);
+  const [startTime, setStartTime] = React.useState<Date | null>(null);
+  const [endDate, setEndDate] = React.useState<Date | null>(null);
+  const [endTime, setEndTime] = React.useState<Date | null>(null);
+  const [participants, setParticipants] = React.useState("");
 
-  const handlePostSubmit = async () => {
-    const newPost = { title, desc, location, date: date?.toString() };
+  const handlePostSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const newPost = { 
+      title, 
+      desc, 
+      location, 
+      startDate: startDate?.toString(),
+      startTime: startTime?.toString(),
+      endDate: endDate?.toString(),
+      endTime: endTime?.toString(),
+      participants
+    };
 
     const res = await fetch("/api/posts", {
       method: "POST",
@@ -23,35 +38,44 @@ function YourPosts() {
 
     if (res.ok) {
       console.log("Post submitted!");
+      // Reset form
+      setTitle("");
+      setDesc("");
+      setLocation("");
+      setStartDate(null);
+      setStartTime(null);
+      setEndDate(null);
+      setEndTime(null);
+      setParticipants("");
     }
   };
 
   const TempItems = [
     {
       postTitle: {label: "Service Event 1"},
-      desc: {label: "This is a test description of a the test event"},
+      desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     },
     {
       postTitle: {label: "Service Event 2"},
-      desc: {label: "This is a test description of a the test event"},
+      desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     },
     {
       postTitle: {label: "Service Event 3"},
-      desc: {label: "This is a test description of a the test event"},
+      desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
-      visable: {label: "Visable"}
+      visible: {label: "Visible"}
     }    
-  ]
+  ];
 
   const columns = [
     {columnKey: "title", label: "Title"},
@@ -59,8 +83,8 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
-    {columnKey: "visable", label: "Visability"}
-  ]
+    {columnKey: "visible", label: "Visibility"}
+  ];
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
@@ -78,28 +102,59 @@ function YourPosts() {
               <DialogBody>
                 <DialogTitle>Create Community Service Event</DialogTitle>
                 <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                  <Text></Text>
                   <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
                   <Field label={"Event Name:"} required>
-                    <Input id="titlebox" placeholder="ex: Swim Competition Volunteer" value={title} onChange={ (_, data) => setTitle(data.value) } required/>
+                    <Input id="titlebox" placeholder="ex: Swim Competition Volunteer" value={title} onChange={(_, data) => setTitle(data.value)} required/>
                   </Field>
                   <Field label={"Description:"} required>
-                    <Textarea placeholder="Be descriptive about the event here." value={desc} onChange={ (_, data) => setDesc(data.value)} required />
+                    <Textarea id="descriptionbox" placeholder="Be descriptive about the event here." value={desc} onChange={(_, data) => setDesc(data.value)} required />
                   </Field>
                   <Field label={"Location:"} required>
                     <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                   </Field>
-                  <Field label={"Start Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"Start Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
-                  </Field>
-                  <Field label={"End Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"End Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
+                  <div style={{display: "flex", flexDirection: 'row'}}>
+                    <Field label={"Start Day"} required>
+                      <DatePicker 
+                        placeholder="Select a Date..." 
+                        value={startDate} 
+                        onSelectDate={(date) => setStartDate(date || null)} 
+                        required
+                      />
+                    </Field>
+                    <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
+                      <TimePicker 
+                        placeholder="Select a Time..." 
+                        selectedTime={startTime}
+                        onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
+                        required
+                      />
+                    </Field>
+                  </div>
+                  <div style={{display: "flex", flexDirection: 'row'}}>
+                    <Field label={"End Day"} required>
+                      <DatePicker 
+                        placeholder="Select a Date..." 
+                        value={endDate} 
+                        onSelectDate={(date) => setEndDate(date || null)} 
+                        required
+                      />
+                    </Field>
+                    <Field style={{marginLeft: '16px'}} label={"End Time"} required>
+                      <TimePicker 
+                        placeholder="Select a Time..." 
+                        selectedTime={endTime}
+                        onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
+                        required
+                      />
+                    </Field>
+                  </div>
+                  <Field label={"Number of Participants"} required>
+                    <Input 
+                      type="number" 
+                      value={participants}
+                      onChange={(_, data) => setParticipants(data.value)}
+                      required
+                    />
                   </Field>
                 </DialogContent>
                 <DialogActions>
@@ -124,30 +179,18 @@ function YourPosts() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {TempItems.map ((item) => (
+          {TempItems.map((item) => (
             <TableRow key={item.postTitle.label}>
-              <TableCell>
-                {item.postTitle.label}
-              </TableCell>
-              <TableCell>
-                {item.desc.label}
-              </TableCell>
-              <TableCell>
-                {item.created.label}
-              </TableCell>
-              <TableCell>
-                {item.eventStart.label}
-              </TableCell>
-              <TableCell>
-                {item.eventEnd.label}
-              </TableCell>
-              <TableCell>
-                {item.visable.label}
-              </TableCell>
+              <TableCell>{item.postTitle.label}</TableCell>
+              <TableCell>{item.desc.label}</TableCell>
+              <TableCell>{item.created.label}</TableCell>
+              <TableCell>{item.eventStart.label}</TableCell>
+              <TableCell>{item.eventEnd.label}</TableCell>
+              <TableCell>{item.visible.label}</TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
                   <Button icon={<EditRegular/>}>Edit</Button>
-                  <Button icon={<EyeRegular/>}>View</Button>
+                  <Button as="a" href="/post" icon={<EyeRegular/>}>View</Button>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
