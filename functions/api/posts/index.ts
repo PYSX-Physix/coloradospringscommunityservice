@@ -1,9 +1,13 @@
+interface Env {
+  DB: D1Database;
+}
+
 interface Post {
   title: string;
   desc: string;
   location: string;
-  startDateTime: string;  // Changed from separate date/time
-  endDateTime: string;    // Changed from separate date/time
+  startDateTime: string;
+  endDateTime: string;
   participants: string;
 }
 
@@ -24,25 +28,7 @@ export async function onRequestPost(context: {
       });
     }
 
-    // Validate datetime format
-    const startDate = new Date(body.startDateTime);
-    const endDate = new Date(body.endDateTime);
-    
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return new Response(JSON.stringify({ error: 'Invalid date format' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400
-      });
-    }
-
-    if (endDate <= startDate) {
-      return new Response(JSON.stringify({ error: 'End time must be after start time' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400
-      });
-    }
-
-    // Insert post with combined datetime
+    // Insert post
     const result = await context.env.DB.prepare(
       `INSERT INTO posts 
         (title, description, location, start_datetime, end_datetime, max_participants, user_id, user_name) 
@@ -69,6 +55,7 @@ export async function onRequestPost(context: {
       status: 201
     });
   } catch (error: any) {
+    console.error('Error in POST /api/posts:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500
@@ -80,21 +67,7 @@ export async function onRequestPost(context: {
 export async function onRequestGet(context: { env: Env }) {
   try {
     const { results } = await context.env.DB.prepare(
-      `SELECT 
-        id, 
-        title, 
-        description, 
-        location,
-        start_datetime,
-        end_datetime,
-        max_participants,
-        current_participants,
-        user_name,
-        visible,
-        created_at
-      FROM posts 
-      WHERE visible = 1
-      ORDER BY start_datetime ASC`
+      `SELECT * FROM posts WHERE visible = 1 ORDER BY start_datetime ASC`
     ).all();
 
     return new Response(JSON.stringify({ posts: results }), {
@@ -105,9 +78,21 @@ export async function onRequestGet(context: { env: Env }) {
       status: 200
     });
   } catch (error: any) {
+    console.error('Error in GET /api/posts:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500
     });
   }
+}
+
+// Handle CORS preflight
+export async function onRequestOptions() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
