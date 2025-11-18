@@ -48,7 +48,7 @@ function YourPosts() {
       setEndTime(null);
       setParticipants("");
     }
-  }; // <-- This was missing!
+  };
 
   const TempItems = [
     {
@@ -95,7 +95,7 @@ function YourPosts() {
         <Title1>Manage Events</Title1>
         <Dialog modalType="non-modal">
           <DialogTrigger disableButtonEnhancement>
-            <Button size="small" appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}><AddCircle32Color/></Button>
+            <Button size="large" appearance="secondary" style={{alignSelf: "start", marginLeft: '16px'}} icon={<AddCircle32Color/>}/>
           </DialogTrigger>
           <DialogSurface>
             <form onSubmit={handlePostSubmit} method="post">
