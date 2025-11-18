@@ -14,7 +14,7 @@ export default function Post()
                     <Title2 style={{marginTop: '15px'}}>Descripton</Title2>
                     <Divider style={{marginTop: '15px', marginBottom: '15px'}}/>
                     <Text>This is a test card to make sure that the input is working (kind of) as intended.</Text>
-                    <div>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
                         <div style={{display: 'flex', flexDirection: 'row', marginTop: '16px'}}>
                             <div>
                                 <Calendar16Color style={{marginRight: '16px'}}/>
@@ -28,6 +28,7 @@ export default function Post()
                             <Text><LocationRipple16Color style={{marginRight: '16px'}}/><strong>Location:</strong> 1234, Main Street, Colorado Springs, Colorado</Text>
                         </div>
                         <Persona name="Test User" style={{marginTop: '16px'}}/>
+                        <Button>Sign-Up</Button>
                     </div>
                 </div>
                 <div style={{marginLeft: '15px', width: '100%'}}>
