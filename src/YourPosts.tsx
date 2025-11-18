@@ -16,7 +16,6 @@ function YourPosts() {
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState("");
 
-  // Helper function to combine date and time
   const combineDateAndTime = (date: Date | null, time: Date | null): string => {
     if (!date || !time) return '';
     
@@ -36,6 +35,7 @@ function YourPosts() {
       return;
     }
     
+    // CRITICAL: Use startDateTime and endDateTime, NOT startDate/startTime
     const newPost = { 
       title, 
       desc, 
@@ -45,41 +45,44 @@ function YourPosts() {
       participants
     };
 
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newPost),
-    });
+    console.log('Sending:', newPost);
 
-    if (res.ok) {
-      const data = await res.json();
-      console.log("Post created with ID:", data.id);
-      // Reset form
-      setTitle("");
-      setDesc("");
-      setLocation("");
-      setStartDate(null);
-      setStartTime(null);
-      setEndDate(null);
-      setEndTime(null);
-      setParticipants("");
-    } else {
-      const error = await res.json();
-      alert(`Error: ${error.error}`);
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPost),
+      });
+
+      const responseText = await res.text();
+      console.log('Response:', responseText);
+
+      if (res.ok) {
+        const data = JSON.parse(responseText);
+        alert('Post created successfully with ID: ' + data.id);
+        
+        // Reset form
+        setTitle("");
+        setDesc("");
+        setLocation("");
+        setStartDate(null);
+        setStartTime(null);
+        setEndDate(null);
+        setEndTime(null);
+        setParticipants("");
+      } else {
+        const error = JSON.parse(responseText);
+        alert('Error: ' + JSON.stringify(error));
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      alert('Failed to create post');
     }
   };
 
   const TempItems = [
     {
       postTitle: {label: "Service Event 1"},
-      desc: {label: "This is a test description of the test event"},
-      created: {label: "11/12/2025", timeStamp: 1},
-      eventStart: {label: "November 12, 2025 at 2:30 PM"},
-      eventEnd: {label: "November 12, 2025 at 3:30 PM"},
-      visible: {label: "Visible"}
-    },
-    {
-      postTitle: {label: "Service Event 2"},
       desc: {label: "This is a test description of the test event"},
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "November 12, 2025 at 2:30 PM"},
@@ -109,19 +112,34 @@ function YourPosts() {
             <Button size="small" appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}><AddCircle32Color/></Button>
           </DialogTrigger>
           <DialogSurface>
-            <form onSubmit={handlePostSubmit} method="post">
+            <form onSubmit={handlePostSubmit}>
               <DialogBody>
                 <DialogTitle>Create Community Service Event</DialogTitle>
                 <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
                   <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
                   <Field label={"Event Name:"} required>
-                    <Input id="titlebox" placeholder="ex: Swim Competition Volunteer" value={title} onChange={(_, data) => setTitle(data.value)} required/>
+                    <Input 
+                      placeholder="ex: Swim Competition Volunteer" 
+                      value={title} 
+                      onChange={(_, data) => setTitle(data.value)} 
+                      required
+                    />
                   </Field>
                   <Field label={"Description:"} required>
-                    <Textarea id="descriptionbox" placeholder="Be descriptive about the event here." value={desc} onChange={(_, data) => setDesc(data.value)} required />
+                    <Textarea 
+                      placeholder="Be descriptive about the event here." 
+                      value={desc} 
+                      onChange={(_, data) => setDesc(data.value)} 
+                      required 
+                    />
                   </Field>
                   <Field label={"Location:"} required>
-                    <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
+                    <Input 
+                      placeholder="ex: 1234, Main Street Rd" 
+                      value={location} 
+                      onChange={(_, data) => setLocation(data.value)} 
+                      required
+                    />
                   </Field>
                   <div style={{display: "flex", flexDirection: 'row'}}>
                     <Field label={"Start Day"} required>
@@ -213,3 +231,21 @@ function YourPosts() {
 }
 
 export default YourPosts;
+/*
+
+4. **Save the file**
+5. **Restart both terminals:**
+   - Terminal 1: `npm run dev:react`
+   - Terminal 2: `npm run dev:wrangler`
+6. **Hard refresh the browser** (Ctrl+Shift+R)
+
+Then try submitting the form again. In the Wrangler terminal, you should now see:
+```
+Received POST request: {
+  title: '...',
+  desc: '...',
+  location: '...',
+  startDateTime: '2025-11-20T14:00:00.000Z',  // ← Should be ISO string
+  endDateTime: '2025-11-20T16:30:00.000Z',    // ← Should be ISO string
+  participants: '15'
+}*/

@@ -19,16 +19,70 @@ export async function onRequestPost(context: {
   try {
     const body = await context.request.json() as Post;
     
-    // Validate required fields
-    if (!body.title || !body.desc || !body.location || 
-        !body.startDateTime || !body.endDateTime || !body.participants) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+    console.log('Received POST request:', body);
+    
+    // Check each field individually
+    const missingFields = [];
+    if (!body.title) missingFields.push('title');
+    if (!body.desc) missingFields.push('desc');
+    if (!body.location) missingFields.push('location');
+    if (!body.startDateTime) missingFields.push('startDateTime');
+    if (!body.endDateTime) missingFields.push('endDateTime');
+    if (!body.participants) missingFields.push('participants');
+    
+    if (missingFields.length > 0) {
+      console.error('Missing fields:', missingFields);
+      return new Response(JSON.stringify({ 
+        error: 'Missing required fields',
+        missingFields: missingFields,
+        receivedData: body
+      }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
       });
     }
 
-    // Insert post
+    // Validate datetime format
+    const startDate = new Date(body.startDateTime);
+    const endDate = new Date(body.endDateTime);
+    
+    if (isNaN(startDate.getTime())) {
+      console.error('Invalid start datetime:', body.startDateTime);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid start datetime format',
+        received: body.startDateTime
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+    
+    if (isNaN(endDate.getTime())) {
+      console.error('Invalid end datetime:', body.endDateTime);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid end datetime format',
+        received: body.endDateTime
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    if (endDate <= startDate) {
+      console.error('End time before start time');
+      return new Response(JSON.stringify({ 
+        error: 'End time must be after start time',
+        start: body.startDateTime,
+        end: body.endDateTime
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    console.log('Inserting into database...');
+
+    // Insert post with combined datetime
     const result = await context.env.DB.prepare(
       `INSERT INTO posts 
         (title, description, location, start_datetime, end_datetime, max_participants, user_id, user_name) 
@@ -44,6 +98,8 @@ export async function onRequestPost(context: {
       'Test User'
     ).run();
 
+    console.log('Insert successful:', result.meta);
+
     return new Response(JSON.stringify({ 
       success: true, 
       id: result.meta.last_row_id 
@@ -56,43 +112,12 @@ export async function onRequestPost(context: {
     });
   } catch (error: any) {
     console.error('Error in POST /api/posts:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      stack: error.stack
+    }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500
     });
   }
-}
-
-// GET all posts
-export async function onRequestGet(context: { env: Env }) {
-  try {
-    const { results } = await context.env.DB.prepare(
-      `SELECT * FROM posts WHERE visible = 1 ORDER BY start_datetime ASC`
-    ).all();
-
-    return new Response(JSON.stringify({ posts: results }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      status: 200
-    });
-  } catch (error: any) {
-    console.error('Error in GET /api/posts:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
-  }
-}
-
-// Handle CORS preflight
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
 }
