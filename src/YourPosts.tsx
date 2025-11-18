@@ -33,6 +33,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "00/00"},
       visable: {label: "Visable"}
     },
     {
@@ -41,6 +42,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "00/00"},
       visable: {label: "Visable"}
     },
     {
@@ -49,6 +51,7 @@ function YourPosts() {
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "2:30pm"},
       eventEnd: {label: "3:30pm"},
+      participants: {label: "00/00"},
       visable: {label: "Visable"}
     }    
   ]
@@ -59,6 +62,7 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
+    {columnKey: "participants", label: "Participants"},
     {columnKey: "visable", label: "Visability"}
   ]
 
@@ -89,17 +93,24 @@ function YourPosts() {
                   <Field label={"Location:"} required>
                     <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                   </Field>
-                  <Field label={"Start Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"Start Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
-                  </Field>
-                  <Field label={"End Day"} required>
-                    <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
-                  </Field>
-                  <Field label={"End Time"} required>
-                    <TimePicker placeholder="Select a Time..." required/>
+                  <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <Field label={"Start Day"} required>
+                      <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(startDate) => setDate(startDate ? startDate.toDateString() : "")} required></DatePicker>
+                    </Field>
+                    <Field label={"Start Time"} required>
+                      <TimePicker placeholder="Select a Time..." required/>
+                    </Field>
+                  </div>
+                  <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <Field label={"End Day"} required>
+                      <DatePicker placeholder="Select a Date..." value={date ? new Date(date) : null} onSelectDate={(endDate) => setDate(endDate ? endDate.toDateString() : "")} required></DatePicker>
+                    </Field>
+                    <Field label={"End Time"} required>
+                      <TimePicker placeholder="Select a Time..." required/>
+                    </Field>
+                  </div>
+                  <Field label={"Participants"} required>
+                    <Input type="number" required/>
                   </Field>
                 </DialogContent>
                 <DialogActions>
@@ -113,7 +124,7 @@ function YourPosts() {
           </DialogSurface>
         </Dialog>
       </div>
-      <Table aria-label="Your Posts Table" id="yourpoststable" sortable>
+      <Table style={{marginTop: '15px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
@@ -142,12 +153,15 @@ function YourPosts() {
                 {item.eventEnd.label}
               </TableCell>
               <TableCell>
+                {item.participants.label}
+              </TableCell>
+              <TableCell>
                 {item.visable.label}
               </TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
-                  <Button icon={<EditRegular/>}>Edit</Button>
-                  <Button icon={<EyeRegular/>}>View</Button>
+                  <Button icon={<EditRegular/>} style={{marginRight: '5px'}}>Edit</Button>
+                  <Button icon={<EyeRegular/>} style={{marginLeft: '5px'}}>View</Button>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
