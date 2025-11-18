@@ -116,9 +116,9 @@ function YourPosts() {
                   <Field label={"Location:"} required>
                     <Input placeholder="ex: 1234, Main Street Rd" value={location} onChange={(_, data) => setLocation(data.value)} required/>
                   </Field>
-                  <div style={{display: "flex", flexDirection: 'row'}}>
+                  <div style={{display: "flex", flexDirection: 'row', width: '100vh'}}>
                     <Field label={"Start Day"} required>
-                      <DatePicker 
+                      <DatePicker
                         placeholder="Select a Date..." 
                         value={startDate} 
                         onSelectDate={(date) => setStartDate(date || null)} 
