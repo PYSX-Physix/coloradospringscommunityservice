@@ -1,54 +1,10 @@
-interface Env {
-  DB: D1Database;
-}
-
 interface Post {
   title: string;
   desc: string;
   location: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
+  startDateTime: string;  // Changed from separate date/time
+  endDateTime: string;    // Changed from separate date/time
   participants: string;
-}
-
-// GET all posts
-export async function onRequestGet(context: { env: Env }) {
-  try {
-    const { results } = await context.env.DB.prepare(
-      `SELECT 
-        id, 
-        title, 
-        description, 
-        location,
-        start_date,
-        start_time,
-        end_date,
-        end_time,
-        max_participants,
-        current_participants,
-        user_name,
-        visible,
-        created_at
-      FROM posts 
-      WHERE visible = 1
-      ORDER BY created_at DESC`
-    ).all();
-
-    return new Response(JSON.stringify({ posts: results }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      status: 200
-    });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
-  }
 }
 
 // POST new post
@@ -60,30 +16,46 @@ export async function onRequestPost(context: {
     const body = await context.request.json() as Post;
     
     // Validate required fields
-    if (!body.title || !body.desc || !body.location || !body.startDate || 
-        !body.startTime || !body.endDate || !body.endTime || !body.participants) {
+    if (!body.title || !body.desc || !body.location || 
+        !body.startDateTime || !body.endDateTime || !body.participants) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
       });
     }
 
-    // Insert post
+    // Validate datetime format
+    const startDate = new Date(body.startDateTime);
+    const endDate = new Date(body.endDateTime);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return new Response(JSON.stringify({ error: 'Invalid date format' }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    if (endDate <= startDate) {
+      return new Response(JSON.stringify({ error: 'End time must be after start time' }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    // Insert post with combined datetime
     const result = await context.env.DB.prepare(
       `INSERT INTO posts 
-        (title, description, location, start_date, start_time, end_date, end_time, max_participants, user_id, user_name) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (title, description, location, start_datetime, end_datetime, max_participants, user_id, user_name) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       body.title,
       body.desc,
       body.location,
-      body.startDate,
-      body.startTime,
-      body.endDate,
-      body.endTime,
+      body.startDateTime,
+      body.endDateTime,
       parseInt(body.participants),
-      'temp-user-id', // Replace with actual user ID from auth
-      'Test User' // Replace with actual user name from auth
+      'temp-user-id',
+      'Test User'
     ).run();
 
     return new Response(JSON.stringify({ 
@@ -104,13 +76,38 @@ export async function onRequestPost(context: {
   }
 }
 
-// Handle CORS preflight
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
+// GET all posts
+export async function onRequestGet(context: { env: Env }) {
+  try {
+    const { results } = await context.env.DB.prepare(
+      `SELECT 
+        id, 
+        title, 
+        description, 
+        location,
+        start_datetime,
+        end_datetime,
+        max_participants,
+        current_participants,
+        user_name,
+        visible,
+        created_at
+      FROM posts 
+      WHERE visible = 1
+      ORDER BY start_datetime ASC`
+    ).all();
+
+    return new Response(JSON.stringify({ posts: results }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      status: 200
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 500
+    });
+  }
 }
