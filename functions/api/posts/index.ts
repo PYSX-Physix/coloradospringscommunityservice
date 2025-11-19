@@ -8,7 +8,44 @@ interface Post {
   location: string;
   startDateTime: string;
   endDateTime: string;
-  participants: number;
+  participants: string;
+}
+
+// GET all posts
+export async function onRequestGet(context: { env: Env }) {
+  try {
+    const { results } = await context.env.DB.prepare(
+      `SELECT 
+        id, 
+        title, 
+        description, 
+        location,
+        start_datetime,
+        end_datetime,
+        max_participants,
+        current_participants,
+        user_name,
+        visible,
+        created_at
+      FROM posts 
+      WHERE visible = 1
+      ORDER BY start_datetime ASC`
+    ).all();
+
+    return new Response(JSON.stringify({ posts: results }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      status: 200
+    });
+  } catch (error: any) {
+    console.error('Error in GET /api/posts:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 500
+    });
+  }
 }
 
 // POST new post
@@ -120,4 +157,15 @@ export async function onRequestPost(context: {
       status: 500
     });
   }
+}
+
+// Handle CORS preflight
+export async function onRequestOptions() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }

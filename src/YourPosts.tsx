@@ -20,7 +20,7 @@ function YourPosts() {
   const [startTime, setStartTime] = React.useState<Date | null>(null);
   const [endDate, setEndDate] = React.useState<Date | null>(null);
   const [endTime, setEndTime] = React.useState<Date | null>(null);
-  const [participants, setParticipants] = React.useState<number | null>(null);
+  const [participants, setParticipants] = React.useState<number>(1);
 
   const combineDateAndTime = (date: Date | null, time: Date | null): string => {
     if (!date || !time) return '';
@@ -184,7 +184,7 @@ function YourPosts() {
                     </Field>
                   </div>
                   <Field label={"Number of Participants"} required>
-                    <SpinButton defaultValue={1} value={participants || null} onChange={(_, data) => setParticipants(data.value || null)} min={1} max={40} required />
+                    <SpinButton defaultValue={1} value={participants} onChange={(_, data) => setParticipants(data.value || 1)} min={1} max={40} required />
                   </Field>
                 </DialogContent>
                 <DialogActions>
