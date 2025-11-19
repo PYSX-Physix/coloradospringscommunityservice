@@ -35,7 +35,7 @@ function YourPosts() {
       return;
     }
     
-    // CRITICAL: Use startDateTime and endDateTime, NOT startDate/startTime
+    // CRITICAL: Use startDateTime and endDateTime, NOT startDate/startTime those will cause error 500
     const newPost = { 
       title, 
       desc, 
