@@ -1,12 +1,18 @@
 import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
-  TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem} from "@fluentui/react-components";
+  TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
+  MenuDivider,
+  SpinButton} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular } from "@fluentui/react-icons";
 
 function YourPosts() {
+  type DeleteModalState = 'closed' | 'modal' | 'confirmation'
+  const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
+
+  // Event Post details
   const [title, setTitle] = React.useState("");
   const [desc, setDesc] = React.useState("");
   const [location, setLocation] = React.useState("");
@@ -14,7 +20,7 @@ function YourPosts() {
   const [startTime, setStartTime] = React.useState<Date | null>(null);
   const [endDate, setEndDate] = React.useState<Date | null>(null);
   const [endTime, setEndTime] = React.useState<Date | null>(null);
-  const [participants, setParticipants] = React.useState("");
+  const [participants, setParticipants] = React.useState<number | null>(null);
 
   const combineDateAndTime = (date: Date | null, time: Date | null): string => {
     if (!date || !time) return '';
@@ -69,7 +75,7 @@ function YourPosts() {
         setStartTime(null);
         setEndDate(null);
         setEndTime(null);
-        setParticipants("");
+        setParticipants(1);
       } else {
         const error = JSON.parse(responseText);
         alert('Error: ' + JSON.stringify(error));
@@ -83,7 +89,7 @@ function YourPosts() {
   const TempItems = [
     {
       postTitle: {label: "Service Event 1"},
-      desc: {label: "This is a test description of the test event"},
+      location: {label: "1234, Main Street"},
       created: {label: "11/12/2025", timeStamp: 1},
       eventStart: {label: "November 12, 2025 at 2:30 PM"},
       eventEnd: {label: "November 12, 2025 at 3:30 PM"},
@@ -93,7 +99,7 @@ function YourPosts() {
 
   const columns = [
     {columnKey: "title", label: "Title"},
-    {columnKey: "description", label: "Description"},
+    {columnKey: "location", label: "Location"},
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
@@ -178,12 +184,7 @@ function YourPosts() {
                     </Field>
                   </div>
                   <Field label={"Number of Participants"} required>
-                    <Input 
-                      type="number" 
-                      value={participants}
-                      onChange={(_, data) => setParticipants(data.value)}
-                      required
-                    />
+                    <SpinButton defaultValue={1} value={participants || null} onChange={(_, data) => setParticipants(data.value || null)} min={1} max={40} required />
                   </Field>
                 </DialogContent>
                 <DialogActions>
@@ -211,7 +212,7 @@ function YourPosts() {
           {TempItems.map((item) => (
             <TableRow key={item.postTitle.label}>
               <TableCell>{item.postTitle.label}</TableCell>
-              <TableCell>{item.desc.label}</TableCell>
+              <TableCell>{item.location.label}</TableCell>
               <TableCell>{item.created.label}</TableCell>
               <TableCell>{item.eventStart.label}</TableCell>
               <TableCell>{item.eventEnd.label}</TableCell>
@@ -226,6 +227,8 @@ function YourPosts() {
                       <MenuList>
                         <MenuItem icon={<EditRegular />}>Edit</MenuItem>
                         <MenuItem icon={<EyeRegular />}>View Post</MenuItem>
+                        <MenuDivider/>
+                        <MenuItem icon={<DeleteRegular/>} onClick={ () => setDeleteModalState("modal") }>Delete</MenuItem>
                       </MenuList>
                     </MenuPopover>
                   </Menu>
@@ -235,6 +238,32 @@ function YourPosts() {
           ))}
         </TableBody>
       </Table>
+      <Dialog open={deleteModalState === "modal"}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Delete Event Post?</DialogTitle>
+            <DialogContent>
+              <Divider style={{ marginBottom: '15px', marginTop: '15px' }} />
+              <Text>Are you sure you want to delete this post? This action cannot be undone.</Text>
+            </DialogContent>
+            <DialogActions style={{ marginTop: '15px'}}>
+              <Button appearance='primary' onClick={ () => setDeleteModalState("confirmation") }>Delete</Button>
+              <Button appearance='secondary' onClick={ () => setDeleteModalState("closed") }>Cancel</Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+      <Dialog open={deleteModalState === 'confirmation'}>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>Event Deleted</DialogTitle>
+            <DialogContent>Your event post has been deleted. If this was done by mistake you have to make a new event.</DialogContent>
+          </DialogBody>
+          <DialogActions>
+            <Button appearance="primary" onClick={ () => setDeleteModalState('closed') }>Ok</Button>
+          </DialogActions>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 }
