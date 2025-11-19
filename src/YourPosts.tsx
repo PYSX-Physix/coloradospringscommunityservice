@@ -23,6 +23,14 @@ interface PostData {
   created_at: string;
 }
 
+/**
+ * Renders the Saved Events management UI that lets users view, create, and delete event posts.
+ *
+ * Fetches posts from `/api/posts`, displays them in a sortable table with actions to edit, view, and delete;
+ * provides a dialog to create new posts (POST `/api/posts`) and a confirmation flow for deletions (DELETE `/api/posts/{id}`).
+ *
+ * @returns A JSX element containing the posts management interface.
+ */
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
   const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
