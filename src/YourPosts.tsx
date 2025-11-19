@@ -3,14 +3,29 @@ import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, Dialo
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
   MenuDivider,
-  SpinButton} from "@fluentui/react-components";
+  SpinButton, Spinner} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular } from "@fluentui/react-icons";
 
+interface PostData {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  start_datetime: string;
+  end_datetime: string;
+  max_participants: number;
+  current_participants: number;
+  user_name: string;
+  visible: number;
+  created_at: string;
+}
+
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
   const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
+  const [deletePostId, setDeletePostId] = React.useState<number | null>(null);
 
   // Event Post details
   const [title, setTitle] = React.useState("");
@@ -21,6 +36,53 @@ function YourPosts() {
   const [endDate, setEndDate] = React.useState<Date | null>(null);
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState<number>(1);
+
+  // Posts data from API
+  const [posts, setPosts] = React.useState<PostData[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+
+  // Fetch posts from API
+  const fetchPosts = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/posts');
+      const data = await res.json();
+      setPosts(data.posts || []);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch posts on component mount
+  React.useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
+
+  // Format datetime for display
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  // Format date for "Created On" column
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
+    });
+  };
 
   const combineDateAndTime = (date: Date | null, time: Date | null): string => {
     if (!date || !time) return '';
@@ -41,14 +103,13 @@ function YourPosts() {
       return;
     }
     
-    // CRITICAL: Use startDateTime and endDateTime, NOT startDate/startTime those will cause error 500
     const newPost = { 
       title, 
       desc, 
       location, 
       startDateTime,
       endDateTime,
-      participants
+      participants: participants.toString()
     };
 
     console.log('Sending:', newPost);
@@ -76,6 +137,10 @@ function YourPosts() {
         setEndDate(null);
         setEndTime(null);
         setParticipants(1);
+        
+        // Close dialog and refresh posts
+        setCreateDialogOpen(false);
+        fetchPosts();
       } else {
         const error = JSON.parse(responseText);
         alert('Error: ' + JSON.stringify(error));
@@ -86,16 +151,25 @@ function YourPosts() {
     }
   };
 
-  const TempItems = [
-    {
-      postTitle: {label: "Service Event 1"},
-      location: {label: "1234, Main Street"},
-      created: {label: "11/12/2025", timeStamp: 1},
-      eventStart: {label: "November 12, 2025 at 2:30 PM"},
-      eventEnd: {label: "November 12, 2025 at 3:30 PM"},
-      visible: {label: "Visible"}
+  const handleDelete = async () => {
+    if (!deletePostId) return;
+
+    try {
+      const res = await fetch(`/api/posts/${deletePostId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setDeleteModalState('confirmation');
+        fetchPosts(); // Refresh the list
+      } else {
+        alert('Failed to delete post');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Failed to delete post');
     }
-  ];
+  };
 
   const columns = [
     {columnKey: "title", label: "Title"},
@@ -111,11 +185,16 @@ function YourPosts() {
       <Title1 style={{marginBottom: '16px'}}>Saved Events</Title1>
       <Text>Saved posts will go here</Text>
       <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>
-      <div style={{display: "flex", flexDirection: "row"}}>
+      <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
         <Title1>Manage Events</Title1>
-        <Dialog modalType="non-modal">
+        <Dialog open={createDialogOpen} onOpenChange={(_, data) => setCreateDialogOpen(data.open)}>
           <DialogTrigger disableButtonEnhancement>
-            <Button size="large" icon={<AddCircle32Color/>} appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}/>
+            <Button 
+              size="large" 
+              icon={<AddCircle32Color/>} 
+              appearance="subtle" 
+              style={{alignSelf: "start", marginLeft: '16px'}}
+            />
           </DialogTrigger>
           <DialogSurface>
             <form onSubmit={handlePostSubmit}>
@@ -184,12 +263,18 @@ function YourPosts() {
                     </Field>
                   </div>
                   <Field label={"Number of Participants"} required>
-                    <SpinButton defaultValue={1} value={participants} onChange={(_, data) => setParticipants(data.value || 1)} min={1} max={40} required />
+                    <SpinButton 
+                      value={participants} 
+                      onChange={(_, data) => setParticipants(data.value || 1)} 
+                      min={1} 
+                      max={40} 
+                      required 
+                    />
                   </Field>
                 </DialogContent>
                 <DialogActions>
                   <Button appearance="primary" type="submit">Create</Button>
-                  <DialogTrigger>
+                  <DialogTrigger disableButtonEnhancement>
                     <Button appearance="secondary">Cancel</Button>
                   </DialogTrigger>
                 </DialogActions>
@@ -198,47 +283,66 @@ function YourPosts() {
           </DialogSurface>
         </Dialog>
       </div>
-      <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey}>
-                {column.label}
-              </TableHeaderCell>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {TempItems.map((item) => (
-            <TableRow key={item.postTitle.label}>
-              <TableCell>{item.postTitle.label}</TableCell>
-              <TableCell>{item.location.label}</TableCell>
-              <TableCell>{item.created.label}</TableCell>
-              <TableCell>{item.eventStart.label}</TableCell>
-              <TableCell>{item.eventEnd.label}</TableCell>
-              <TableCell>{item.visible.label}</TableCell>
-              <TableCell role="gridcell">
-                <TableCellLayout>
-                  <Menu>
-                    <MenuTrigger>
-                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                    </MenuTrigger>
-                    <MenuPopover>
-                      <MenuList>
-                        <MenuItem icon={<EditRegular />}>Edit</MenuItem>
-                        <MenuItem icon={<EyeRegular />}>View Post</MenuItem>
-                        <MenuDivider/>
-                        <MenuItem icon={<DeleteRegular/>} onClick={ () => setDeleteModalState("modal") }>Delete</MenuItem>
-                      </MenuList>
-                    </MenuPopover>
-                  </Menu>
-                </TableCellLayout>
-              </TableCell>
+
+      {loading ? (
+        <div style={{display: 'flex', justifyContent: 'center', marginTop: '32px'}}>
+          <Spinner label="Loading posts..." />
+        </div>
+      ) : posts.length === 0 ? (
+        <Text style={{marginTop: '32px'}}>No posts yet. Create your first event!</Text>
+      ) : (
+        <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column) => (
+                <TableHeaderCell key={column.columnKey}>
+                  {column.label}
+                </TableHeaderCell>
+              ))}
+              <TableHeaderCell>Actions</TableHeaderCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Dialog open={deleteModalState === "modal"}>
+          </TableHeader>
+          <TableBody>
+            {posts.map((post) => (
+              <TableRow key={post.id}>
+                <TableCell>{post.title}</TableCell>
+                <TableCell>{post.location}</TableCell>
+                <TableCell>{formatDate(post.created_at)}</TableCell>
+                <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
+                <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                <TableCell>{post.visible ? 'Visible' : 'Hidden'}</TableCell>
+                <TableCell role="gridcell">
+                  <TableCellLayout>
+                    <Menu>
+                      <MenuTrigger>
+                        <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                      </MenuTrigger>
+                      <MenuPopover>
+                        <MenuList>
+                          <MenuItem icon={<EditRegular />}>Edit</MenuItem>
+                          <MenuItem icon={<EyeRegular />}><a  href={`/post?id=${post.id}`}>View Post</a></MenuItem>
+                          <MenuDivider/>
+                          <MenuItem 
+                            icon={<DeleteRegular/>} 
+                            onClick={() => {
+                              setDeletePostId(post.id);
+                              setDeleteModalState("modal");
+                            }}
+                          >
+                            Delete
+                          </MenuItem>
+                        </MenuList>
+                      </MenuPopover>
+                    </Menu>
+                  </TableCellLayout>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+
+      <Dialog open={deleteModalState === "modal"} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
         <DialogSurface>
           <DialogBody>
             <DialogTitle>Delete Event Post?</DialogTitle>
@@ -247,21 +351,22 @@ function YourPosts() {
               <Text>Are you sure you want to delete this post? This action cannot be undone.</Text>
             </DialogContent>
             <DialogActions style={{ marginTop: '15px'}}>
-              <Button appearance='primary' onClick={ () => setDeleteModalState("confirmation") }>Delete</Button>
-              <Button appearance='secondary' onClick={ () => setDeleteModalState("closed") }>Cancel</Button>
+              <Button appearance='primary' onClick={handleDelete}>Delete</Button>
+              <Button appearance='secondary' onClick={() => setDeleteModalState("closed")}>Cancel</Button>
             </DialogActions>
           </DialogBody>
         </DialogSurface>
       </Dialog>
-      <Dialog open={deleteModalState === 'confirmation'}>
+
+      <Dialog open={deleteModalState === 'confirmation'} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
         <DialogSurface>
           <DialogBody>
             <DialogTitle>Event Deleted</DialogTitle>
             <DialogContent>Your event post has been deleted. If this was done by mistake you have to make a new event.</DialogContent>
+            <DialogActions>
+              <Button appearance="primary" onClick={() => setDeleteModalState('closed')}>Ok</Button>
+            </DialogActions>
           </DialogBody>
-          <DialogActions>
-            <Button appearance="primary" onClick={ () => setDeleteModalState('closed') }>Ok</Button>
-          </DialogActions>
         </DialogSurface>
       </Dialog>
     </div>
