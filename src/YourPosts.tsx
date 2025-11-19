@@ -320,7 +320,7 @@ function YourPosts() {
                       <MenuPopover>
                         <MenuList>
                           <MenuItem icon={<EditRegular />}>Edit</MenuItem>
-                          <MenuItem icon={<EyeRegular />}><a  href={`/post?id=${post.id}`}>View Post</a></MenuItem>
+                          <MenuItem icon={<EyeRegular />}><a  href={`/post?id=${post.id}`} style={{textDecoration: 'none'}}>View Post</a></MenuItem>
                           <MenuDivider/>
                           <MenuItem 
                             icon={<DeleteRegular/>} 
