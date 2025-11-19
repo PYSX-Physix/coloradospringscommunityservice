@@ -7,7 +7,7 @@ binding = "DB"
 database_name = "cospringscs-db"
 database_id = "b6f7fd1c-55a4-44a8-b571-cbbd10d3ce47"
 
-[[env.staging.d1_databases]]
+[[env.preview.d1_databases]]
 binding = "DB"
 database_name = "cospringscs-db-preview"
 database_id = "3acb55c2-d4b9-43f1-a701-9986cc2a62c4"
