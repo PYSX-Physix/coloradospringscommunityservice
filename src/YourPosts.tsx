@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
-  TableCellLayout} from "@fluentui/react-components";
+  TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular } from "@fluentui/react-icons";
 
 function YourPosts() {
   const [title, setTitle] = React.useState("");
@@ -109,7 +109,7 @@ function YourPosts() {
         <Title1>Manage Events</Title1>
         <Dialog modalType="non-modal">
           <DialogTrigger disableButtonEnhancement>
-            <Button size="small" appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}><AddCircle32Color/></Button>
+            <Button size="large" icon={<AddCircle32Color/>} appearance="subtle" style={{alignSelf: "start", marginLeft: '16px'}}/>
           </DialogTrigger>
           <DialogSurface>
             <form onSubmit={handlePostSubmit}>
@@ -218,8 +218,17 @@ function YourPosts() {
               <TableCell>{item.visible.label}</TableCell>
               <TableCell role="gridcell">
                 <TableCellLayout>
-                  <Button icon={<EditRegular/>}>Edit</Button>
-                  <Button as="a" href="/post" icon={<EyeRegular/>}>View</Button>
+                  <Menu>
+                    <MenuTrigger>
+                      <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                    </MenuTrigger>
+                    <MenuPopover>
+                      <MenuList>
+                        <MenuItem icon={<EditRegular />}>Edit</MenuItem>
+                        <MenuItem icon={<EyeRegular />}>View Post</MenuItem>
+                      </MenuList>
+                    </MenuPopover>
+                  </Menu>
                 </TableCellLayout>
               </TableCell>
             </TableRow>
@@ -231,21 +240,3 @@ function YourPosts() {
 }
 
 export default YourPosts;
-/*
-
-4. **Save the file**
-5. **Restart both terminals:**
-   - Terminal 1: `npm run dev:react`
-   - Terminal 2: `npm run dev:wrangler`
-6. **Hard refresh the browser** (Ctrl+Shift+R)
-
-Then try submitting the form again. In the Wrangler terminal, you should now see:
-```
-Received POST request: {
-  title: '...',
-  desc: '...',
-  location: '...',
-  startDateTime: '2025-11-20T14:00:00.000Z',  // ← Should be ISO string
-  endDateTime: '2025-11-20T16:30:00.000Z',    // ← Should be ISO string
-  participants: '15'
-}*/
