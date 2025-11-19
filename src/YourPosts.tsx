@@ -3,7 +3,8 @@ import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, Dialo
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
   MenuDivider,
-  SpinButton, Spinner} from "@fluentui/react-components";
+  SpinButton, Spinner,
+  MenuItemLink} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular } from "@fluentui/react-icons";
@@ -320,7 +321,7 @@ function YourPosts() {
                       <MenuPopover>
                         <MenuList>
                           <MenuItem icon={<EditRegular />}>Edit</MenuItem>
-                          <MenuItem icon={<EyeRegular />}><a  href={`/post?id=${post.id}`}>View Post</a></MenuItem>
+                          <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
                           <MenuDivider/>
                           <MenuItem 
                             icon={<DeleteRegular/>} 
