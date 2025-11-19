@@ -8,7 +8,7 @@ interface Post {
   location: string;
   startDateTime: string;
   endDateTime: string;
-  participants: string;
+  participants: number;
 }
 
 // POST new post
