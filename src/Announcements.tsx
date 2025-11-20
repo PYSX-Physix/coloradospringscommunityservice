@@ -6,7 +6,7 @@ export default function Announcements()
     return(
         <div>
             <Title1>Announcements</Title1>
-            <Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
                 <p>
                     <Text>
@@ -16,7 +16,7 @@ export default function Announcements()
                     </Text>
                 </p>
             </Card>
-            <Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
                 <p>
                     <Text>
@@ -25,7 +25,7 @@ export default function Announcements()
                     </Text>
                 </p>
             </Card>
-            <Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Backend Update: V11.18.2025.01</Title3>}/>
                 <p>
                     <Text>
@@ -38,7 +38,7 @@ export default function Announcements()
                     </Text>
                 </p>
             </Card>
-            <Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Minor Update: V11.17.2025.03</Title3>}/>
                 <p>
                     <Text>
