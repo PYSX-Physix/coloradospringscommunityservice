@@ -28,6 +28,9 @@ function YourPosts() {
   const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
   const [deletePostId, setDeletePostId] = React.useState<number | null>(null);
 
+  type CreateModalState = 'closed' | 'modal' | 'confirmation'
+  const [createModalState, setCreateModalState] = React.useState<CreateModalState>("closed")
+
   // Event Post details
   const [title, setTitle] = React.useState("");
   const [desc, setDesc] = React.useState("");
@@ -41,7 +44,6 @@ function YourPosts() {
   // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
   // Fetch posts from API
   const fetchPosts = React.useCallback(async () => {
@@ -140,7 +142,7 @@ function YourPosts() {
         setParticipants(1);
         
         // Close dialog and refresh posts
-        setCreateDialogOpen(false);
+        setCreateModalState("closed")
         fetchPosts();
       } else {
         const error = JSON.parse(responseText);
@@ -188,15 +190,13 @@ function YourPosts() {
       <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>
       <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
         <Title1>Manage Events</Title1>
-        <Dialog open={createDialogOpen} onOpenChange={(_, data) => setCreateDialogOpen(data.open)}>
-          <DialogTrigger disableButtonEnhancement>
-            <Button 
+        <Button 
               size="large" 
               icon={<AddCircle32Color/>} 
-              appearance="subtle" 
+              appearance="subtle" onClick={() => setCreateModalState("modal")}
               style={{alignSelf: "start", marginLeft: '16px'}}
             />
-          </DialogTrigger>
+        <Dialog open={createModalState === 'modal'} onOpenChange={() => setCreateModalState("closed")}>
           <DialogSurface>
             <form onSubmit={handlePostSubmit}>
               <DialogBody>
@@ -281,6 +281,17 @@ function YourPosts() {
                 </DialogActions>
               </DialogBody>
             </form>
+          </DialogSurface>
+        </Dialog>
+        <Dialog open={createModalState === 'confirmation'} onOpenChange={() => setCreateModalState("closed")}>
+          <DialogSurface>
+            <DialogBody>
+              <DialogTitle>Event Deleted</DialogTitle>
+              <DialogContent>Your event post has been deleted. If this was done by mistake you have to make a new event.</DialogContent>
+              <DialogActions>
+                <Button appearance="primary" onClick={() => setCreateModalState('closed')}>Ok</Button>
+              </DialogActions>
+            </DialogBody>
           </DialogSurface>
         </Dialog>
       </div>
