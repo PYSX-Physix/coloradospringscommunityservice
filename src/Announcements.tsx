@@ -8,6 +8,15 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
+                <p>
+                    <Text>
+                        <strong>Change:</strong> The "post" page shows real data from a post rather than dummy data.<br/>
+                        <strong>Fix:</strong> Fixed a minor issue with the "View Post" button is the "Your Post" page.<br/>
+                    </Text>
+                </p>
+            </Card>
+            <Card>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Backend Update: V11.18.2025.01</Title3>}/>
                 <p>
                     <Text>
