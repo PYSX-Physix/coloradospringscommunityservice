@@ -178,7 +178,7 @@ function YourPosts() {
     {columnKey: "created", label: "Created On"},
     {columnKey: "start", label: "Starts"},
     {columnKey: "ends", label: "Ends"},
-    {columnKey: "visible", label: "Visibility"}
+    {columnKey: "participants", label: "Participants"}
   ];
 
   return (
@@ -311,7 +311,7 @@ function YourPosts() {
                 <TableCell>{formatDate(post.created_at)}</TableCell>
                 <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
                 <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
-                <TableCell>{post.visible ? 'Visible' : 'Hidden'}</TableCell>
+                <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
                 <TableCell role="gridcell">
                   <TableCellLayout>
                     <Menu>
