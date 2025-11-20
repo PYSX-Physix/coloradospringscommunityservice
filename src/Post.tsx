@@ -33,11 +33,17 @@ export default function Post() {
   const [error, setError] = React.useState<string | null>(null);
   const [joining, setJoining] = React.useState(false);
 
-  const fetchPost = async () => {
+  const fetchPost = React.useCallback(async () => {
+    if (!postId) {
+      setError("No post ID provided");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await fetch(`/api/posts/${postId}`);
-      
+
       if (!res.ok) {
         throw new Error('Post not found');
       }
@@ -50,17 +56,13 @@ export default function Post() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [postId]); // <-- stable dependency
 
   React.useEffect(() => {
-    if (!postId) {
-      setError("No post ID provided");
-      setLoading(false);
-      return;
-    }
-
     fetchPost();
-  }, [postId]);
+  }, [fetchPost]);
+
+
 
   const handleJoin = async () => {
     if (!postId) return;
@@ -73,7 +75,7 @@ export default function Post() {
 
       if (res.ok) {
         alert('Successfully joined the event!');
-        fetchPost(); // Refresh to show updated participant count
+        fetchPost(); // Refresh
       } else {
         const error = await res.json();
         alert(error.error || 'Failed to join event');
@@ -84,6 +86,7 @@ export default function Post() {
       setJoining(false);
     }
   };
+
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
