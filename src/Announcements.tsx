@@ -14,7 +14,7 @@ export default function Announcements()
                         Hey everyone! I've been working behind the scenes to get posting your service opportunities onto our system. 
                         I've been working on creating an linking databases to this site so your posts are saved and shown to everyone. 
                         You're able to create your posts however they won't show up because this site is not made to find your posts yet.
-                        I'll be working on making sure your posts are visable, editable, viewable, and joinable for others. Anyway here are the changes.<br/>
+                        I'll be working on making sure your posts are visable, editable, viewable, and joinable for others. Anyway here are the changes.<br/><br/>
                         <strong>Addition:</strong> When creating a form, it now creates a post in our database.<br/>
                         <strong>Note:</strong> Creating a post for community service events it's only stored in our database and will not display at the moment.<br/>
                     </Text>
