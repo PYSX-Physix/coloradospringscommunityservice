@@ -1,4 +1,3 @@
-import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';

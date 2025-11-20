@@ -66,7 +66,7 @@ function PostCard({ title, desc, img }: { title: string; desc: string; img?: str
           description={<Text>{desc}</Text>}
         />
         <CardFooter>
-          <Button appearance="primary" as='a' href='/post'>Learn More</Button>
+          <Button appearance="primary" as='a' href='/post?id=3'>Learn More</Button>
           <Menu>
             <MenuTrigger>
               <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />

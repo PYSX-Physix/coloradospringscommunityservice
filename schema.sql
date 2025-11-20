@@ -1,12 +1,17 @@
-CREATE TABLE IF NOT EXISTS posts (
+-- Drop existing tables to start fresh
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS saved_posts;
+DROP TABLE IF EXISTS participants;
+DROP TABLE IF EXISTS posts;
+
+-- Posts table with COMBINED datetime columns
+CREATE TABLE posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   location TEXT NOT NULL,
-  start_date TEXT NOT NULL,
-  start_time TEXT NOT NULL,
-  end_date TEXT NOT NULL,
-  end_time TEXT NOT NULL,
+  start_datetime TEXT NOT NULL,
+  end_datetime TEXT NOT NULL,
   max_participants INTEGER NOT NULL,
   current_participants INTEGER DEFAULT 0,
   user_id TEXT NOT NULL,
@@ -16,7 +21,8 @@ CREATE TABLE IF NOT EXISTS posts (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE IF NOT EXISTS participants (
+-- Participants table
+CREATE TABLE participants (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL,
   user_id TEXT NOT NULL,
@@ -26,7 +32,8 @@ CREATE TABLE IF NOT EXISTS participants (
   UNIQUE(post_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS saved_posts (
+-- Saved posts table
+CREATE TABLE saved_posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL,
   user_id TEXT NOT NULL,
@@ -35,7 +42,8 @@ CREATE TABLE IF NOT EXISTS saved_posts (
   UNIQUE(post_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS reports (
+-- Reports table
+CREATE TABLE reports (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL,
   user_id TEXT NOT NULL,
@@ -45,3 +53,11 @@ CREATE TABLE IF NOT EXISTS reports (
   created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
+
+-- Create indexes for better performance
+CREATE INDEX idx_posts_visible ON posts(visible);
+CREATE INDEX idx_posts_start_datetime ON posts(start_datetime);
+CREATE INDEX idx_participants_post_id ON participants(post_id);
+CREATE INDEX idx_participants_user_id ON participants(user_id);
+CREATE INDEX idx_saved_posts_user_id ON saved_posts(user_id);
+CREATE INDEX idx_reports_status ON reports(status);

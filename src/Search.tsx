@@ -1,4 +1,3 @@
-import React from 'react';
 import { Divider, SearchBox, Title1 } from '@fluentui/react-components';
 
 function Search() {
