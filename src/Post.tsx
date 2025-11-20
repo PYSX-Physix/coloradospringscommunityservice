@@ -33,16 +33,6 @@ export default function Post() {
   const [error, setError] = React.useState<string | null>(null);
   const [joining, setJoining] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!postId) {
-      setError("No post ID provided");
-      setLoading(false);
-      return;
-    }
-
-    fetchPost();
-  }, [postId]);
-
   const fetchPost = async () => {
     try {
       setLoading(true);
@@ -61,6 +51,16 @@ export default function Post() {
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    if (!postId) {
+      setError("No post ID provided");
+      setLoading(false);
+      return;
+    }
+
+    fetchPost();
+  }, [postId]);
 
   const handleJoin = async () => {
     if (!postId) return;
