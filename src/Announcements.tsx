@@ -1,6 +1,5 @@
 import { Card, CardHeader, Text, Title1, Title3 } from "@fluentui/react-components";
 import { WrenchScrewdriver24Color } from "@fluentui/react-icons";
-import React from "react";
 
 export default function Announcements()
 {
