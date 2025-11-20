@@ -7,6 +7,16 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
+                <p>
+                    <Text>
+                        Hey everyone! We have made a major change the backend of the site. Previously we were using the "Create React App" package which had depricated packages that
+                        were vulnerable and were a security risk. To fix this major issue, we migrated the website to Vite + React to mitigate these security risks. We are now using 
+                        packages that are maintained and up-to-date to keep you safe while on this site. 
+                    </Text>
+                </p>
+            </Card>
+            <Card>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
                 <p>
                     <Text>
