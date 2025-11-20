@@ -128,8 +128,6 @@ function YourPosts() {
       console.log('Response:', responseText);
 
       if (res.ok) {
-        const data = JSON.parse(responseText);
-        alert('Post created successfully with ID: ' + data.id);
         
         // Reset form
         setTitle("");
@@ -142,7 +140,7 @@ function YourPosts() {
         setParticipants(1);
         
         // Close dialog and refresh posts
-        setCreateModalState("closed")
+        setCreateModalState("confirmation")
         fetchPosts();
       } else {
         const error = JSON.parse(responseText);
