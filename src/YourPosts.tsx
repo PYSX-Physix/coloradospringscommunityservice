@@ -284,8 +284,8 @@ function YourPosts() {
         <Dialog open={createModalState === 'confirmation'} onOpenChange={() => setCreateModalState("closed")}>
           <DialogSurface>
             <DialogBody>
-              <DialogTitle>Event Deleted</DialogTitle>
-              <DialogContent>Your event post has been deleted. If this was done by mistake you have to make a new event.</DialogContent>
+              <DialogTitle>Event Created!</DialogTitle>
+              <DialogContent>Your event has been created! If you want to view it, just click "View Post" under <MoreHorizontal20Regular/> menu to see it.</DialogContent>
               <DialogActions>
                 <Button appearance="primary" onClick={() => setCreateModalState('closed')}>Ok</Button>
               </DialogActions>
