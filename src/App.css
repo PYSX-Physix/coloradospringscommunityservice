@@ -3,7 +3,8 @@
 }
 
 .root {
-  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
   display: flex;
   height: 100vh;
   text-align: left;
