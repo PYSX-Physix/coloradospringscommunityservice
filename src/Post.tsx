@@ -2,6 +2,7 @@ import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, 
 import { Calendar16Color, LocationRipple16Color } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import "./Post.css"
 
 interface PostData {
   id: number;
@@ -120,7 +121,7 @@ export default function Post() {
   const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div>
+    <div className="scrollbox">
       <Title1>{post.title}</Title1>
       <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
       <div style={{ display: 'flex' }}>
