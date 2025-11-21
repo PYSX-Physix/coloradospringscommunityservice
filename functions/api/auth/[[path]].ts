@@ -17,7 +17,7 @@ function getAuth(db: D1Database) {
         enabled: true,
         requireEmailVerification: false,
       },
-      trustedOrigins: ["http://localhost:8788", "http://localhost:3000"],
+      trustedOrigins: ["https://react-dev-accounts.coloradospringscommunityservice.pages.dev", "https://react-dev.coloradospringscommunityservice.pages.dev"],
     });
   }
   return authInstance;
