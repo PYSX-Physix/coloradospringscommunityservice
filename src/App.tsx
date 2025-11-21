@@ -3,9 +3,9 @@ import Search from './Search';
 import YourPosts from './YourPosts';
 import About from './About'
 import Policies from './Policies';
-import { useSession, signOut } from "./lib/auth-client";
+import { useSession, signOut } from "./lib/auth-client"; // Keep this
 import SignIn from './components/SignIn';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import {
   AppItem,
@@ -19,7 +19,7 @@ import {
   MenuPopover,
   MenuList,
   Menu,
-  MenuItem, // Added MenuItem for sign out
+  MenuItem,
   NavSectionHeader,
   MessageBar,
   MessageBarTitle,
@@ -50,7 +50,7 @@ const POLICIESMENU = '6'
 
 function App() {
   const location = useLocation();
-  const navigate = useNavigate(); // Added this
+  const navigate = useNavigate();
   const { data: session } = useSession();
 
   const handleSignOut = async () => {
@@ -83,7 +83,7 @@ function App() {
             <Menu>
               <MenuTrigger disableButtonEnhancement>
                 <AppItem icon={<Person32Color />} as="a">
-                  {session?.user.name || session?.user.email || "Guest"}
+                  {session?.user?.name || session?.user?.email || "Guest"}
                 </AppItem>
               </MenuTrigger>
               <MenuPopover>

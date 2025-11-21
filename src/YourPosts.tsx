@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Text, Field, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
+import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
   MenuDivider,
@@ -44,30 +44,13 @@ function YourPosts() {
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState<number>(1);
 
-  const { data: session, isPending } = useSession();
-  const navigate = useNavigate();
-
   // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    if (!isPending && !session) {
-      navigate("/auth");
-    }
-  }, [session, isPending, navigate]);
-
-  if (isPending) {
-    return <Spinner label="Loading..." />;
-  }
-
-  if (!session) {
-    return null;
-  }
-
-  // Get user info
-  const userId = session.user.id;
-  const userName = session.user.name || session.user.email;
+  // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
+  const { data: session, isPending } = useSession();
+  const navigate = useNavigate();
 
   // Fetch posts from API
   const fetchPosts = React.useCallback(async () => {
@@ -87,6 +70,26 @@ function YourPosts() {
   React.useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
+
+  // Redirect if not logged in
+  React.useEffect(() => {
+    if (!isPending && !session) {
+      navigate("/auth");
+    }
+  }, [session, isPending, navigate]);
+
+  // NOW do conditional returns AFTER all hooks
+  if (isPending) {
+    return <Spinner label="Loading..." />;
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  // Get user info
+  const userId = session.user.id;
+  const userName = session.user.name || session.user.email;
 
   // Format datetime for display
   const formatDateTime = (isoString: string) => {
@@ -154,7 +157,6 @@ function YourPosts() {
       console.log('Response:', responseText);
 
       if (res.ok) {
-        
         // Reset form
         setTitle("");
         setDesc("");
@@ -299,9 +301,7 @@ function YourPosts() {
                 </DialogContent>
                 <DialogActions>
                   <Button appearance="primary" type="submit">Create</Button>
-                  <DialogTrigger disableButtonEnhancement>
-                    <Button appearance="secondary">Cancel</Button>
-                  </DialogTrigger>
+                  <Button appearance="secondary" onClick={() => setCreateModalState("closed")}>Cancel</Button>
                 </DialogActions>
               </DialogBody>
             </form>
