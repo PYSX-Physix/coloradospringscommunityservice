@@ -26,7 +26,7 @@ function getAuth(db: D1Database) {
 export async function onRequest(context: {
   request: Request;
   env: Env;
-  params: { all: string[] };
+  params: { path?: string };
 }) {
   const auth = getAuth(context.env.DB);
   
