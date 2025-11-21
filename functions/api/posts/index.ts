@@ -13,6 +13,44 @@ interface Post {
   userName: string;
 }
 
+// GET all posts
+export async function onRequestGet(context: { env: Env }) {
+  try {
+    const { results } = await context.env.DB.prepare(
+      `SELECT 
+        id, 
+        title, 
+        description, 
+        location,
+        start_datetime,
+        end_datetime,
+        max_participants,
+        current_participants,
+        user_name,
+        visible,
+        created_at
+      FROM posts 
+      WHERE visible = 1
+      ORDER BY start_datetime ASC`
+    ).all();
+
+    return new Response(JSON.stringify({ posts: results }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      status: 200
+    });
+  } catch (error: any) {
+    console.error('Error in GET /api/posts:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 500
+    });
+  }
+}
+
+// POST new post
 export async function onRequestPost(context: { 
   request: Request; 
   env: Env;
@@ -44,7 +82,38 @@ export async function onRequestPost(context: {
       });
     }
 
-    // ... validation code ...
+    // Validate datetime format
+    const startDate = new Date(body.startDateTime);
+    const endDate = new Date(body.endDateTime);
+    
+    if (isNaN(startDate.getTime())) {
+      return new Response(JSON.stringify({ 
+        error: 'Invalid start datetime format'
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+    
+    if (isNaN(endDate.getTime())) {
+      return new Response(JSON.stringify({ 
+        error: 'Invalid end datetime format'
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    if (endDate <= startDate) {
+      return new Response(JSON.stringify({ 
+        error: 'End time must be after start time'
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 400
+      });
+    }
+
+    console.log('Inserting into database...');
 
     // Insert with real user data
     const result = await context.env.DB.prepare(
@@ -58,8 +127,8 @@ export async function onRequestPost(context: {
       body.startDateTime,
       body.endDateTime,
       parseInt(body.participants),
-      body.userId, // Real user ID from session
-      body.userName // Real user name from session
+      body.userId,
+      body.userName
     ).run();
 
     console.log('Insert successful:', result.meta);
@@ -83,4 +152,15 @@ export async function onRequestPost(context: {
       status: 500
     });
   }
+}
+
+// Handle CORS preflight
+export async function onRequestOptions() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
