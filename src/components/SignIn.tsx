@@ -19,18 +19,11 @@ export default function SignIn() {
 
     try {
       if (isSignUp) {
-        await signUp.email({
-          email,
-          password,
-          name,
-        });
+        await signUp(email, password, name);
         alert("Account created! Please sign in.");
         setIsSignUp(false);
       } else {
-        await signIn.email({
-          email,
-          password,
-        });
+        await signIn(email, password);
         navigate("/");
       }
     } catch (err: any) {
