@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:8788", // Change for production
+  baseURL: "https://react-dev-accounts.coloradospringscommunityservice.pages.dev", // Change for production
 });
 
 export const {
