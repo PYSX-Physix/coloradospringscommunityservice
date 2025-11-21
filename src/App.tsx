@@ -110,7 +110,7 @@ function App() {
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
+            <NavItem disabled as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
