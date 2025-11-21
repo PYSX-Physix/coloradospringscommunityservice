@@ -72,16 +72,18 @@ export default function Post() {
       setJoining(true);
       const res = await fetch(`/api/posts/${postId}/participants`, {
         method: 'POST',
+        credentials: 'include', // Important: Send cookies
       });
 
       if (res.ok) {
         alert('Successfully joined the event!');
-        fetchPost(); // Refresh
+        fetchPost(); // Refresh to show updated participant count
       } else {
         const error = await res.json();
         alert(error.error || 'Failed to join event');
       }
     } catch (err) {
+      console.error('Join error:', err);
       alert('Failed to join event');
     } finally {
       setJoining(false);
