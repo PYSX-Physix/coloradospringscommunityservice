@@ -3,7 +3,9 @@ import Search from './Search';
 import YourPosts from './YourPosts';
 import About from './About'
 import Policies from './Policies';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useSession, signOut } from "./lib/auth-client";
+import SignIn from './components/SignIn';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
 import './App.css';
 import {
   AppItem,
@@ -17,6 +19,7 @@ import {
   MenuPopover,
   MenuList,
   Menu,
+  MenuItem, // Added MenuItem for sign out
   NavSectionHeader,
   MessageBar,
   MessageBarTitle,
@@ -47,6 +50,13 @@ const POLICIESMENU = '6'
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate(); // Added this
+  const { data: session } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   // Determine which nav item should be active
   let selectedValue = POSTSMENU;
@@ -72,12 +82,20 @@ function App() {
           <NavDrawerHeader>
             <Menu>
               <MenuTrigger disableButtonEnhancement>
-                <AppItem icon={<Person32Color />} as="a">Person Name</AppItem>
+                <AppItem icon={<Person32Color />} as="a">
+                  {session?.user.name || session?.user.email || "Guest"}
+                </AppItem>
               </MenuTrigger>
               <MenuPopover>
                 <MenuList>
-                  <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                  <MenuItemLink icon={<SettingsColor />} href='/settings'>Settings</MenuItemLink>
+                  {session ? (
+                    <>
+                      <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
+                      <MenuItem icon={<SettingsColor />} onClick={handleSignOut}>Sign Out</MenuItem>
+                    </>
+                  ) : (
+                    <MenuItemLink href='/auth'>Sign In</MenuItemLink>
+                  )}
                 </MenuList>
               </MenuPopover>
             </Menu>
@@ -117,6 +135,7 @@ function App() {
             </MessageBarBody>
           </MessageBar>
           <Routes>
+            <Route path='/auth' element={<SignIn/>}/>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />

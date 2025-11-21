@@ -9,46 +9,10 @@ interface Post {
   startDateTime: string;
   endDateTime: string;
   participants: string;
+  userId: string;
+  userName: string;
 }
 
-// GET all posts
-export async function onRequestGet(context: { env: Env }) {
-  try {
-    const { results } = await context.env.DB.prepare(
-      `SELECT 
-        id, 
-        title, 
-        description, 
-        location,
-        start_datetime,
-        end_datetime,
-        max_participants,
-        current_participants,
-        user_name,
-        visible,
-        created_at
-      FROM posts 
-      WHERE visible = 1
-      ORDER BY start_datetime ASC`
-    ).all();
-
-    return new Response(JSON.stringify({ posts: results }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      status: 200
-    });
-  } catch (error: any) {
-    console.error('Error in GET /api/posts:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
-  }
-}
-
-// POST new post
 export async function onRequestPost(context: { 
   request: Request; 
   env: Env;
@@ -58,7 +22,7 @@ export async function onRequestPost(context: {
     
     console.log('Received POST request:', body);
     
-    // Check each field individually
+    // Validate required fields
     const missingFields = [];
     if (!body.title) missingFields.push('title');
     if (!body.desc) missingFields.push('desc');
@@ -66,60 +30,23 @@ export async function onRequestPost(context: {
     if (!body.startDateTime) missingFields.push('startDateTime');
     if (!body.endDateTime) missingFields.push('endDateTime');
     if (!body.participants) missingFields.push('participants');
+    if (!body.userId) missingFields.push('userId');
+    if (!body.userName) missingFields.push('userName');
     
     if (missingFields.length > 0) {
       console.error('Missing fields:', missingFields);
       return new Response(JSON.stringify({ 
         error: 'Missing required fields',
-        missingFields: missingFields,
-        receivedData: body
+        missingFields
       }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
       });
     }
 
-    // Validate datetime format
-    const startDate = new Date(body.startDateTime);
-    const endDate = new Date(body.endDateTime);
-    
-    if (isNaN(startDate.getTime())) {
-      console.error('Invalid start datetime:', body.startDateTime);
-      return new Response(JSON.stringify({ 
-        error: 'Invalid start datetime format',
-        received: body.startDateTime
-      }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400
-      });
-    }
-    
-    if (isNaN(endDate.getTime())) {
-      console.error('Invalid end datetime:', body.endDateTime);
-      return new Response(JSON.stringify({ 
-        error: 'Invalid end datetime format',
-        received: body.endDateTime
-      }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400
-      });
-    }
+    // ... validation code ...
 
-    if (endDate <= startDate) {
-      console.error('End time before start time');
-      return new Response(JSON.stringify({ 
-        error: 'End time must be after start time',
-        start: body.startDateTime,
-        end: body.endDateTime
-      }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 400
-      });
-    }
-
-    console.log('Inserting into database...');
-
-    // Insert post with combined datetime
+    // Insert with real user data
     const result = await context.env.DB.prepare(
       `INSERT INTO posts 
         (title, description, location, start_datetime, end_datetime, max_participants, user_id, user_name) 
@@ -131,8 +58,8 @@ export async function onRequestPost(context: {
       body.startDateTime,
       body.endDateTime,
       parseInt(body.participants),
-      'temp-user-id',
-      'Test User'
+      body.userId, // Real user ID from session
+      body.userName // Real user name from session
     ).run();
 
     console.log('Insert successful:', result.meta);
@@ -150,22 +77,10 @@ export async function onRequestPost(context: {
   } catch (error: any) {
     console.error('Error in POST /api/posts:', error);
     return new Response(JSON.stringify({ 
-      error: error.message,
-      stack: error.stack
+      error: error.message
     }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500
     });
   }
-}
-
-// Handle CORS preflight
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
 }

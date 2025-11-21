@@ -9,6 +9,9 @@ import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular } from "@fluentui/react-icons";
 
+import { useSession } from "./lib/auth-client";
+import { useNavigate } from "react-router-dom";
+
 interface PostData {
   id: number;
   title: string;
@@ -41,9 +44,30 @@ function YourPosts() {
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState<number>(1);
 
+  const { data: session, isPending } = useSession();
+  const navigate = useNavigate();
+
   // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!isPending && !session) {
+      navigate("/auth");
+    }
+  }, [session, isPending, navigate]);
+
+  if (isPending) {
+    return <Spinner label="Loading..." />;
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  // Get user info
+  const userId = session.user.id;
+  const userName = session.user.name || session.user.email;
 
   // Fetch posts from API
   const fetchPosts = React.useCallback(async () => {
@@ -112,7 +136,9 @@ function YourPosts() {
       location, 
       startDateTime,
       endDateTime,
-      participants: participants.toString()
+      participants: participants.toString(),
+      userId,
+      userName
     };
 
     console.log('Sending:', newPost);
