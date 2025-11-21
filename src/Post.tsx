@@ -120,7 +120,7 @@ export default function Post() {
   const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div style={{overflow: 'scroll'}}>
+    <div>
       <Title1>{post.title}</Title1>
       <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
       <div style={{ display: 'flex' }}>
