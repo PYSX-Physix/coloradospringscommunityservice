@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: "https://react-dev-accounts.coloradospringscommunityservice.pages.dev", // Change for production
+  baseURL: window.location.origin, // Dynamically use current origin
 });
 
 export const {
