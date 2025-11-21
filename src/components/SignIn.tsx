@@ -22,6 +22,7 @@ export default function SignIn() {
         await signUp(email, password, name);
         alert("Account created! Please sign in.");
         setIsSignUp(false);
+        setPassword(""); // Clear password after signup
       } else {
         await signIn(email, password);
         navigate("/");
@@ -83,6 +84,7 @@ export default function SignIn() {
               value={password}
               onChange={(_, data) => setPassword(data.value)}
               required
+              minLength={6}
             />
           </Field>
 
@@ -106,7 +108,11 @@ export default function SignIn() {
 
         <Button
           appearance="subtle"
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setError("");
+            setPassword("");
+          }}
           style={{ width: "100%", marginTop: "16px" }}
         >
           {isSignUp 

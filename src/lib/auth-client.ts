@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export async function signUp(email: string, password: string, name: string) {
   const res = await fetch("/api/auth/signup", {
