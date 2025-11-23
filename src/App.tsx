@@ -1,8 +1,8 @@
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
+import { Privacy, Terms } from './Policies';
 import About from './About'
-import Policies from './Policies';
 import { useSession, signOut } from "./lib/auth-client"; // Keep this
 import SignIn from './components/SignIn';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -23,7 +23,11 @@ import {
   NavSectionHeader,
   MessageBar,
   MessageBarTitle,
-  MessageBarBody
+  MessageBarBody,
+  NavCategory,
+  NavCategoryItem,
+  NavSubItem,
+  NavSubItemGroup
 } from "@fluentui/react-components";
 
 import {
@@ -47,6 +51,8 @@ const SAVEDPOSTSMENU = '3';
 const YOURPOSTSMENU = '4';
 const ABOUTMENU = '5'
 const POLICIESMENU = '6'
+const PRIVACYPOLICY = '7'
+const TERMSOFSERVICE = '8'
 
 function App() {
   const location = useLocation();
@@ -64,8 +70,10 @@ function App() {
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
   else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
   else if (location.pathname === '/about') selectedValue = ABOUTMENU;
-  else if (location.pathname === '/about/policies') selectedValue = POLICIESMENU;
+  else if (location.pathname === '/policies') selectedValue = POLICIESMENU;
   else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
+  else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
+  else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '10'
 
@@ -121,9 +129,19 @@ function App() {
             <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
               About Us
             </NavItem>
-            <NavItem as='a' href='/about/policies' value={POLICIESMENU} icon={<DocumentMultiple20Filled/>}>
-              Policies
-            </NavItem>
+            <NavCategory value={POLICIESMENU}>
+                  <NavCategoryItem icon={<DocumentMultiple20Filled/>}>
+                    Policies
+                  </NavCategoryItem>
+                  <NavSubItemGroup>
+                    <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
+                      Privacy Policy
+                    </NavSubItem>
+                    <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
+                      Terms of Service
+                    </NavSubItem>
+                  </NavSubItemGroup>
+            </NavCategory>
           </NavDrawerBody>
         </NavDrawer>
 
@@ -140,9 +158,10 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />
             <Route path="/about" element={<About/>}/>
-            <Route path="/about/policies" element={<Policies/>}/>
             <Route path='/post' element={<Post/>}/>
             <Route path='/announcements' element={<Announcements/>}/>
+            <Route path='/policies/privacy-policy' element={<Privacy/>}/>
+            <Route path='/policies/terms-of-service' element={<Terms/>}/>
           </Routes>
         </div>
       </div>

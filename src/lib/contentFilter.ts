@@ -5,54 +5,56 @@ const filter = new Filter();
 
 // Add custom words to blacklist (community service specific)
 const customBadWords = [
-    // Add inappropriate terms specific to your community
+    // Scam/spam indicators
     'scam',
     'mlm',
-    'pyramid',
-    "idiot",
-    "moron",
-    "stupid",
-    "dumb",
-    "loser",
-    "clown",
-    "freak",
-    "worthless",
-    "pathetic",
-    "trash",
-    "ugly",
-    ".zip link",
-    "bit.ly",
-    "tinyurl",
-    ".ru",
-    ".cn",
-    ".tk",
-    "🔥🔥🔥🔥",
-    "BUYBUYBUYBUY",
-    "f r e e m o n e y",
-    "free free free free",
-    "kill yourself",
-    "i'll hurt you",
-    "i will hurt you",
+    'pyramid scheme',
+    'get rich quick',
+    'crypto investment',
+    'investment opportunity',
+    'act now',
+    'limited time',
+    'cash app',
+    'venmo me',
+    'zelle',
+    
+    // Suspicious links
+    '.zip link',
+    'bit.ly',
+    'tinyurl',
+    '.ru/',
+    '.cn/',
+    '.tk/',
+    'download here',
+    'click here now',
+    
+    // Spam patterns
+    '🔥🔥🔥',
+    'free money',
+    'easy money',
+    'work from home',
+    'make money fast',
+    
+    // Direct threats (combine with context)
+    'kill yourself',
+    'kys',
+    'hurt you',
     "i'm going to find you",
-    "you better watch out",
-    "i'll beat you up",
-    "nigger",
-    "faggot",
-    "slut",
-    "whore",
-    "bitch",
-    "cuckslur",
-    "cum",
-    "dick pics"
-    // Add more as needed
+    'watch your back',
+    'you better watch out',
+    
+    // Harassment patterns
+    'doxx',
+    'dox',
+    'swat',
+    'your address',
 ];
 
 filter.addWords(...customBadWords);
 
-// Optional: Add words to whitelist (false positives)
 const whitelistWords = [
   // Words that might be flagged but are OK in your context
-  'damn', // Example: "damn good cause"
+  'damn',
 ];
 
 filter.removeWords(...whitelistWords);

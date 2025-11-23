@@ -37,7 +37,7 @@ function Posts() {
       <Title1>Posts</Title1>
       <Divider style={{ marginTop: '16px', marginBottom: '32px' }}/>
       <div>
-        <PostCard title='Test Card 1' desc='This is a test card to make sure that the input is working (kind of) as intended.' img='https://www.colorado.com/_next/image?url=https%3A%2F%2Fapi.colorado.com%2F%2Fsites%2Fdefault%2Ffiles%2Flegacy_drupal_7_images%2F8_Pikes%2520Peak-Garden%2520of%2520the%2520Gods.jpg&w=2048&q=75' />
+        <PostCard title='Test Cards System Test' desc="This is a test to prove that this system works. The user ID's will be different hopefully and nothing goes wrong when posting this because coding can be dumb sometimes." img='https://www.colorado.com/_next/image?url=https%3A%2F%2Fapi.colorado.com%2F%2Fsites%2Fdefault%2Ffiles%2Flegacy_drupal_7_images%2F8_Pikes%2520Peak-Garden%2520of%2520the%2520Gods.jpg&w=2048&q=75' />
       </div>
     </div>
   );
@@ -66,7 +66,7 @@ function PostCard({ title, desc, img }: { title: string; desc: string; img?: str
           description={<Text>{desc}</Text>}
         />
         <CardFooter>
-          <Button appearance="primary" as='a' href='/post?id=3'>Learn More</Button>
+          <Button appearance="primary" as='a' href='/post?id=8'>Learn More</Button>
           <Menu>
             <MenuTrigger>
               <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
