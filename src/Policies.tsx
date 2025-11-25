@@ -1,10 +1,19 @@
-import { Text } from "@fluentui/react-components";
+import { Title1 } from "@fluentui/react-components";
 
-function Policies()
+export function Privacy()
 {
-    return (
-        <Text>Policies Sections</Text>
-    )
+    return(
+        <div>
+            <Title1>Privacy Policy</Title1>
+        </div>
+    );
 }
 
-export default Policies;
+export function Terms()
+{
+    return(
+        <div>
+            <Title1>Terms of Service</Title1>
+        </div>
+    );
+}
