@@ -79,8 +79,31 @@ function PostCard({ post }: { post: PostData }) {
   const [reportDetails, setReportDetails] = React.useState("");
   const [isSaved, setIsSaved] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [checkingStatus, setCheckingStatus] = React.useState(true);
 
   const styles = cardStyles();
+
+  React.useEffect(() => {
+    checkSavedStatus();
+  }, [post.id]);
+
+  const checkSavedStatus = async () => {
+    try {
+      setCheckingStatus(true);
+      const res = await fetch(`/api/saved-posts/check?postId=${post.id}`, {
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setIsSaved(data.isSaved);
+      }
+    } catch (error) {
+      console.error('Error checking saved status:', error);
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
 
   const handleSaveToggle = async () => {
     try {
@@ -157,9 +180,9 @@ function PostCard({ post }: { post: PostData }) {
                 <MenuItem 
                   icon={isSaved ? <BookmarkAdd20Filled /> : <BookmarkAdd20Regular />}
                   onClick={handleSaveToggle}
-                  disabled={saving}
+                  disabled={saving || checkingStatus}
                 >
-                  {isSaved ? 'Unsave Post' : 'Save Post'}
+                  {checkingStatus ? 'Loading...' : (isSaved ? 'Unsave Post' : 'Save Post')}
                 </MenuItem>
                 <MenuItem icon={<Warning20Regular />} onClick={() => setReportState("form")}>
                   Report Post
