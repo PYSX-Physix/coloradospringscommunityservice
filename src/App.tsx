@@ -1,9 +1,11 @@
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
+import { Privacy, Terms } from './Policies';
 import About from './About'
-import Policies from './Policies';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useSession, signOut } from "./lib/auth-client"; // Keep this
+import SignIn from './components/SignIn';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
 import {
   AppItem,
@@ -17,10 +19,15 @@ import {
   MenuPopover,
   MenuList,
   Menu,
+  MenuItem,
   NavSectionHeader,
   MessageBar,
   MessageBarTitle,
-  MessageBarBody
+  MessageBarBody,
+  NavCategory,
+  NavCategoryItem,
+  NavSubItem,
+  NavSubItemGroup
 } from "@fluentui/react-components";
 
 import {
@@ -44,9 +51,18 @@ const SAVEDPOSTSMENU = '3';
 const YOURPOSTSMENU = '4';
 const ABOUTMENU = '5'
 const POLICIESMENU = '6'
+const PRIVACYPOLICY = '7'
+const TERMSOFSERVICE = '8'
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { data: session } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   // Determine which nav item should be active
   let selectedValue = POSTSMENU;
@@ -54,8 +70,10 @@ function App() {
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
   else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
   else if (location.pathname === '/about') selectedValue = ABOUTMENU;
-  else if (location.pathname === '/about/policies') selectedValue = POLICIESMENU;
+  else if (location.pathname === '/policies') selectedValue = POLICIESMENU;
   else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
+  else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
+  else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '10'
 
@@ -72,12 +90,20 @@ function App() {
           <NavDrawerHeader>
             <Menu>
               <MenuTrigger disableButtonEnhancement>
-                <AppItem icon={<Person32Color />} as="a">Person Name</AppItem>
+                <AppItem icon={<Person32Color />} as="a">
+                  {session?.user?.name || session?.user?.email || "Guest"}
+                </AppItem>
               </MenuTrigger>
               <MenuPopover>
                 <MenuList>
-                  <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                  <MenuItemLink icon={<SettingsColor />} href='/settings'>Settings</MenuItemLink>
+                  {session ? (
+                    <>
+                      <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
+                      <MenuItem icon={<SettingsColor />} onClick={handleSignOut}>Sign Out</MenuItem>
+                    </>
+                  ) : (
+                    <MenuItemLink href='/auth'>Sign In</MenuItemLink>
+                  )}
                 </MenuList>
               </MenuPopover>
             </Menu>
@@ -92,7 +118,7 @@ function App() {
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
+            <NavItem disabled as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
             <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
@@ -103,9 +129,19 @@ function App() {
             <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
               About Us
             </NavItem>
-            <NavItem as='a' href='/about/policies' value={POLICIESMENU} icon={<DocumentMultiple20Filled/>}>
-              Policies
-            </NavItem>
+            <NavCategory value={POLICIESMENU}>
+                  <NavCategoryItem icon={<DocumentMultiple20Filled/>}>
+                    Policies
+                  </NavCategoryItem>
+                  <NavSubItemGroup>
+                    <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
+                      Privacy Policy
+                    </NavSubItem>
+                    <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
+                      Terms of Service
+                    </NavSubItem>
+                  </NavSubItemGroup>
+            </NavCategory>
           </NavDrawerBody>
         </NavDrawer>
 
@@ -117,13 +153,15 @@ function App() {
             </MessageBarBody>
           </MessageBar>
           <Routes>
+            <Route path='/auth' element={<SignIn/>}/>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
             <Route path="/saved/your-posts" element={<YourPosts />} />
             <Route path="/about" element={<About/>}/>
-            <Route path="/about/policies" element={<Policies/>}/>
             <Route path='/post' element={<Post/>}/>
             <Route path='/announcements' element={<Announcements/>}/>
+            <Route path='/policies/privacy-policy' element={<Privacy/>}/>
+            <Route path='/policies/terms-of-service' element={<Terms/>}/>
           </Routes>
         </div>
       </div>

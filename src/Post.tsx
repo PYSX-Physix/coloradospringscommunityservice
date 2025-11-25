@@ -2,6 +2,7 @@ import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, 
 import { Calendar16Color, LocationRipple16Color } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import "./Post.css"
 
 interface PostData {
   id: number;
@@ -71,16 +72,18 @@ export default function Post() {
       setJoining(true);
       const res = await fetch(`/api/posts/${postId}/participants`, {
         method: 'POST',
+        credentials: 'include', // Important: Send cookies
       });
 
       if (res.ok) {
         alert('Successfully joined the event!');
-        fetchPost(); // Refresh
+        fetchPost(); // Refresh to show updated participant count
       } else {
         const error = await res.json();
         alert(error.error || 'Failed to join event');
       }
     } catch (err) {
+      console.error('Join error:', err);
       alert('Failed to join event');
     } finally {
       setJoining(false);
@@ -120,7 +123,7 @@ export default function Post() {
   const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div>
+    <div className="scrollbox">
       <Title1>{post.title}</Title1>
       <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
       <div style={{ display: 'flex' }}>

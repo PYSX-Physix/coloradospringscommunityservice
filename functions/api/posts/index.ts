@@ -9,6 +9,8 @@ interface Post {
   startDateTime: string;
   endDateTime: string;
   participants: string;
+  userId: string;
+  userName: string;
 }
 
 // GET all posts
@@ -58,7 +60,7 @@ export async function onRequestPost(context: {
     
     console.log('Received POST request:', body);
     
-    // Check each field individually
+    // Validate required fields
     const missingFields = [];
     if (!body.title) missingFields.push('title');
     if (!body.desc) missingFields.push('desc');
@@ -66,13 +68,14 @@ export async function onRequestPost(context: {
     if (!body.startDateTime) missingFields.push('startDateTime');
     if (!body.endDateTime) missingFields.push('endDateTime');
     if (!body.participants) missingFields.push('participants');
+    if (!body.userId) missingFields.push('userId');
+    if (!body.userName) missingFields.push('userName');
     
     if (missingFields.length > 0) {
       console.error('Missing fields:', missingFields);
       return new Response(JSON.stringify({ 
         error: 'Missing required fields',
-        missingFields: missingFields,
-        receivedData: body
+        missingFields
       }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
@@ -84,10 +87,8 @@ export async function onRequestPost(context: {
     const endDate = new Date(body.endDateTime);
     
     if (isNaN(startDate.getTime())) {
-      console.error('Invalid start datetime:', body.startDateTime);
       return new Response(JSON.stringify({ 
-        error: 'Invalid start datetime format',
-        received: body.startDateTime
+        error: 'Invalid start datetime format'
       }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
@@ -95,10 +96,8 @@ export async function onRequestPost(context: {
     }
     
     if (isNaN(endDate.getTime())) {
-      console.error('Invalid end datetime:', body.endDateTime);
       return new Response(JSON.stringify({ 
-        error: 'Invalid end datetime format',
-        received: body.endDateTime
+        error: 'Invalid end datetime format'
       }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
@@ -106,11 +105,8 @@ export async function onRequestPost(context: {
     }
 
     if (endDate <= startDate) {
-      console.error('End time before start time');
       return new Response(JSON.stringify({ 
-        error: 'End time must be after start time',
-        start: body.startDateTime,
-        end: body.endDateTime
+        error: 'End time must be after start time'
       }), {
         headers: { 'Content-Type': 'application/json' },
         status: 400
@@ -119,7 +115,7 @@ export async function onRequestPost(context: {
 
     console.log('Inserting into database...');
 
-    // Insert post with combined datetime
+    // Insert with real user data
     const result = await context.env.DB.prepare(
       `INSERT INTO posts 
         (title, description, location, start_datetime, end_datetime, max_participants, user_id, user_name) 
@@ -131,8 +127,8 @@ export async function onRequestPost(context: {
       body.startDateTime,
       body.endDateTime,
       parseInt(body.participants),
-      'temp-user-id',
-      'Test User'
+      body.userId,
+      body.userName
     ).run();
 
     console.log('Insert successful:', result.meta);
@@ -150,8 +146,7 @@ export async function onRequestPost(context: {
   } catch (error: any) {
     console.error('Error in POST /api/posts:', error);
     return new Response(JSON.stringify({ 
-      error: error.message,
-      stack: error.stack
+      error: error.message
     }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500
