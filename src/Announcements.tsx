@@ -7,6 +7,26 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Update: V11.25.2025.01</Title3>}/>
+                <p>
+                    <Text>
+                        Hey everyone! I'm so excited to finally say this is the first version of the app that is in beta! You're able to sign up with email and passwords.
+                        If anyone is curious about how we'll store your passwords, they will be hashed meaning it's hard for bad actors to decrypt passwords easily.
+                        You're now able to start posting (only if you're signed in) keep in mind posts can be reported and reviewed.<br/>
+                        Here some of the new, fixed, and modified things are in this update!<br/>
+                        <strong>Addition:</strong> Authentication is now available!<br/>
+                        <strong>Addition:</strong> We now show user created posts and have removed all sample data so say bye to that one card on the post screen.<br/>
+                        <strong>Addition:</strong> You're now able to sign-up for events! This will show your name on a list with others.<br/>
+                        <strong>Change:</strong> The "Your Posts" page recived and new layout! It's more organized and sorted out then our original layouts.<br/>
+                        <strong>Issue:</strong> The "Sign-Up" button is clipped out of the users view. You're able to zoom out if you're on a small display to fix the issue.<br/>
+                        <strong>Disabled:</strong> We disabled the Search feature since that is not our main priority at the moment.<br/>
+                        <br/>
+                        A lot has gone into this update and we can't wait for you guys to start creating community service events/opportunities. Keep in mind this site is free and will always be free
+                        to use. Good luck everyone!
+                    </Text>
+                </p>
+            </Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
                 <p>
                     <Text>
