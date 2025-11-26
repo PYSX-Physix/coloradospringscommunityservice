@@ -96,7 +96,7 @@ export default function CheckInManager({
                   <TableHeaderCell>Participant</TableHeaderCell>
                   <TableHeaderCell>Registered</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
-                  {isOrganizer && <TableHeaderCell>Action</TableHeaderCell>}
+                  {isOrganizer && <TableHeaderCell/>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -105,7 +105,7 @@ export default function CheckInManager({
                     <TableCell>
                       <TableCellLayout>
                         {participant.attended ? (
-                          <CheckmarkCircle20Regular style={{ color: 'green' }} />
+                          <CheckmarkCircle20Regular style={{ color: 'green', marginRight: '16px' }} />
                         ) : (
                           <Circle20Regular />
                         )}

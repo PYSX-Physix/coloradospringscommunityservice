@@ -169,13 +169,15 @@ export default function Post() {
             <Persona name={post.user_name} style={{ marginTop: '16px' }} />
             
             <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <Button 
+              {!isOrganizer && (
+                <Button 
                 appearance="primary" 
                 onClick={handleJoin}
                 disabled={isFull || joining}
               >
                 {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
               </Button>
+              )}
               
               {isOrganizer && (
                 <Button 
