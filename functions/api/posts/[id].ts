@@ -28,11 +28,17 @@ export async function onRequestGet(context: {
     }
 
     // Get participants
+    // Update the participants query to include attendance info
     const { results: participants } = await context.env.DB.prepare(
-      `SELECT user_id, user_name, joined_at 
-       FROM participants 
-       WHERE post_id = ?
-       ORDER BY joined_at ASC`
+      `SELECT 
+        user_id, 
+        user_name, 
+        joined_at,
+        attended,
+        checked_in_at
+      FROM participants 
+      WHERE post_id = ?
+      ORDER BY joined_at ASC`
     ).bind(id).all();
 
     return new Response(JSON.stringify({ 

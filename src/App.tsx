@@ -3,7 +3,8 @@ import Search from './Search';
 import YourPosts from './YourPosts';
 import { Privacy, Terms } from './Policies';
 import About from './About'
-import { useSession, signOut } from "./lib/auth-client"; // Keep this
+import Profile from './Profile';
+import { useSession, signOut } from "./lib/auth-client";
 import SignIn from './components/SignIn';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
@@ -53,6 +54,7 @@ const ABOUTMENU = '5'
 const POLICIESMENU = '6'
 const PRIVACYPOLICY = '7'
 const TERMSOFSERVICE = '8'
+const PROFILE = '9'
 
 function App() {
   const location = useLocation();
@@ -74,6 +76,7 @@ function App() {
   else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
   else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
   else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
+  else if (location.pathname === '/profile') selectedValue = PROFILE;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '10'
 
@@ -162,6 +165,7 @@ function App() {
             <Route path='/announcements' element={<Announcements/>}/>
             <Route path='/policies/privacy-policy' element={<Privacy/>}/>
             <Route path='/policies/terms-of-service' element={<Terms/>}/>
+            <Route path='/profile' element={<Profile/>}/>
           </Routes>
         </div>
       </div>
