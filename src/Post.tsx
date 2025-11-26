@@ -2,6 +2,8 @@ import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, 
 import { Calendar16Color, LocationRipple16Color } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
+import CheckInManager from "./components/CheckInManager";
+import { useSession } from "./lib/auth-client";
 import "./Post.css"
 
 interface PostData {
@@ -13,6 +15,7 @@ interface PostData {
   end_datetime: string;
   max_participants: number;
   current_participants: number;
+  user_id: string;
   user_name: string;
   visible: number;
   created_at: string;
@@ -22,6 +25,8 @@ interface Participant {
   user_id: string;
   user_name: string;
   joined_at: string;
+  attended: number;
+  checked_in_at?: string;
 }
 
 export default function Post() {
@@ -33,6 +38,10 @@ export default function Post() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [joining, setJoining] = React.useState(false);
+  const [showCheckIn, setShowCheckIn] = React.useState(false);
+  const [isOrganizer, setIsOrganizer] = React.useState(false);
+  
+  const { data: session } = useSession();
 
   const fetchPost = React.useCallback(async () => {
     if (!postId) {
@@ -57,13 +66,17 @@ export default function Post() {
     } finally {
       setLoading(false);
     }
-  }, [postId]); // <-- stable dependency
+  }, [postId]);
 
   React.useEffect(() => {
     fetchPost();
   }, [fetchPost]);
 
-
+  React.useEffect(() => {
+    if (post && session?.user) {
+      setIsOrganizer(post.user_id === session.user.id);
+    }
+  }, [post, session]);
 
   const handleJoin = async () => {
     if (!postId) return;
@@ -72,12 +85,12 @@ export default function Post() {
       setJoining(true);
       const res = await fetch(`/api/posts/${postId}/participants`, {
         method: 'POST',
-        credentials: 'include', // Important: Send cookies
+        credentials: 'include',
       });
 
       if (res.ok) {
         alert('Successfully joined the event!');
-        fetchPost(); // Refresh to show updated participant count
+        fetchPost();
       } else {
         const error = await res.json();
         alert(error.error || 'Failed to join event');
@@ -89,7 +102,6 @@ export default function Post() {
       setJoining(false);
     }
   };
-
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -155,14 +167,25 @@ export default function Post() {
               </Text>
             </div>
             <Persona name={post.user_name} style={{ marginTop: '16px' }} />
-            <Button 
-              appearance="primary" 
-              style={{ marginTop: '16px', width: 'fit-content' }}
-              onClick={handleJoin}
-              disabled={isFull || joining}
-            >
-              {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
-            </Button>
+            
+            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+              <Button 
+                appearance="primary" 
+                onClick={handleJoin}
+                disabled={isFull || joining}
+              >
+                {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
+              </Button>
+              
+              {isOrganizer && (
+                <Button 
+                  appearance="secondary"
+                  onClick={() => setShowCheckIn(true)}
+                >
+                  Manage Attendance
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -186,6 +209,15 @@ export default function Post() {
           )}
         </div>
       </div>
+
+      <CheckInManager
+        open={showCheckIn}
+        onClose={() => setShowCheckIn(false)}
+        postId={Number(postId)}
+        participants={participants}
+        isOrganizer={isOrganizer}
+        onRefresh={fetchPost}
+      />
     </div>
   );
 }
