@@ -136,7 +136,30 @@ export default function Post() {
 
   return (
     <div className="scrollbox">
-      <Title1>{post.title}</Title1>
+      <div style={{width: '100vh'}}>
+        <Title1>{post.title}</Title1>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+          {!isOrganizer && (
+            <Button 
+            appearance="primary" 
+            onClick={handleJoin}
+            disabled={isFull || joining}
+          >
+            {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
+          </Button>
+          )}
+          
+          {isOrganizer && (
+            <Button 
+              appearance="secondary"
+              onClick={() => setShowCheckIn(true)}
+            >
+              Manage Attendance
+            </Button>
+          )}
+        </div>
+      </div>
+
       <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
       <div style={{ display: 'flex' }}>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -168,26 +191,7 @@ export default function Post() {
             </div>
             <Persona name={post.user_name} style={{ marginTop: '16px' }} />
             
-            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              {!isOrganizer && (
-                <Button 
-                appearance="primary" 
-                onClick={handleJoin}
-                disabled={isFull || joining}
-              >
-                {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
-              </Button>
-              )}
-              
-              {isOrganizer && (
-                <Button 
-                  appearance="secondary"
-                  onClick={() => setShowCheckIn(true)}
-                >
-                  Manage Attendance
-                </Button>
-              )}
-            </div>
+            
           </div>
         </div>
 
