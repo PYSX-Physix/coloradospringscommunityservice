@@ -28,17 +28,11 @@ export async function onRequestGet(context: {
     }
 
     // Get participants
-    // Update the participants query to include attendance info
     const { results: participants } = await context.env.DB.prepare(
-      `SELECT 
-        user_id, 
-        user_name, 
-        joined_at,
-        attended,
-        checked_in_at
-      FROM participants 
-      WHERE post_id = ?
-      ORDER BY joined_at ASC`
+      `SELECT user_id, user_name, joined_at, attended, checked_in_at
+       FROM participants 
+       WHERE post_id = ?
+       ORDER BY joined_at ASC`
     ).bind(id).all();
 
     return new Response(JSON.stringify({ 
@@ -63,13 +57,99 @@ export async function onRequestGet(context: {
 export async function onRequestDelete(context: { 
   params: { id: string }; 
   env: Env;
+  request: Request;
 }) {
   try {
     const { id } = context.params;
     
+    // Get user from session to verify they're the organizer
+    const cookie = context.request.headers.get("Cookie");
+    const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
+
+    if (!sessionId) {
+      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+        status: 401,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    const session = await context.env.DB.prepare(
+      `SELECT user_id FROM session WHERE id = ? AND expires_at > ?`
+    ).bind(sessionId, Date.now()).first();
+
+    if (!session) {
+      return new Response(JSON.stringify({ error: 'Session expired' }), {
+        status: 401,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Get the post details
+    const post = await context.env.DB.prepare(
+      `SELECT user_id, title, description, location, start_datetime, end_datetime 
+       FROM posts WHERE id = ?`
+    ).bind(id).first();
+
+    if (!post) {
+      return new Response(JSON.stringify({ error: 'Post not found' }), {
+        status: 404,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Verify the user is the organizer
+    if (post.user_id !== session.user_id) {
+      return new Response(JSON.stringify({ error: 'Only the organizer can delete this event' }), {
+        status: 403,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // BEFORE deleting the post, save event details for all participants who attended
+    await context.env.DB.prepare(
+      `UPDATE participants 
+       SET event_title = ?,
+           event_description = ?,
+           event_location = ?,
+           event_start_datetime = ?,
+           event_end_datetime = ?
+       WHERE post_id = ? AND attended = 1 AND event_title IS NULL`
+    ).bind(
+      post.title,
+      post.description,
+      post.location,
+      post.start_datetime,
+      post.end_datetime,
+      id
+    ).run();
+
+    console.log('Event details saved for attended participants');
+    
+    // Now delete the post
     await context.env.DB.prepare(
       `DELETE FROM posts WHERE id = ?`
     ).bind(id).run();
+
+    console.log('Post deleted');
+
+    // Clean up participants who didn't attend (they just registered)
+    await context.env.DB.prepare(
+      `DELETE FROM participants WHERE post_id = ? AND attended = 0`
+    ).bind(id).run();
+
+    console.log('Non-attended participants cleaned up');
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { 
@@ -79,8 +159,12 @@ export async function onRequestDelete(context: {
       status: 200
     });
   } catch (error: any) {
+    console.error('Error deleting post:', error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       status: 500
     });
   }
@@ -92,7 +176,8 @@ export async function onRequestOptions() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Cookie',
+      'Access-Control-Allow-Credentials': 'true',
     },
   });
 }
