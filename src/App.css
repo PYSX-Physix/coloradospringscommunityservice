@@ -1,20 +1,23 @@
 #root {
   margin: 0px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .root {
   display: flex;
   height: 100vh;
   text-align: left;
-  overflow: hidden; /* Prevent overflow on the root container */
+  overflow: hidden;
 }
 
 .content {
   margin: 16px;
-  overflow-y: auto; /* Make content vertically scrollable */
-  overflow-x: hidden; /* Hide horizontal overflow */
-  flex: 1; /* Take up remaining space */
-  height: 100%; /* Full height of parent */
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  height: calc(100vh - 32px); /* Account for margin */
+  width: 100%;
 }
 
 .content::-webkit-scrollbar {
