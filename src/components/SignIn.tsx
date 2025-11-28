@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Field, Title1, Text, Divider } from "@fluentui/react-components";
+import { Button, Input, Field, Title1, Text, Divider, Checkbox } from "@fluentui/react-components";
 import { signIn, signUp } from "../lib/auth-client";
 import { useNavigate } from "react-router-dom";
 
@@ -87,6 +87,11 @@ export default function SignIn() {
               minLength={6}
             />
           </Field>
+
+          
+          {isSignUp && (
+              <Checkbox style={{ marginBottom: '24px'}} label={"I agree to the Terms of Service and Privacy Policy"} required/>
+          )}
 
           {error && (
             <Text style={{ color: "red", marginBottom: "16px", display: "block" }}>

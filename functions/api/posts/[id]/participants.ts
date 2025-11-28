@@ -93,10 +93,10 @@ export async function onRequestPost(context: {
       });
     }
 
-    // Add participant
+    // Add participant WITHOUT event details (they haven't attended yet)
     await context.env.DB.prepare(
-      `INSERT INTO participants (post_id, user_id, user_name) 
-       VALUES (?, ?, ?)`
+      `INSERT INTO participants (post_id, user_id, user_name, attended) 
+       VALUES (?, ?, ?, 0)`
     ).bind(id, userId, userName).run();
 
     console.log('Participant added');
