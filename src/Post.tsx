@@ -4,7 +4,6 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
 import { useSession } from "./lib/auth-client";
-import "./Post.css"
 
 interface PostData {
   id: number;
