@@ -94,15 +94,23 @@ function YourPosts() {
     }
   };
 
-  // Fetch posts from API
+  // Fetch Posts function (This should get only the users created events and not anyone elses)
   const fetchPosts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/posts');
+      const res = await fetch('/api/posts/my-posts', {
+        credentials: 'include',
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      
       const data = await res.json();
       setPosts(data.posts || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
