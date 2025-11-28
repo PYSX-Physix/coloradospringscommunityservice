@@ -3,7 +3,8 @@ import Search from './Search';
 import YourPosts from './YourPosts';
 import { Privacy, Terms } from './Policies';
 import About from './About'
-import { useSession, signOut } from "./lib/auth-client"; // Keep this
+import Profile from './Profile';
+import { useSession, signOut } from "./lib/auth-client";
 import SignIn from './components/SignIn';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './App.css';
@@ -53,6 +54,7 @@ const ABOUTMENU = '5'
 const POLICIESMENU = '6'
 const PRIVACYPOLICY = '7'
 const TERMSOFSERVICE = '8'
+const PROFILE = '9'
 
 function App() {
   const location = useLocation();
@@ -68,12 +70,13 @@ function App() {
   let selectedValue = POSTSMENU;
   if (location.pathname === '/search') selectedValue = SEARCHMENU;
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
-  else if (location.pathname === '/saved/your-posts') selectedValue = YOURPOSTSMENU;
+  else if (location.pathname === '/saved/my-posts') selectedValue = YOURPOSTSMENU;
   else if (location.pathname === '/about') selectedValue = ABOUTMENU;
   else if (location.pathname === '/policies') selectedValue = POLICIESMENU;
   else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
   else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
   else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
+  else if (location.pathname === '/profile') selectedValue = PROFILE;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '10'
 
@@ -121,8 +124,8 @@ function App() {
             <NavItem disabled as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
-            <NavItem as='a' href="/saved/your-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
-              Your Posts
+            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
+              My Posts
             </NavItem>
             <NavDivider/>
             <NavSectionHeader>Info</NavSectionHeader>
@@ -156,12 +159,13 @@ function App() {
             <Route path='/auth' element={<SignIn/>}/>
             <Route path="/" element={<Posts />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/saved/your-posts" element={<YourPosts />} />
+            <Route path="/saved/my-posts" element={<YourPosts />} />
             <Route path="/about" element={<About/>}/>
             <Route path='/post' element={<Post/>}/>
             <Route path='/announcements' element={<Announcements/>}/>
             <Route path='/policies/privacy-policy' element={<Privacy/>}/>
             <Route path='/policies/terms-of-service' element={<Terms/>}/>
+            <Route path='/profile' element={<Profile/>}/>
           </Routes>
         </div>
       </div>

@@ -7,9 +7,10 @@ import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogC
   MenuItemLink} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular } from "@fluentui/react-icons";
 
 import { useSession } from "./lib/auth-client";
+import { downloadAttendanceSheet } from './utils/attendanceSheet';
 import { useNavigate } from "react-router-dom";
 
 interface PostData {
@@ -51,19 +52,65 @@ function YourPosts() {
   const [loading, setLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<'created' | 'saved' | 'joined'>('created');
 
+  const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
+
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
 
-  // Fetch posts from API
+
+  const handleDownloadAttendance = async (postId: number) => {
+    try {
+      setDownloadingAttendance(postId);
+      
+      const res = await fetch(`/api/posts/${postId}/attendance`, {
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.error || 'Failed to download attendance sheet');
+        return;
+      }
+
+      const data = await res.json();
+      
+      downloadAttendanceSheet(
+        {
+          title: data.event.title,
+          description: data.event.description,
+          location: data.event.location,
+          start_datetime: data.event.start_datetime,
+          end_datetime: data.event.end_datetime,
+          organizer: data.event.user_name,
+        },
+        data.participants
+      );
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download attendance sheet');
+    } finally {
+      setDownloadingAttendance(null);
+    }
+  };
+
+  // Fetch Posts function (This should get only the users created events and not anyone elses)
   const fetchPosts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/posts');
+      const res = await fetch('/api/posts/my-posts', {
+        credentials: 'include',
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      
       const data = await res.json();
       setPosts(data.posts || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
@@ -311,6 +358,14 @@ function YourPosts() {
                           </MenuTrigger>
                           <MenuPopover>
                             <MenuList>
+                              <MenuItem 
+                                icon={<DocumentArrowDown20Regular />}
+                                onClick={() => handleDownloadAttendance(post.id)}
+                                disabled={downloadingAttendance === post.id}
+                              >
+                                {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
+                              </MenuItem>
+                              <MenuDivider />
                               <MenuItem icon={<EditRegular />}>Edit</MenuItem>
                               <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
                               <MenuDivider/>
