@@ -3,13 +3,34 @@
 }
 
 .root {
-  overflow-y: scroll;
-  overflow-x: hidden;
   display: flex;
   height: 100vh;
   text-align: left;
+  overflow: hidden; /* Prevent overflow on the root container */
 }
 
 .content {
   margin: 16px;
+  overflow-y: auto; /* Make content vertically scrollable */
+  overflow-x: hidden; /* Hide horizontal overflow */
+  flex: 1; /* Take up remaining space */
+  height: 100%; /* Full height of parent */
+}
+
+.content::-webkit-scrollbar {
+  width: 12px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: #2d2d2d;
+  border-radius: 5px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }
