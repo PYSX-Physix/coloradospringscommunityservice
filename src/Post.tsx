@@ -135,7 +135,7 @@ export default function Post() {
   const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div className="scrollbox">
+    <div>
       <div style={{width: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Title1>{post.title}</Title1>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
