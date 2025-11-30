@@ -28,7 +28,8 @@ import {
   NavCategory,
   NavCategoryItem,
   NavSubItem,
-  NavSubItemGroup
+  NavSubItemGroup,
+  MenuDivider
 } from "@fluentui/react-components";
 
 import {
@@ -40,7 +41,8 @@ import {
   SettingsColor,
   Info20Filled,
   DocumentMultiple20Filled,
-  MegaphoneLoud20Color
+  MegaphoneLoud20Color,
+  ArrowExitRegular
 } from "@fluentui/react-icons";
 import Post from './Post';
 import Announcements from './Announcements';
@@ -102,7 +104,9 @@ function App() {
                   {session ? (
                     <>
                       <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                      <MenuItem icon={<SettingsColor />} onClick={handleSignOut}>Sign Out</MenuItem>
+                      <MenuItemLink icon={<SettingsColor/>} href='/settings'>Settings</MenuItemLink>
+                      <MenuDivider/>
+                      <MenuItem icon={<ArrowExitRegular/>} onClick={handleSignOut}>Sign Out</MenuItem>
                     </>
                   ) : (
                     <MenuItemLink href='/auth'>Sign In</MenuItemLink>
