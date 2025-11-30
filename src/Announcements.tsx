@@ -7,6 +7,24 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.29.2025.01</Title3>}/>
+                <p>
+                    <Text>
+                        Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.<br/>
+                        Here are the new features added in this update:<br/>
+                        <strong>Addition:</strong> Event organizers can now mark attendees as "attended" or "no-show".<br/>
+                        <strong>Addition:</strong> Attendees can view their attendance status for events they signed up for.<br/>
+                        <strong>Fix:</strong> Resolved minor bugs related to event sign-up and attendance tracking.<br/>
+                        <strong>Addition:</strong> Event organizers can print attendance reports for their events.<br/>
+                        <strong>Change:</strong> Improved the user interface for event sign-up and attendance tracking.<br/>
+                        <strong>Work-In-Progress:</strong> We're working on adding calendar events so you can easily add your signed-up events to your personal calendar.<br/>
+                        <strong>Work-In-Progress:</strong> We're also working on email notifications to remind you of upcoming events you've signed up for.<br/>
+                        <br/>
+                        We hope these new features enhance your experience on our platform. As always, thank you for being part of our community! 
+                    </Text>
+                </p>
+            </Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Update: V11.25.2025.01</Title3>}/>
                 <p>
                     <Text>
