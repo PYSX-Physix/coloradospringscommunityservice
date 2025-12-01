@@ -1,9 +1,10 @@
 import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, Button, Spinner } from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color } from "@fluentui/react-icons";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
 import { useSession } from "./lib/auth-client";
+import CalendarExport from "./components/CalendarExport";
 
 interface PostData {
   id: number;
@@ -40,6 +41,9 @@ export default function Post() {
   const [showCheckIn, setShowCheckIn] = React.useState(false);
   const [isOrganizer, setIsOrganizer] = React.useState(false);
   
+  const [showCalendarExport, setShowCalendarExport] = React.useState(false);
+  const [hasJoined, setHasJoined] = React.useState(false);
+
   const { data: session } = useSession();
 
   const fetchPost = React.useCallback(async () => {
@@ -72,10 +76,15 @@ export default function Post() {
   }, [fetchPost]);
 
   React.useEffect(() => {
-    if (post && session?.user) {
+    if (post && session?.user && participants) {
       setIsOrganizer(post.user_id === session.user.id);
+      // Check if current user is in participants list
+      const userParticipant = participants.find(
+        p => p.user_id === session.user.id
+      );
+      setHasJoined(!!userParticipant);
     }
-  }, [post, session]);
+  }, [post, session, participants]);
 
   const handleJoin = async () => {
     if (!postId) return;
@@ -89,6 +98,7 @@ export default function Post() {
 
       if (res.ok) {
         alert('Successfully joined the event!');
+        setHasJoined(true); // Add this line
         fetchPost();
       } else {
         const error = await res.json();
@@ -138,14 +148,24 @@ export default function Post() {
       <div style={{width: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Title1>{post.title}</Title1>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          {!isOrganizer && (
+          {!hasJoined && (
             <Button 
-            appearance="primary" 
-            onClick={handleJoin}
-            disabled={isFull || joining}
-          >
-            {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
-          </Button>
+              appearance="primary" 
+              onClick={handleJoin}
+              disabled={isFull || joining}
+            >
+              {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
+            </Button>
+          )}
+          
+          {hasJoined && (
+            <Button
+              appearance="outline"
+              icon={<CalendarAdd20Regular />}
+              onClick={() => setShowCalendarExport(true)}
+            >
+              Add to Calendar
+            </Button>
           )}
           
           {isOrganizer && (
@@ -214,6 +234,19 @@ export default function Post() {
           )}
         </div>
       </div>
+
+      <CalendarExport
+        open={showCalendarExport}
+        onClose={() => setShowCalendarExport(false)}
+        event={{
+          title: post.title,
+          description: post.description,
+          location: post.location,
+          startDateTime: post.start_datetime,
+          endDateTime: post.end_datetime,
+          organizerName: post.user_name,
+        }}
+      />
 
       <CheckInManager
         open={showCheckIn}

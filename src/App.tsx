@@ -42,10 +42,12 @@ import {
   Info20Filled,
   DocumentMultiple20Filled,
   MegaphoneLoud20Color,
-  ArrowExitRegular
+  ArrowExitRegular,
+  QuestionCircle20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
 import Announcements from './Announcements';
+import { HelpHome } from './Help';
 
 const ANNOUCEMENTS = '0'
 const POSTSMENU = '1';
@@ -57,6 +59,7 @@ const POLICIESMENU = '6'
 const PRIVACYPOLICY = '7'
 const TERMSOFSERVICE = '8'
 const PROFILE = '9'
+const HELPHOME = '10'
 
 function App() {
   const location = useLocation();
@@ -80,7 +83,7 @@ function App() {
   else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
   else if (location.pathname === '/profile') selectedValue = PROFILE;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
-  else selectedValue = '10'
+  else selectedValue = '50'
 
   return (
     <div className="App">
@@ -149,6 +152,7 @@ function App() {
                     </NavSubItem>
                   </NavSubItemGroup>
             </NavCategory>
+            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
           </NavDrawerBody>
         </NavDrawer>
 
@@ -170,6 +174,7 @@ function App() {
             <Route path='/policies/privacy-policy' element={<Privacy/>}/>
             <Route path='/policies/terms-of-service' element={<Terms/>}/>
             <Route path='/profile' element={<Profile/>}/>
+            <Route path='/help' element={<HelpHome/>}/>
           </Routes>
         </div>
       </div>
