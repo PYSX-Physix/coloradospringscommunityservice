@@ -7,7 +7,7 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.29.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Content Update: V11.29.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.
@@ -27,7 +27,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Update: V11.25.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Major Update: V11.25.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! I'm so excited to finally say this is the first version of the app that is in beta! You're able to sign up with email and passwords.
@@ -47,7 +47,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Major Backend Update: V11.20.2025.02</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! We have made a major change the backend of the site. Previously we were using the "Create React App" package which had depricated packages that
@@ -57,7 +57,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Frontend Update: V11.20.2025.01</Title3>}/>
                 <p>
                     <Text>
                         <strong>Change:</strong> The "post" page shows real data from a post rather than dummy data.<br/>
@@ -66,7 +66,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Backend Update: V11.18.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Backend Update: V11.18.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! I've been working behind the scenes to get posting your service opportunities onto our system. 
@@ -79,7 +79,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Minor Update: V11.17.2025.03</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Update: V11.17.2025.03</Title3>}/>
                 <p>
                     <Text>
                         <strong>Fix:</strong> Height of the page doesn't adjust to the size of the display.<br/>
