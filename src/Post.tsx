@@ -148,13 +148,15 @@ export default function Post() {
       <div style={{width: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Title1>{post.title}</Title1>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <Button 
-            appearance="primary" 
-            onClick={handleJoin}
-            disabled={isFull || joining}
-          >
-            {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
-          </Button>
+          {!hasJoined && (
+            <Button 
+              appearance="primary" 
+              onClick={handleJoin}
+              disabled={isFull || joining}
+            >
+              {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
+            </Button>
+          )}
           
           {hasJoined && (
             <Button
