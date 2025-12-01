@@ -7,11 +7,13 @@ import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogC
   MenuItemLink} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
-import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular } from "@fluentui/react-icons";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular } from "@fluentui/react-icons";
 
 import { useSession } from "./lib/auth-client";
 import { downloadAttendanceSheet } from './utils/attendanceSheet';
 import { useNavigate } from "react-router-dom";
+
+import CalendarExport from "./components/CalendarExport";
 
 interface PostData {
   id: number;
@@ -53,6 +55,9 @@ function YourPosts() {
   const [activeTab, setActiveTab] = React.useState<'created' | 'saved' | 'joined'>('created');
 
   const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
+
+  const [showCalendarExport, setShowCalendarExport] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
 
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
@@ -458,10 +463,20 @@ function YourPosts() {
                     <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
                     <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                    <TableCell>
-                      <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
-                        View
-                      </Button>
+                    <TableCell role="gridcell">
+                      <TableCellLayout>
+                        <Menu>
+                          <MenuTrigger>
+                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                          </MenuTrigger>
+                          <MenuPopover>
+                            <MenuList>
+                              <MenuItem icon={<CalendarAddRegular />}>Add to Calendar</MenuItem>
+                              <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                            </MenuList>
+                          </MenuPopover>
+                        </Menu>
+                      </TableCellLayout>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -600,6 +615,24 @@ function YourPosts() {
           </DialogBody>
         </DialogSurface>
       </Dialog>
+
+      {selectedEvent && (
+        <CalendarExport
+          open={showCalendarExport}
+          onClose={() => {
+            setShowCalendarExport(false);
+            setSelectedEvent(null);
+          }}
+          event={{
+            title: selectedEvent.title,
+            description: selectedEvent.description,
+            location: selectedEvent.location,
+            startDateTime: selectedEvent.start_datetime,
+            endDateTime: selectedEvent.end_datetime,
+            organizerName: selectedEvent.user_name,
+          }}
+        />
+      )}
     </div>
   );
 }

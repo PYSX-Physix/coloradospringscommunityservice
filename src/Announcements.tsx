@@ -10,7 +10,9 @@ export default function Announcements()
                 <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.29.2025.01</Title3>}/>
                 <p>
                     <Text>
-                        Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.<br/>
+                        Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.
+                        This will also give credit to people who actually deserve the credit. 
+                        <br/>
                         Here are the new features added in this update:<br/>
                         <strong>Addition:</strong> Event organizers can now mark attendees as "attended" or "no-show".<br/>
                         <strong>Addition:</strong> Attendees can view their attendance status for events they signed up for.<br/>
