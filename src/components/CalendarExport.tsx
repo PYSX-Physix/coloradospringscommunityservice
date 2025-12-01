@@ -12,7 +12,7 @@ import {
   getGoogleCalendarUrl,
   getOutlookCalendarUrl,
   getYahooCalendarUrl
-} from "../utils/CalendarExport";
+} from "../utils/CalendarExports";
 
 interface CalendarExportProps {
   open: boolean;
