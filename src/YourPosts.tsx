@@ -471,7 +471,7 @@ function YourPosts() {
                           </MenuTrigger>
                           <MenuPopover>
                             <MenuList>
-                              <MenuItem icon={<CalendarAddRegular />}>Add to Calendar</MenuItem>
+                              <MenuItem icon={<CalendarAddRegular />} onClick={() => setShowCalendarExport(true)}>Add to Calendar</MenuItem>
                               <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
                             </MenuList>
                           </MenuPopover>
