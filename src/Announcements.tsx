@@ -15,11 +15,11 @@ export default function Announcements()
                         <br/>
                         Here are the new features added in this update:<br/>
                         <strong>Addition:</strong> Event organizers can now mark attendees as "attended" or "no-show".<br/>
-                        <strong>Addition:</strong> Attendees can view their attendance status for events they signed up for.<br/>
+                        <strong>Addition:</strong> Attendees can view their attendance status for events they signed up for under their profile page.<br/>
                         <strong>Fix:</strong> Resolved minor bugs related to event sign-up and attendance tracking.<br/>
                         <strong>Addition:</strong> Event organizers can print attendance reports for their events.<br/>
                         <strong>Change:</strong> Improved the user interface for event sign-up and attendance tracking.<br/>
-                        <strong>Work-In-Progress:</strong> We're working on adding calendar events so you can easily add your signed-up events to your personal calendar.<br/>
+                        <strong>Addition:</strong> We're working on adding calendar events so you can easily add your signed-up events to your personal calendar (Outlook, Google, Yahoo, etc.).<br/>
                         <strong>Work-In-Progress:</strong> We're also working on email notifications to remind you of upcoming events you've signed up for.<br/>
                         <br/>
                         We hope these new features enhance your experience on our platform. As always, thank you for being part of our community! 
