@@ -22,14 +22,13 @@ import {
   Menu,
   MenuItem,
   NavSectionHeader,
-  MessageBar,
-  MessageBarTitle,
-  MessageBarBody,
   NavCategory,
   NavCategoryItem,
   NavSubItem,
   NavSubItemGroup,
-  MenuDivider
+  MenuDivider,
+  Tooltip,
+  Hamburger
 } from "@fluentui/react-components";
 
 import {
@@ -48,6 +47,7 @@ import {
 import Post from './Post';
 import Announcements from './Announcements';
 import { HelpHome } from './Help';
+import { useState } from 'react';
 
 const ANNOUCEMENTS = '0'
 const POSTSMENU = '1';
@@ -62,6 +62,7 @@ const PROFILE = '9'
 const HELPHOME = '10'
 
 function App() {
+  const [ isOpen, setIsOpen ] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
@@ -91,11 +92,14 @@ function App() {
         <NavDrawer
           className="nav"
           type="inline"
-          open={true}
+          open={isOpen}
           multiple={true}
           selectedValue={selectedValue}
         >
           <NavDrawerHeader>
+            <Tooltip content="Close navigation" relationship='label'>
+              <Hamburger onClick={() => setIsOpen(!isOpen)}/>
+            </Tooltip>
             <Menu>
               <MenuTrigger disableButtonEnhancement>
                 <AppItem icon={<Person32Color />} as="a">
@@ -157,12 +161,9 @@ function App() {
         </NavDrawer>
 
         <div className="content" style={{width: '100%'}}>
-          <MessageBar intent='warning'>
-            <MessageBarBody>
-              <MessageBarTitle>Warning:</MessageBarTitle>
-              This application is in development and not a complete product. Expect rapid changes since this application is in prototyping. Changes may lead to unexpected bugs and issues because this application is unstable.
-            </MessageBarBody>
-          </MessageBar>
+          <Tooltip content={"Toggle Nav"} relationship='label'>
+            <Hamburger onClick={() => setIsOpen(!isOpen)}/>
+          </Tooltip>
           <Routes>
             <Route path='/auth' element={<SignIn/>}/>
             <Route path="/" element={<Posts />} />
