@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Input, Field, Title1, Text, Divider, Checkbox } from "@fluentui/react-components";
+import { Button, Input, Field, Title1, Text, Divider, Checkbox, Link } from "@fluentui/react-components";
 import { signIn, signUp } from "../lib/auth-client";
 import { useNavigate } from "react-router-dom";
 
@@ -90,7 +90,7 @@ export default function SignIn() {
 
           
           {isSignUp && (
-              <Checkbox style={{ marginBottom: '24px'}} label={"I agree to the Terms of Service and Privacy Policy"} required/>
+              <Checkbox style={{ marginBottom: '24px'}} label={"I agree to the and Privacy Policy" + <Link href='/policies/privacy-policy'>Privacy Policy</Link> + "and" + <Link href='/policies/terms-of-service'>Terms of Service</Link>} required/>
           )}
 
           {error && (
