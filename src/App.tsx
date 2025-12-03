@@ -161,9 +161,11 @@ function App() {
         </NavDrawer>
 
         <div className="content" style={{width: '100%'}}>
-          <Tooltip content={"Toggle Nav"} relationship='label'>
-            <Hamburger onClick={() => setIsOpen(!isOpen)}/>
-          </Tooltip>
+          { !isOpen && (
+            <Tooltip content={"Toggle Nav"} relationship='label'>
+              <Hamburger onClick={() => setIsOpen(!isOpen)}/>
+            </Tooltip>
+          )}
           <Routes>
             <Route path='/auth' element={<SignIn/>}/>
             <Route path="/" element={<Posts />} />
