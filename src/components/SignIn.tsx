@@ -90,7 +90,18 @@ export default function SignIn() {
 
           
           {isSignUp && (
-              <Checkbox style={{ marginBottom: '24px'}} label={"I agree to the and Privacy Policy" + <Link href='/policies/privacy-policy'>Privacy Policy</Link> + "and" + <Link href='/policies/terms-of-service'>Terms of Service</Link>} required/>
+            <Checkbox
+              style={{ marginBottom: '24px' }}
+              required
+              label={
+                <span>
+                  I agree to the {" "}
+                  <Link href="/policies/privacy-policy">Privacy Policy</Link>
+                  {" "}and{" "}
+                  <Link href="/policies/terms-of-service">Terms of Service</Link>
+                </span>
+              }
+            />
           )}
 
           {error && (
