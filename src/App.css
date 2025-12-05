@@ -1,5 +1,4 @@
-#root {
-  margin: 0px;
+.App {
   height: 100vh;
   overflow: hidden;
 }
@@ -7,33 +6,12 @@
 .root {
   display: flex;
   height: 100vh;
-  text-align: left;
   overflow: hidden;
 }
 
 .content {
-  margin: 16px;
-  overflow-y: auto;
-  overflow-x: hidden;
   flex: 1;
-  height: calc(100vh - 32px); /* Account for margin */
-  width: 100%;
-}
-
-.content::-webkit-scrollbar {
-  width: 12px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: #2d2d2d;
-  border-radius: 5px;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 5px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
