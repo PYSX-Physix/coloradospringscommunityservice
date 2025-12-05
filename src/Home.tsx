@@ -159,24 +159,28 @@ function Home() {
           </NavDrawerBody>
         </NavDrawer>
 
-        <div className="content" style={{width: '100%'}}>
-          { !isOpen && (
-            <Tooltip content={"Toggle Nav"} relationship='label'>
-              <Hamburger onClick={() => setIsOpen(!isOpen)}/>
-            </Tooltip>
-          )}
-          <Routes>
-            <Route path="/" element={<Posts />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/saved/my-posts" element={<YourPosts />} />
-            <Route path="/about" element={<About/>}/>
-            <Route path='/post' element={<Post/>}/>
-            <Route path='/announcements' element={<Announcements/>}/>
-            <Route path='/policies/privacy-policy' element={<Privacy/>}/>
-            <Route path='/policies/terms-of-service' element={<Terms/>}/>
-            <Route path='/profile' element={<Profile/>}/>
-            <Route path='/help' element={<HelpHome/>}/>
-          </Routes>
+        <div className="content">
+            {!isOpen && (
+                <div className="hamburger-container">
+                <Tooltip content={"Open navigation"} relationship='label'>
+                    <Hamburger onClick={() => setIsOpen(!isOpen)}/>
+                </Tooltip>
+                </div>
+            )}
+            <div className="content-scroll">
+                <Routes>
+                <Route path="/" element={<Posts />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/saved/my-posts" element={<YourPosts />} />
+                <Route path="/about" element={<About/>}/>
+                <Route path='/post' element={<Post/>}/>
+                <Route path='/announcements' element={<Announcements/>}/>
+                <Route path='/policies/privacy-policy' element={<Privacy/>}/>
+                <Route path='/policies/terms-of-service' element={<Terms/>}/>
+                <Route path='/profile' element={<Profile/>}/>
+                <Route path='/help' element={<HelpHome/>}/>
+                </Routes>
+            </div>
         </div>
       </div>
     </div>
