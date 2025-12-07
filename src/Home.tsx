@@ -176,8 +176,8 @@ function Home() {
             </NavCategory>
             <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
           </NavDrawerBody>
-          <NavDrawerFooter>
-            <Tag shape='circular' appearance='brand'>Beta</Tag>
+          <NavDrawerFooter style={{marginBottom: '6px'}}>
+            <Tag shape='circular' appearance='brand'>App in beta</Tag>
           </NavDrawerFooter>
         </NavDrawer>
 
