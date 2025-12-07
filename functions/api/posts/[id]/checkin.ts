@@ -1,3 +1,5 @@
+import { createNotification } from '../../notifications/send';
+
 interface Env {
   DB: D1Database;
 }
@@ -92,6 +94,15 @@ export async function onRequestPost(context: {
         id, 
         participantUserId
       ).run();
+
+      await createNotification(
+        context.env.DB,
+        participantUserId,
+        'checked_in',
+        'You have been checked in',
+        `You have been checked in for the event "${post.title}".`,
+        `/post?id=${id}`
+      );
     } else {
       // If unmarking attendance, remove event details from history
       await context.env.DB.prepare(
