@@ -102,9 +102,6 @@ function Home() {
             </Tooltip>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
-              {/* Add notification panel here */}
-              {session && <NotificationPanel />}
-              
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
                   <AppItem icon={<Person32Color />} as="a">
@@ -126,6 +123,8 @@ function Home() {
                   </MenuList>
                 </MenuPopover>
               </Menu>
+
+              {session && <NotificationPanel />}
             </div>
           </NavDrawerHeader>
 
