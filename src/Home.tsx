@@ -124,7 +124,7 @@ function Home() {
                 </MenuPopover>
               </Menu>
 
-              {session && <div style={{marginLeft: 'auto'}}><NotificationPanel /></div>}
+              {session && <div style={{marginLeft: 'auto', marginTop: 'auto', marginBottom: 'auto'}}><NotificationPanel /></div>}
             </div>
           </NavDrawerHeader>
 
