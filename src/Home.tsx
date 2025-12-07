@@ -101,7 +101,7 @@ function Home() {
               <Hamburger onClick={() => setIsOpen(!isOpen)}/>
             </Tooltip>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', gap: '8px'}}>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
                   <AppItem icon={<Person32Color />} as="a">
