@@ -7,7 +7,7 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V11.29.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V12.07.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Here are the new features added in this update:<br/>
