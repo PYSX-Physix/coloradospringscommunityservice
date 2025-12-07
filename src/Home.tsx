@@ -28,7 +28,9 @@ import {
   NavSubItemGroup,
   MenuDivider,
   Tooltip,
-  Hamburger
+  Hamburger,
+  NavDrawerFooter,
+  Tag
 } from "@fluentui/react-components";
 
 import {
@@ -174,6 +176,9 @@ function Home() {
             </NavCategory>
             <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
           </NavDrawerBody>
+          <NavDrawerFooter style={{marginBottom: '6px'}}>
+            <Tag shape='circular' appearance='brand'>App in beta</Tag>
+          </NavDrawerFooter>
         </NavDrawer>
 
         <div className="content">
