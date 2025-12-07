@@ -47,6 +47,7 @@ import Post from './Post';
 import Announcements from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
+import NotificationPanel from './components/NotificationPanel';
 
 const ANNOUCEMENTS = '0'
 const POSTSMENU = '1';
@@ -99,27 +100,33 @@ function Home() {
             <Tooltip content="Close navigation" relationship='label'>
               <Hamburger onClick={() => setIsOpen(!isOpen)}/>
             </Tooltip>
-            <Menu>
-              <MenuTrigger disableButtonEnhancement>
-                <AppItem icon={<Person32Color />} as="a">
-                  {session?.user?.name || session?.user?.email || "Guest"}
-                </AppItem>
-              </MenuTrigger>
-              <MenuPopover>
-                <MenuList>
-                  {session ? (
-                    <>
-                      <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                      <MenuItemLink icon={<SettingsColor/>} href='/settings'>Settings</MenuItemLink>
-                      <MenuDivider/>
-                      <MenuItem icon={<ArrowExitRegular/>} onClick={handleSignOut}>Sign Out</MenuItem>
-                    </>
-                  ) : (
-                    <MenuItemLink href='/auth'>Sign In</MenuItemLink>
-                  )}
-                </MenuList>
-              </MenuPopover>
-            </Menu>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+              {/* Add notification panel here */}
+              {session && <NotificationPanel />}
+              
+              <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                  <AppItem icon={<Person32Color />} as="a">
+                    {session?.user?.name || session?.user?.email || "Guest"}
+                  </AppItem>
+                </MenuTrigger>
+                <MenuPopover>
+                  <MenuList>
+                    {session ? (
+                      <>
+                        <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
+                        <MenuItemLink icon={<SettingsColor/>} href='/settings'>Settings</MenuItemLink>
+                        <MenuDivider/>
+                        <MenuItem icon={<ArrowExitRegular/>} onClick={handleSignOut}>Sign Out</MenuItem>
+                      </>
+                    ) : (
+                      <MenuItemLink href='/auth'>Sign In</MenuItemLink>
+                    )}
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
+            </div>
           </NavDrawerHeader>
 
           <NavDrawerBody>
