@@ -104,7 +104,7 @@ export default function NotificationPanel() {
         <Button
           appearance="subtle"
           icon={<Alert20Regular />}
-          style={{ position: 'relative' }}
+          style={{ position: 'relative', minWidth: '32px' }}
         >
           {unreadCount > 0 && (
             <Badge
