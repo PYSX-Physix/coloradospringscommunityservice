@@ -97,9 +97,9 @@ function Home() {
           selectedValue={selectedValue}
         >
           <NavDrawerHeader>
-            <Tooltip content="Close navigation" relationship='label'>
+            {window.innerWidth <= 500 && <Tooltip content="Close navigation" relationship='label'>
               <Hamburger onClick={() => setIsOpen(!isOpen)}/>
-            </Tooltip>
+            </Tooltip>}
             
             <div style={{ display: 'flex', gap: '8px'}}>
               <Menu>
