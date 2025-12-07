@@ -7,7 +7,22 @@ export default function Announcements()
         <div>
             <Title1>Announcements</Title1>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Content Update: V11.29.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V11.29.2025.01</Title3>}/>
+                <p>
+                    <Text>
+                        Here are the new features added in this update:<br/>
+                        <strong>Addition:</strong> Add new notifications feature. This will be used for reminders about events, telling you that you were marked present, and moderation notifications.<br/>
+                        <strong>Change:</strong> The hamburger icons will now only show for users that have a device displaying the site with 500 pixels or less.<br/>
+                        <strong>Issue:</strong> Aware of an issue where the buttons for signing up for events are clipped on smaller displays. A fix is being worked on.<br/>
+                        <br/>
+                        We are still working on adding email notifications to remind you of upcoming events you've signed up for. 
+                        We're also trying to add email verification for less botted accounts, any accounts that aren't verified at the time of the release of the feature will be sent a notification about the issue. 
+                        If this notification is ignored the account will be disabled to avoid inactive/botted accounts. Stay tuned for more updates!
+                    </Text>
+                </p>
+            </Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Content Update: V11.29.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.
@@ -27,7 +42,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Major Update: V11.25.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Update: V11.25.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! I'm so excited to finally say this is the first version of the app that is in beta! You're able to sign up with email and passwords.
@@ -47,7 +62,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Major Backend Update: V11.20.2025.02</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! We have made a major change the backend of the site. Previously we were using the "Create React App" package which had depricated packages that
@@ -57,7 +72,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Frontend Update: V11.20.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
                 <p>
                     <Text>
                         <strong>Change:</strong> The "post" page shows real data from a post rather than dummy data.<br/>
@@ -66,7 +81,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Backend Update: V11.18.2025.01</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Backend Update: V11.18.2025.01</Title3>}/>
                 <p>
                     <Text>
                         Hey everyone! I've been working behind the scenes to get posting your service opportunities onto our system. 
@@ -79,7 +94,7 @@ export default function Announcements()
                 </p>
             </Card>
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Update: V11.17.2025.03</Title3>}/>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Minor Update: V11.17.2025.03</Title3>}/>
                 <p>
                     <Text>
                         <strong>Fix:</strong> Height of the page doesn't adjust to the size of the display.<br/>
