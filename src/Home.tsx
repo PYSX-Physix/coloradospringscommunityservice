@@ -1,3 +1,4 @@
+import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
@@ -63,9 +64,19 @@ const HELPHOME = '10'
 
 function Home() {
   const [ isOpen, setIsOpen ] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 500);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -97,7 +108,7 @@ function Home() {
           selectedValue={selectedValue}
         >
           <NavDrawerHeader>
-            {window.innerWidth <= 500 && <Tooltip content="Close navigation" relationship='label'>
+            {isMobile && <Tooltip content="Close navigation" relationship='label'>
               <Hamburger onClick={() => setIsOpen(!isOpen)}/>
             </Tooltip>}
             
