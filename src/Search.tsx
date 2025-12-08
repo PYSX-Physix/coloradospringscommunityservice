@@ -161,18 +161,6 @@ function Search() {
           </div>
         </>
       )}
-
-      {!loading && !searched && (
-        <div style={{ textAlign: 'center', marginTop: '64px' }}>
-          <Search20Regular style={{ fontSize: '48px', color: '#666', marginBottom: '16px' }} />
-          <Text size={400} style={{ display: 'block', color: '#666' }}>
-            Start typing to search for events
-          </Text>
-          <Text size={200} style={{ display: 'block', marginTop: '8px', color: '#999' }}>
-            Search by event title, description, location, or organizer name
-          </Text>
-        </div>
-      )}
     </div>
   );
 }
