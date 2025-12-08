@@ -1,8 +1,9 @@
 import React from 'react';
 import { 
   Divider, SearchBox, Title1, Text, Card, CardPreview,
-  CardHeader, CardFooter, Button, Spinner, Badge,
-  makeStyles
+  CardHeader, CardFooter, Button, Spinner,
+  makeStyles,
+  Title3
 } from '@fluentui/react-components';
 import { Search20Regular } from '@fluentui/react-icons';
 
@@ -122,20 +123,21 @@ function Search() {
                 <CardHeader
                   header={
                     <div>
-                      <Text weight="semibold">{post.title}</Text>
+                      <Title3>{post.title}</Title3>
                       <div style={{ marginTop: '4px' }}>
-                        <Badge appearance="outline" size="small">
-                          {formatDateTime(post.start_datetime)}
-                        </Badge>
                       </div>
                     </div>
                   }
                   description={
-                    <Text size={200}>
-                      {post.description.length > 100 
-                        ? post.description.substring(0, 100) + '...' 
-                        : post.description}
-                    </Text>
+                    <div>
+                      <Text>
+                        {post.description.length > 100 
+                          ? post.description.substring(0, 100) + '...' 
+                          : post.description}
+                      </Text>
+                      
+                      <Text>{formatDateTime(post.start_datetime)}</Text>
+                    </div>
                   }
                 />
                 <CardFooter>
