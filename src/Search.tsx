@@ -122,19 +122,14 @@ function Search() {
                 </CardPreview>
                 <CardHeader
                   header={
-                    <div>
-                      <Title3>{post.title}</Title3>
-                    </div>
+                    <Title3>{post.title}</Title3>
                   }
                   description={
-                    <div>
-                      <Text>
-                        {post.description.length > 100 
-                          ? post.description.substring(0, 100) + '...' 
-                          : post.description}
-                      </Text>
-                      
-                    </div>
+                    <Text>
+                      {post.description.length > 100 
+                        ? post.description.substring(0, 100) + '...' 
+                        : post.description}
+                    </Text>
                   }
                 />
                 <CardFooter>
