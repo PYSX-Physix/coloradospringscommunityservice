@@ -5,7 +5,7 @@ import {
   makeStyles,
   Title3
 } from '@fluentui/react-components';
-import { Search20Regular } from '@fluentui/react-icons';
+import { Calendar20Color, LocationRipple20Color, PeopleCommunity20Color, Person20Color, Search20Regular } from '@fluentui/react-icons';
 
 const cardStyles = makeStyles({
   card: {
@@ -124,8 +124,6 @@ function Search() {
                   header={
                     <div>
                       <Title3>{post.title}</Title3>
-                      <div style={{ marginTop: '4px' }}>
-                      </div>
                     </div>
                   }
                   description={
@@ -136,20 +134,22 @@ function Search() {
                           : post.description}
                       </Text>
                       
-                      <Text>{formatDateTime(post.start_datetime)}</Text>
                     </div>
                   }
                 />
                 <CardFooter>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
                     <Text size={200}>
-                      📍 {post.location}
+                      <Calendar20Color/> {formatDateTime(post.start_datetime)}
                     </Text>
                     <Text size={200}>
-                      👤 {post.user_name}
+                      <LocationRipple20Color/> {post.location}
                     </Text>
                     <Text size={200}>
-                      👥 {post.current_participants}/{post.max_participants} participants
+                      <Person20Color/> {post.user_name}
+                    </Text>
+                    <Text size={200}>
+                      <PeopleCommunity20Color/> {post.current_participants}/{post.max_participants} participants
                     </Text>
                     <Button 
                       appearance="primary" 
