@@ -145,9 +145,9 @@ export default function Post() {
 
   return (
     <div>
-      <div style={{width: '100vh', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+      <div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <Title1>{post.title}</Title1>
-        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', marginBottom: 'auto', marginLeft: 'auto' }}>
           {!hasJoined && (
             <Button 
               appearance="primary" 

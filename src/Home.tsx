@@ -150,7 +150,7 @@ function Home() {
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
-            <NavItem disabled as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
+            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
               Search
             </NavItem>
             <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>

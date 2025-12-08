@@ -170,7 +170,7 @@ function PostCard({ post }: { post: PostData }) {
           description={<Text>{post.description}</Text>}
         />
         <CardFooter>
-          <Button appearance="primary" as='a' href={`/post?id=${post.id}`}>Learn More</Button>
+          <Button appearance="primary" as='a' href={`/post?id=${post.id}`}>View Event</Button>
           <Menu>
             <MenuTrigger>
               <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
