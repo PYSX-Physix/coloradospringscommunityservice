@@ -14,6 +14,7 @@ import { downloadAttendanceSheet } from './utils/attendanceSheet';
 import { useNavigate } from "react-router-dom";
 
 import CalendarExport from "./components/CalendarExport";
+import { AddressAutocomplete } from "./components/AddressAutoComplete";
 
 interface PostData {
   id: number;
@@ -510,14 +511,7 @@ function YourPosts() {
                     required 
                   />
                 </Field>
-                <Field label={"Location:"} required>
-                  <Input 
-                    placeholder="ex: 1234, Main Street Rd" 
-                    value={location} 
-                    onChange={(_, data) => setLocation(data.value)} 
-                    required
-                  />
-                </Field>
+                <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
                 <div style={{display: "flex", flexDirection: 'row'}}>
                   <Field label={"Start Day"} required>
                     <DatePicker 
