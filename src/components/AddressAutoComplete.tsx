@@ -135,7 +135,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
               left: 0,
               right: 0,
               backgroundColor: 'white',
-              border: '1px solid #ccc',
+              border: '1px solid #242424',
               borderRadius: '4px',
               marginTop: '4px',
               maxHeight: '250px',
@@ -151,14 +151,14 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
                 style={{
                   padding: '10px 12px',
                   cursor: 'pointer',
-                  borderBottom: '1px solid #f0f0f0',
+                  borderBottom: '1px solid #242424',
                   transition: 'background-color 0.2s'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f5f5f5';
+                  e.currentTarget.style.backgroundColor = '#242424';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.backgroundColor = 'darkGray';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
