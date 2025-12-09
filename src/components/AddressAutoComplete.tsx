@@ -116,9 +116,8 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
   return (
     <Field label={label} required={required}>
-      <div>
+      <div style={{ position: 'relative', width: '100%' }}>
         <Input
-          style={{width: '100%'}}
           ref={inputRef}
           placeholder={placeholder}
           value={value}
@@ -159,7 +158,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
                   e.currentTarget.style.backgroundColor = '#242424';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'darkGray';
+                  e.currentTarget.style.backgroundColor = 'white';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
