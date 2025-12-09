@@ -116,8 +116,9 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
   return (
     <Field label={label} required={required}>
-      <div style={{ position: 'relative', width: '100%' }}>
+      <div style={{ position: 'relative' }}>
         <Input
+          style={{width: '100%'}}
           ref={inputRef}
           placeholder={placeholder}
           value={value}
