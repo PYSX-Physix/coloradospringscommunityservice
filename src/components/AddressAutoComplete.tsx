@@ -48,19 +48,17 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
     
     try {
       // Using Nominatim (OpenStreetMap) - Free, no API key needed
-      // Please respect their usage policy: max 1 request/second
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?` +
         `format=json&` +
         `q=${encodeURIComponent(input)}&` +
         `addressdetails=1&` +
         `limit=5&` +
-        `countrycodes=us`, // Change to your country code
+        `countrycodes=us`,
         {
           headers: {
             'Accept': 'application/json',
-            // Nominatim requires a user agent
-            'User-Agent': 'CommunityServiceApp/1.0'
+            'User-Agent': 'COSpringsCS/1.0'
           }
         }
       );
