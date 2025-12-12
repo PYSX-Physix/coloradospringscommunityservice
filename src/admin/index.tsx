@@ -280,7 +280,7 @@ export default function AdminPanel() {
                     <TableCell>
                       <div>
                         <Text weight="semibold">{report.reporter_name}</Text>
-                        <Text size={200} style={{ display: 'block', color: '#666' }}>
+                        <Text size={200}>
                           {report.reporter_email}
                         </Text>
                       </div>
@@ -288,7 +288,7 @@ export default function AdminPanel() {
                     <TableCell>
                       <div>
                         <Text weight="semibold">{report.reported_user_name}</Text>
-                        <Text size={200} style={{ display: 'block', color: '#666' }}>
+                        <Text size={200}>
                           {report.reported_user_email}
                         </Text>
                       </div>
