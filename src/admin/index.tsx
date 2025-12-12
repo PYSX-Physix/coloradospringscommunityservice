@@ -354,7 +354,7 @@ export default function AdminPanel() {
             <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {selectedReport && (
                 <>
-                  <div style={{ padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+                  <div>
                     <Text weight="semibold" style={{ display: 'block', marginBottom: '8px' }}>
                       Report Details
                     </Text>
@@ -375,13 +375,7 @@ export default function AdminPanel() {
                   </div>
 
                   <Field label="Description">
-                    <div style={{ 
-                      padding: '12px', 
-                      border: '1px solid #ddd', 
-                      borderRadius: '4px',
-                      backgroundColor: '#fff',
-                      minHeight: '60px'
-                    }}>
+                    <div>
                       <Text>{selectedReport.description}</Text>
                     </div>
                   </Field>
