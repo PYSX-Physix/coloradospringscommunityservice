@@ -48,19 +48,17 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
     
     try {
       // Using Nominatim (OpenStreetMap) - Free, no API key needed
-      // Please respect their usage policy: max 1 request/second
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?` +
         `format=json&` +
         `q=${encodeURIComponent(input)}&` +
         `addressdetails=1&` +
         `limit=5&` +
-        `countrycodes=us`, // Change to your country code
+        `countrycodes=us`,
         {
           headers: {
             'Accept': 'application/json',
-            // Nominatim requires a user agent
-            'User-Agent': 'CommunityServiceApp/1.0'
+            'User-Agent': 'COSpringsCS/1.0'
           }
         }
       );
@@ -135,7 +133,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
               top: '100%',
               left: 0,
               right: 0,
-              backgroundColor: 'white',
+              backgroundColor: '#242424',
               border: '1px solid #242424',
               borderRadius: '4px',
               marginTop: '4px',
@@ -159,7 +157,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
                   e.currentTarget.style.backgroundColor = '#242424';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.backgroundColor = '#242424';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
