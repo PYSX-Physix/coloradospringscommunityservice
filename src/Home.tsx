@@ -101,7 +101,7 @@ function Home() {
   else if (location.pathname === '/profile') selectedValue = PROFILE;
   else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
-  else selectedValue = '50'
+  else selectedValue = '50';
 
   return (
     <div className="App">
