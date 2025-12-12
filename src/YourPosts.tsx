@@ -100,7 +100,7 @@ function YourPosts() {
     }
   };
 
-  // Fetch Posts function (This should get only the users created events and not anyone elses)
+  // Fetch Posts function
   const fetchPosts = React.useCallback(async () => {
     try {
       setLoading(true);

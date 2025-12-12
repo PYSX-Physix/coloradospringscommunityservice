@@ -1,10 +1,11 @@
-import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, Button, Spinner } from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular } from "@fluentui/react-icons";
+import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem} from "@fluentui/react-components";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, PersonProhibitedRegular, ShieldErrorRegular } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
 import { useSession } from "./lib/auth-client";
 import CalendarExport from "./components/CalendarExport";
+import { ReportUser } from "./components/ReportUser";
 
 interface PostData {
   id: number;
@@ -43,6 +44,10 @@ export default function Post() {
   
   const [showCalendarExport, setShowCalendarExport] = React.useState(false);
   const [hasJoined, setHasJoined] = React.useState(false);
+
+  const [showReportDialog, setShowReportDialog] = React.useState(false);
+  const [reportedUserId, setReportedUserId] = React.useState<string | null>(null);
+  const [reportedUserName, setReportedUserName] = React.useState("");
 
   const { data: session } = useSession();
 
@@ -228,9 +233,49 @@ export default function Post() {
               {participants.map((participant) => (
                 <ListItem key={participant.user_id}>
                   <Persona name={participant.user_name} style={{ marginTop: '16px' }} />
+                  
+                  {/* Only show menu if it's not the current user */}
+                  {participant.user_id !== session?.user.id && (
+                    <Menu>
+                      <MenuTrigger>
+                        <Button appearance="subtle" icon={<MoreHorizontalRegular/>}/>
+                      </MenuTrigger>
+                      <MenuPopover>
+                        <MenuList>
+                          <MenuItem 
+                            icon={<ShieldErrorRegular/>}
+                            onClick={() => {
+                              setReportedUserId(participant.user_id);
+                              setReportedUserName(participant.user_name);
+                              setShowReportDialog(true);
+                            }}
+                          >
+                            Report User
+                          </MenuItem>
+                          <MenuItem icon={<PersonProhibitedRegular/>}>
+                            Block User
+                          </MenuItem>
+                        </MenuList>
+                      </MenuPopover>
+                    </Menu>
+                  )}
                 </ListItem>
               ))}
             </List>
+          )}
+          {reportedUserId && (
+            <ReportUser
+              open={showReportDialog}
+              onClose={() => {
+                setShowReportDialog(false);
+                setReportedUserId(null);
+                setReportedUserName("");
+              }}
+              reportedUserId={reportedUserId}
+              reportedUserName={reportedUserName}
+              postId={post?.id}
+              postTitle={post?.title}
+            />
           )}
         </div>
       </div>

@@ -205,8 +205,7 @@ function PostCard({ post }: { post: PostData }) {
                   <RadioGroup 
                     value={reportCategory}
                     onChange={(_, data) => setReportCategory(data.value)}
-                    required
-                  >
+                    required>
                     <Radio value="spam" label="Spam" />
                     <Radio value="offensive" label="Offensive or Harmful Content" />
                     <Radio value="misinformation" label="Misinformation" />
