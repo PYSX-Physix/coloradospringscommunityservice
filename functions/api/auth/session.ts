@@ -45,7 +45,8 @@ export async function onRequestGet(context: {
         user: {
           id: result.user_id,
           email: result.email,
-          name: result.name
+          name: result.name,
+          isAdmin: result.isAdmin
         }
       }
     }), {
