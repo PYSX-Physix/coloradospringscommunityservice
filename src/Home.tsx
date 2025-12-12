@@ -3,6 +3,7 @@ import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
 import { Privacy, Terms } from './Policies';
+import AdminPanel from './admin';
 import About from './About'
 import Profile from './Profile';
 import { useSession, signOut } from "./lib/auth-client";
@@ -44,7 +45,7 @@ import {
   DocumentMultiple20Filled,
   MegaphoneLoud20Color,
   ArrowExitRegular,
-  QuestionCircle20Color
+  QuestionCircle20Color, Shield20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
 import Announcements from './Announcements';
@@ -63,6 +64,7 @@ const PRIVACYPOLICY = '7'
 const TERMSOFSERVICE = '8'
 const PROFILE = '9'
 const HELPHOME = '10'
+const ADMINPANEL = '11';
 
 function Home() {
   const [ isOpen, setIsOpen ] = useState(true);
@@ -70,6 +72,7 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
+  const isAdmin = session?.user && (session.user as any).isAdmin;
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -96,6 +99,7 @@ function Home() {
   else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
   else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
   else if (location.pathname === '/profile') selectedValue = PROFILE;
+  else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '50'
 
@@ -175,6 +179,15 @@ function Home() {
                   </NavSubItemGroup>
             </NavCategory>
             <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
+            {isAdmin && (
+              <>
+                <NavDivider/>
+                <NavSectionHeader>Administration</NavSectionHeader>
+                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color/>}>
+                  Admin Panel
+                </NavItem>
+              </>
+            )}
           </NavDrawerBody>
           <NavDrawerFooter style={{marginBottom: '6px'}}>
             <Tag shape='circular' appearance='brand'>App in beta</Tag>
@@ -201,6 +214,7 @@ function Home() {
                     <Route path='/policies/terms-of-service' element={<Terms/>}/>
                     <Route path='/profile' element={<Profile/>}/>
                     <Route path='/help' element={<HelpHome/>}/>
+                    <Route path="/admin" element={<AdminPanel />} />
                 </Routes>
             </div>
         </div>
