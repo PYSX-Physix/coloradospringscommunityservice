@@ -28,6 +28,7 @@ interface PostData {
   user_name: string;
   visible: number;
   created_at: string;
+  image_url?: string;
 }
 
 function YourPosts() {
@@ -47,6 +48,8 @@ function YourPosts() {
   const [endDate, setEndDate] = React.useState<Date | null>(null);
   const [endTime, setEndTime] = React.useState<Date | null>(null);
   const [participants, setParticipants] = React.useState<number>(1);
+
+  const [imageUrl, setImageUrl] = React.useState<string>("");
 
   // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
@@ -214,6 +217,7 @@ function YourPosts() {
     const newPost = { 
       title, 
       desc, 
+      imageUrl,
       location, 
       startDateTime,
       endDateTime,
@@ -238,6 +242,7 @@ function YourPosts() {
         // Reset form
         setTitle("");
         setDesc("");
+        setImageUrl("");
         setLocation("");
         setStartDate(null);
         setStartTime(null);
@@ -509,6 +514,13 @@ function YourPosts() {
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
                     required 
+                  />
+                </Field>
+                <Field label={"Image URL"}>
+                  <Input 
+                    placeholder="Optional image URL for the event" 
+                    value={imageUrl} 
+                    onChange={(_, data) => setImageUrl(data.value)}
                   />
                 </Field>
                 <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>

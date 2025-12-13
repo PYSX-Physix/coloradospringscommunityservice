@@ -180,13 +180,13 @@ function Home() {
             </NavCategory>
             <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
             {isAdmin && (
-              <div>
-                <NavDivider/>
+              <>
+              <NavDivider/>
                 <NavSectionHeader>Administration</NavSectionHeader>
                 <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color/>}>
                   Admin Panel
                 </NavItem>
-              </div>
+              </>
             )}
           </NavDrawerBody>
           <NavDrawerFooter style={{marginBottom: '6px'}}>

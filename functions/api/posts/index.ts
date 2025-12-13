@@ -28,7 +28,8 @@ export async function onRequestGet(context: { env: Env }) {
         current_participants,
         user_name,
         visible,
-        created_at
+        created_at,
+        image_url
       FROM posts 
       WHERE visible = 1
       ORDER BY start_datetime ASC`

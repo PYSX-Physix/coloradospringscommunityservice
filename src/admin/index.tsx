@@ -279,19 +279,23 @@ export default function AdminPanel() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <Text weight="semibold">{report.reporter_name}</Text>
+                        <Text weight="semibold">{report.reporter_name || 'Unknown'}</Text>
                         <Text size={200}>
-                          {report.reporter_email}
+                          {report.reporter_email || ''}
                         </Text>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div>
-                        <Text weight="semibold">{report.reported_user_name}</Text>
-                        <Text size={200}>
-                          {report.reported_user_email}
-                        </Text>
-                      </div>
+                      {report.reported_user_id ? (
+                        <div>
+                          <Text weight="semibold">{report.reported_user_name || 'Unknown'}</Text>
+                          <Text size={200}>
+                            {report.reported_user_email || ''}
+                          </Text>
+                        </div>
+                      ) : (
+                        <Badge appearance="tint">Post Only</Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       {report.post_title ? (
@@ -325,12 +329,14 @@ export default function AdminPanel() {
                             >
                               Review Report
                             </MenuItem>
-                            <MenuItem
-                              icon={<PersonRegular />}
-                              onClick={() => window.open(`/profile?user=${report.reported_user_id}`, '_blank')}
-                            >
-                              View Reported User
-                            </MenuItem>
+                            {report.reported_user_id && (
+                              <MenuItem
+                                icon={<PersonRegular />}
+                                onClick={() => window.open(`/profile?user=${report.reported_user_id}`, '_blank')}
+                              >
+                                View Reported User
+                              </MenuItem>
+                            )}
                           </MenuList>
                         </MenuPopover>
                       </Menu>
@@ -363,11 +369,22 @@ export default function AdminPanel() {
                         <strong>Category:</strong> {getCategoryLabel(selectedReport.category)}
                       </Text>
                       <Text size={200}>
-                        <strong>Reporter:</strong> {selectedReport.reporter_name}
+                        <strong>Reporter:</strong> {selectedReport.reporter_name || 'Unknown'}
                       </Text>
-                      <Text size={200}>
-                        <strong>Reported User:</strong> {selectedReport.reported_user_name}
-                      </Text>
+                      {selectedReport.reported_user_id ? (
+                        <Text size={200}>
+                          <strong>Reported User:</strong> {selectedReport.reported_user_name || 'Unknown'}
+                        </Text>
+                      ) : (
+                        <Text size={200}>
+                          <strong>Report Type:</strong> Post Report Only
+                        </Text>
+                      )}
+                      {selectedReport.post_title && (
+                        <Text size={200}>
+                          <strong>Event:</strong> {selectedReport.post_title}
+                        </Text>
+                      )}
                       <Text size={200}>
                         <strong>Date:</strong> {formatDate(selectedReport.created_at)}
                       </Text>
