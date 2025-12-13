@@ -1,4 +1,3 @@
-// Fixed functions/api/reports/index.ts
 interface Env {
   DB: D1Database;
 }
@@ -37,11 +36,45 @@ export async function onRequestPost(context: {
       });
     }
 
-    const { postId, category, details } = await context.request.json();
+    const { reportedUserId, postId, category, description } = await context.request.json();
 
     // Validation
-    if (!postId || !category) {
+    if (!reportedUserId || !category || !description) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    const reporterId = session.user_id as string;
+
+    // Cannot report yourself
+    if (reporterId === reportedUserId) {
+      return new Response(JSON.stringify({ error: 'You cannot report yourself' }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Validate description length
+    if (description.length < 10) {
+      return new Response(JSON.stringify({ error: 'Description must be at least 10 characters' }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    if (description.length > 2000) {
+      return new Response(JSON.stringify({ error: 'Description too long (max 2000 characters)' }), {
         status: 400,
         headers: { 
           'Content-Type': 'application/json',
@@ -52,11 +85,11 @@ export async function onRequestPost(context: {
 
     // Validate category
     const validCategories = [
-      'spam',
-      'offensive',
-      'misinformation',
-      'safety concerns',
-      'duplicate',
+      'inappropriate_content',
+      'spam_misleading',
+      'safety_concerns',
+      'terms_violation',
+      'noshow_cancellation',
       'other'
     ];
 
@@ -70,20 +103,18 @@ export async function onRequestPost(context: {
       });
     }
 
-    const reporterId = session.user_id as string;
-
-    // Check for duplicate reports (same reporter, same post, within 24 hours)
+    // Check for duplicate reports (same reporter, same user, within 24 hours)
     const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
     const duplicateCheck = await context.env.DB.prepare(
       `SELECT id FROM reports 
        WHERE reporter_id = ? 
-       AND post_id = ? 
+       AND reported_user_id = ? 
        AND created_at > ?`
-    ).bind(reporterId, postId, oneDayAgo).first();
+    ).bind(reporterId, reportedUserId, oneDayAgo).first();
 
     if (duplicateCheck) {
       return new Response(JSON.stringify({ 
-        error: 'You have already reported this post recently. Please wait 24 hours before reporting again.' 
+        error: 'You have already reported this user recently. Please wait 24 hours before reporting again.' 
       }), {
         status: 400,
         headers: { 
@@ -112,34 +143,6 @@ export async function onRequestPost(context: {
       });
     }
 
-    // Get post details to find the reported user
-    const post = await context.env.DB.prepare(
-      `SELECT user_id FROM posts WHERE id = ?`
-    ).bind(postId).first();
-
-    if (!post) {
-      return new Response(JSON.stringify({ error: 'Post not found' }), {
-        status: 404,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
-    }
-
-    const reportedUserId = post.user_id as string;
-
-    // Cannot report yourself
-    if (reporterId === reportedUserId) {
-      return new Response(JSON.stringify({ error: 'You cannot report your own post' }), {
-        status: 400,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
-    }
-
     // Insert the report
     const reportId = crypto.randomUUID();
     await context.env.DB.prepare(
@@ -157,24 +160,26 @@ export async function onRequestPost(context: {
       reportId,
       reporterId, 
       reportedUserId, 
-      postId, 
+      postId || null, 
       category, 
-      details || null,
+      description,
       Date.now()
     ).run();
 
     // Optional: Auto-hide content if multiple reports
-    const reportCountForPost = await context.env.DB.prepare(
-      `SELECT COUNT(*) as count FROM reports 
-       WHERE post_id = ? 
-       AND status = 'pending'`
-    ).bind(postId).first();
+    if (postId) {
+      const reportCountForPost = await context.env.DB.prepare(
+        `SELECT COUNT(*) as count FROM reports 
+         WHERE post_id = ? 
+         AND status = 'pending'`
+      ).bind(postId).first();
 
-    if (reportCountForPost && (reportCountForPost.count as number) >= 3) {
-      // Auto-hide the post after 3 reports
-      await context.env.DB.prepare(
-        `UPDATE posts SET visible = 0 WHERE id = ?`
-      ).bind(postId).run();
+      if (reportCountForPost && (reportCountForPost.count as number) >= 3) {
+        // Auto-hide the post after 3 reports
+        await context.env.DB.prepare(
+          `UPDATE posts SET visible = 0 WHERE id = ?`
+        ).bind(postId).run();
+      }
     }
 
     return new Response(JSON.stringify({ 
@@ -201,11 +206,80 @@ export async function onRequestPost(context: {
   }
 }
 
+// GET - Get user's submitted reports (optional - for user dashboard)
+export async function onRequestGet(context: {
+  request: Request;
+  env: Env;
+}) {
+  try {
+    const cookie = context.request.headers.get("Cookie");
+    const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
+
+    if (!sessionId) {
+      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+        status: 401,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    const session = await context.env.DB.prepare(
+      `SELECT user_id FROM session WHERE id = ? AND expires_at > ?`
+    ).bind(sessionId, Date.now()).first();
+
+    if (!session) {
+      return new Response(JSON.stringify({ error: 'Session expired' }), {
+        status: 401,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    const { results } = await context.env.DB.prepare(
+      `SELECT 
+        r.id,
+        r.category,
+        r.description,
+        r.status,
+        r.created_at,
+        u.name as reported_user_name,
+        p.title as post_title
+      FROM reports r
+      LEFT JOIN user u ON r.reported_user_id = u.id
+      LEFT JOIN posts p ON r.post_id = p.id
+      WHERE r.reporter_id = ?
+      ORDER BY r.created_at DESC
+      LIMIT 50`
+    ).bind(session.user_id).all();
+
+    return new Response(JSON.stringify({ reports: results }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': 'true',
+      },
+    });
+  } catch (error: any) {
+    console.error('Error fetching reports:', error);
+    return new Response(JSON.stringify({ error: 'Failed to fetch reports' }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  }
+}
+
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Cookie',
       'Access-Control-Allow-Credentials': 'true',
     },
