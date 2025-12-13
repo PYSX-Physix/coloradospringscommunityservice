@@ -77,7 +77,7 @@ function PostCard({ post }: { post: PostData }) {
   type ReportState = "closed" | "form" | "confirmation";
   const [reportState, setReportState] = React.useState<ReportState>("closed");
   const [reportCategory, setReportCategory] = React.useState("");
-  const [reportDetails, setReportDetails] = React.useState<string | null >("");
+  const [reportDetails, setReportDetails] = React.useState<string>("");
   const [isSaved, setIsSaved] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(true);
@@ -208,19 +208,20 @@ function PostCard({ post }: { post: PostData }) {
                     value={reportCategory}
                     onChange={(_, data) => setReportCategory(data.value)}
                     required>
-                    <Radio value="spam" label="Spam" />
-                    <Radio value="offensive" label="Offensive or Harmful Content" />
-                    <Radio value="misinformation" label="Misinformation" />
+                    <Radio value="spam_misleading" label="Spam or Misleading" />
+                    <Radio value="inappropriate_content" label="Offensive or Harmful Content" />
                     <Radio value="safety_concerns" label="Safety Concerns" />
-                    <Radio value="duplicate" label="Duplicate Post" />
+                    <Radio value="terms_violation" label="Violation of Terms" />
                     <Radio value="other" label="Other" />
                   </RadioGroup>
                 </Field>
-                <Field label={"Additional Details (Optional)"}>
+                <Field label={"Additional Details"} required>
                   <Textarea 
-                    placeholder='Details...'
-                    value={reportDetails ?? ""}
+                    placeholder='Please provide details about the issue...'
+                    value={reportDetails}
                     onChange={(_, data) => setReportDetails(data.value)}
+                    required
+                    minLength={10}
                   />
                 </Field>
               </DialogContent>
