@@ -133,15 +133,14 @@ function PostCard({ post }: { post: PostData }) {
     ev.preventDefault();
     
     try {
-      const res = await fetch('/api/reports/create', {
+      const res = await fetch('/api/reports', {  // Changed from '/api/reports/create' to '/api/reports'
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
           postId: post.id,
           category: reportCategory,
-          details: reportDetails || null
-          
+          description: reportDetails || 'No additional details provided',  // Changed from 'details' to 'description'
         }),
       });
 
@@ -150,7 +149,8 @@ function PostCard({ post }: { post: PostData }) {
         setReportCategory("");
         setReportDetails("");
       } else {
-        alert('Failed to submit report. Please sign in.');
+        const error = await res.json();
+        alert(error.error || 'Failed to submit report. Please sign in.');
       }
     } catch (error) {
       console.error('Report error:', error);
