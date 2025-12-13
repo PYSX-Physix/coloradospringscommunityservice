@@ -140,7 +140,7 @@ function PostCard({ post }: { post: PostData }) {
         body: JSON.stringify({
           postId: post.id,
           category: reportCategory,
-          details: reportDetails,
+          details: reportDetails || null
           
         }),
       });
@@ -163,7 +163,7 @@ function PostCard({ post }: { post: PostData }) {
       <Card className={styles.card}>
         <CardPreview>
           <img 
-            src={post.image_url || '/default-event-image.jpg'}
+            src={post.image_url}
             alt="Event" 
           />
         </CardPreview>
@@ -211,7 +211,7 @@ function PostCard({ post }: { post: PostData }) {
                     <Radio value="spam" label="Spam" />
                     <Radio value="offensive" label="Offensive or Harmful Content" />
                     <Radio value="misinformation" label="Misinformation" />
-                    <Radio value="safety concerns" label="Safety Concerns" />
+                    <Radio value="safety_concerns" label="Safety Concerns" />
                     <Radio value="duplicate" label="Duplicate Post" />
                     <Radio value="other" label="Other" />
                   </RadioGroup>
