@@ -77,7 +77,7 @@ function PostCard({ post }: { post: PostData }) {
   type ReportState = "closed" | "form" | "confirmation";
   const [reportState, setReportState] = React.useState<ReportState>("closed");
   const [reportCategory, setReportCategory] = React.useState("");
-  const [reportDetails, setReportDetails] = React.useState("");
+  const [reportDetails, setReportDetails] = React.useState<string | null >("");
   const [isSaved, setIsSaved] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(true);
@@ -141,6 +141,7 @@ function PostCard({ post }: { post: PostData }) {
           postId: post.id,
           category: reportCategory,
           details: reportDetails,
+          
         }),
       });
 
@@ -218,7 +219,7 @@ function PostCard({ post }: { post: PostData }) {
                 <Field label={"Additional Details (Optional)"}>
                   <Textarea 
                     placeholder='Details...'
-                    value={reportDetails}
+                    value={reportDetails ?? ""}
                     onChange={(_, data) => setReportDetails(data.value)}
                   />
                 </Field>
