@@ -26,7 +26,7 @@ interface PostData {
   current_participants: number;
   user_name: string;
   created_at: string;
-  image_url: string;
+  image_url?: string;
 }
 
 function Search() {
