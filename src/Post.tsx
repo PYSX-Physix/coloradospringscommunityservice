@@ -232,7 +232,7 @@ export default function Post() {
           ) : (
             <List>
               {participants.map((participant) => (
-                <ListItem key={participant.user_id}>
+                <ListItem key={participant.user_id} style={{display: 'flex', flexDirection: 'row'}}>
                   <Persona name={participant.user_name} style={{ marginTop: '16px' }} />
                   
                   {/* Only show menu if it's not the current user */}
