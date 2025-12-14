@@ -168,11 +168,11 @@ export default function NotificationPanel() {
                   }}
                   onMouseEnter={(e) => {
                     if (notification.link) {
-                      e.currentTarget.style.backgroundColor = '#e0e0e0';
+                      e.currentTarget.style.backgroundColor = '#292929ff';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = notification.read ? 'transparent' : '#f0f0f0';
+                    e.currentTarget.style.backgroundColor = notification.read ? 'transparent' : '#1f1f1fff';
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
@@ -180,7 +180,7 @@ export default function NotificationPanel() {
                       <Text weight="semibold" style={{ display: 'block', marginBottom: '4px' }}>
                         {notification.title}
                       </Text>
-                      <Text size={200} style={{ display: 'block', color: '#666', marginBottom: '4px' }}>
+                      <Text size={200} style={{ display: 'block', marginBottom: '4px' }}>
                         {notification.message}
                       </Text>
                       <Text size={100}>
