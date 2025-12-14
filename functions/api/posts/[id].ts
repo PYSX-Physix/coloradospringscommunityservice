@@ -117,7 +117,8 @@ export async function onRequestDelete(context: {
       });
     }
 
-    // BEFORE deleting the post, save event details for all participants who attended
+    // CRITICAL: Save event details for all participants who attended (attended = 1)
+    // This preserves their attendance record even after the event is deleted
     await context.env.DB.prepare(
       `UPDATE participants 
        SET event_title = ?,
@@ -125,7 +126,7 @@ export async function onRequestDelete(context: {
            event_location = ?,
            event_start_datetime = ?,
            event_end_datetime = ?
-       WHERE post_id = ? AND attended = 1 AND event_title IS NULL`
+       WHERE post_id = ? AND attended = 1`
     ).bind(
       post.title,
       post.description,
@@ -144,7 +145,9 @@ export async function onRequestDelete(context: {
 
     console.log('Post deleted');
 
-    // Clean up participants who didn't attend (they just registered)
+    // Clean up participants who didn't attend (attended = 0)
+    // These are people who only registered but never showed up
+    // Their registration record is removed completely
     await context.env.DB.prepare(
       `DELETE FROM participants WHERE post_id = ? AND attended = 0`
     ).bind(id).run();

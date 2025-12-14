@@ -75,7 +75,7 @@ export default function Profile() {
         <CardHeader header={<Title2>Event Attendance History</Title2>} />
         <div style={{ padding: '16px' }}>
           <Text style={{ marginBottom: '16px', display: 'block' }}>
-            This shows only events you have been confirmed as attending by the event organizer.
+            This shows only events you have been confirmed as attending by the event organizer. If the event is ever deleted by the organizer, it will not effect this list to keep a permanent record of your attendance.
           </Text>
           
           {loading ? (

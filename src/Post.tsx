@@ -1,5 +1,5 @@
 import { Title1, Image, Divider, Title2, Text, List, ListItem, Title3, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem} from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, PersonProhibitedRegular, ShieldErrorRegular } from "@fluentui/react-icons";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
@@ -214,7 +214,19 @@ export default function Post() {
                 <strong>Location:</strong> {post.location}
               </Text>
             </div>
-            <Persona name={post.user_name} style={{ marginTop: '16px' }} />
+            <div>
+              <Persona name={post.user_name} style={{ marginTop: '16px' }} />
+              <Menu>
+                <MenuTrigger>
+                  <Button appearance="subtle" icon={<MoreHorizontalRegular/>}/>
+                </MenuTrigger>
+                <MenuPopover>
+                  <MenuList>
+                    <MenuItem icon={<ShieldErrorRegular/>} onClick={ () => {setReportedUserId(post.user_id); setReportedUserName(post.user_name); setShowReportDialog(true);}}>Report User</MenuItem>
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
+            </div>
             
             
           </div>
@@ -253,9 +265,6 @@ export default function Post() {
                               }}
                             >
                               Report User
-                            </MenuItem>
-                            <MenuItem icon={<PersonProhibitedRegular/>}>
-                              Block User
                             </MenuItem>
                           </MenuList>
                         </MenuPopover>

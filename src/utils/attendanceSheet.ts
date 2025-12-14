@@ -29,11 +29,6 @@ export function generateAttendanceHTML(
     });
   };
 
-  const formatTimestamp = (timestamp: string | undefined) => {
-    if (!timestamp) return 'N/A';
-    return new Date(parseInt(timestamp)).toLocaleString();
-  };
-
   const attendedCount = participants.filter(p => p.attended).length;
   const attendanceRate = participants.length > 0 
     ? ((attendedCount / participants.length) * 100).toFixed(1)
@@ -106,29 +101,33 @@ export function generateAttendanceHTML(
     }
     
     .stats {
-      background: #e3f2fd;
-      padding: 15px;
-      border-radius: 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      border-radius: 8px;
       margin-bottom: 20px;
       display: flex;
       justify-content: space-around;
       text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
     .stat-box {
       flex: 1;
+      padding: 10px;
     }
     
     .stat-number {
-      font-size: 32pt;
+      font-size: 36pt;
       font-weight: bold;
-      color: #0078d4;
+      color: white;
       display: block;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
     
     .stat-label {
-      color: #666;
-      font-size: 10pt;
+      color: rgba(255,255,255,0.95);
+      font-size: 11pt;
+      font-weight: 500;
     }
     
     table {
@@ -136,6 +135,12 @@ export function generateAttendanceHTML(
       border-collapse: collapse;
       margin-top: 20px;
       font-size: 10pt;
+      page-break-inside: auto;
+    }
+    
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
     }
     
     th {
@@ -148,44 +153,45 @@ export function generateAttendanceHTML(
     }
     
     td {
-      padding: 10px 8px;
+      padding: 14px 8px;
       border: 1px solid #ddd;
+      min-height: 40px;
     }
     
     tr:nth-child(even) {
       background: #f9f9f9;
     }
     
-    tr:hover {
-      background: #f0f0f0;
-    }
-    
-    .attended-yes {
-      color: #107c10;
-      font-weight: bold;
-    }
-    
-    .attended-no {
-      color: #d13438;
+    .signature-cell {
+      width: 200px;
+      border-bottom: 2px solid #333;
+      min-height: 30px;
     }
     
     .checkbox {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border: 2px solid #333;
       display: inline-block;
-      margin-right: 5px;
+      margin-right: 8px;
       vertical-align: middle;
+      border-radius: 4px;
+      background: white;
+    }
+    
+    .checkbox.checked {
+      background: #107c10;
+      border-color: #107c10;
     }
     
     .checkbox.checked::after {
       content: '✓';
       display: block;
       text-align: center;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
-      line-height: 18px;
-      color: #107c10;
+      line-height: 20px;
+      color: white;
     }
     
     .footer {
@@ -202,6 +208,7 @@ export function generateAttendanceHTML(
       display: flex;
       justify-content: space-between;
       gap: 40px;
+      page-break-inside: avoid;
     }
     
     .signature-box {
@@ -227,6 +234,55 @@ export function generateAttendanceHTML(
     
     .print-button:hover {
       background: #106ebe;
+    }
+
+    .instructions-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fffacd;
+      border-radius: 5px;
+      border-left: 4px solid #ffd700;
+      page-break-inside: avoid;
+    }
+
+    .instructions-box h3 {
+      margin: 0 0 10px 0;
+      color: #b8860b;
+    }
+
+    .instructions-box ol {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.8;
+    }
+
+    .checklist-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      border-left: 4px solid #0078d4;
+      page-break-inside: avoid;
+    }
+
+    .checklist-box h3 {
+      margin: 0 0 10px 0;
+      color: #0078d4;
+    }
+
+    .checklist-item {
+      margin: 10px 0;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .warning-box {
+      margin-top: 15px;
+      padding: 10px;
+      background: #fff4ce;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -279,6 +335,16 @@ export function generateAttendanceHTML(
       <span class="stat-label">Attendance Rate</span>
     </div>
   </div>
+
+  <div class="instructions-box">
+    <h3>📋 Instructions for Event Day</h3>
+    <ol>
+      <li><strong>Print this sheet</strong> and bring it to your event</li>
+      <li><strong>Have participants sign</strong> in the "Signature" column when they arrive</li>
+      <li><strong>After the event</strong>, return to the platform and mark attendance online</li>
+      <li><strong>Save attendance</strong> - Only checked-in participants will receive credit</li>
+    </ol>
+  </div>
   
   <table>
     <thead>
@@ -286,23 +352,32 @@ export function generateAttendanceHTML(
         <th style="width: 50px;">#</th>
         <th>Participant Name</th>
         <th style="width: 150px;">Registered On</th>
-        <th style="width: 100px; text-align: center;">Attended</th>
-        <th style="width: 150px;">Check-In Time</th>
+        <th style="width: 200px; text-align: center;">Signature</th>
+        <th style="width: 120px; text-align: center;">Present</th>
       </tr>
     </thead>
     <tbody>
       ${participants.map((participant, index) => `
         <tr>
           <td>${index + 1}</td>
-          <td>${participant.user_name}</td>
+          <td><strong>${participant.user_name}</strong></td>
           <td>${new Date(participant.joined_at).toLocaleDateString()}</td>
+          <td class="signature-cell"></td>
           <td style="text-align: center;">
-            <span class="checkbox ${participant.attended ? 'checked' : ''}"></span>
-            <span class="${participant.attended ? 'attended-yes' : 'attended-no'}">
-              ${participant.attended ? 'Yes' : 'No'}
-            </span>
+            <span class="checkbox"></span>
           </td>
-          <td>${formatTimestamp(participant.checked_in_at)}</td>
+        </tr>
+      `).join('')}
+      
+      ${Array(5).fill(0).map((_, index) => `
+        <tr style="background: #f0f8ff;">
+          <td>${participants.length + index + 1}</td>
+          <td style="color: #666;"><em>Walk-in participant</em></td>
+          <td style="color: #666;"><em>N/A</em></td>
+          <td class="signature-cell"></td>
+          <td style="text-align: center;">
+            <span class="checkbox"></span>
+          </td>
         </tr>
       `).join('')}
     </tbody>
@@ -317,9 +392,29 @@ export function generateAttendanceHTML(
     </div>
   </div>
   
+  <div class="checklist-box">
+    <h3>📊 Post-Event Checklist</h3>
+    <div class="checklist-item">
+      <input type="checkbox"> Return to the platform: <strong>Colorado Springs Community Service Hub</strong>
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox"> Navigate to "My Posts" → Click menu (⋯) → "Manage Attendance"
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox"> Check the boxes for participants who attended
+    </div>
+    <div class="checklist-item">
+      <input type="checkbox"> Click "Save Attendance" to record attendance
+    </div>
+    <div class="warning-box">
+      <strong>⚠️ Important:</strong> Only participants you mark as attended will receive credit for this event in their profile.
+    </div>
+  </div>
+  
   <div class="footer">
     <p>This attendance sheet was generated by Colorado Springs Community Service Hub</p>
     <p>For questions or corrections, please contact the event organizer</p>
+    <p style="font-size: 8pt; color: #999; margin-top: 10px;">Generated on ${new Date().toLocaleString()}</p>
   </div>
 </body>
 </html>
