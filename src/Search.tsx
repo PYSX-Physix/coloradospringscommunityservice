@@ -116,10 +116,7 @@ function Search() {
             {posts.map((post) => (
               <Card key={post.id} className={styles.card}>
                 <CardPreview>
-                  <img 
-                    src={post.image_url}
-                    alt="Event" 
-                  />
+                  <img src={post.image_url} alt="Event Keyart" />
                 </CardPreview>
                 <CardHeader
                   header={
