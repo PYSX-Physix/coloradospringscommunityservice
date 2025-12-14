@@ -237,28 +237,30 @@ export default function Post() {
                   
                   {/* Only show menu if it's not the current user */}
                   {participant.user_id !== session?.user.id && (
-                    <Menu>
-                      <MenuTrigger>
-                        <Button appearance="subtle" icon={<MoreHorizontalRegular/>}/>
-                      </MenuTrigger>
-                      <MenuPopover>
-                        <MenuList>
-                          <MenuItem 
-                            icon={<ShieldErrorRegular/>}
-                            onClick={() => {
-                              setReportedUserId(participant.user_id);
-                              setReportedUserName(participant.user_name);
-                              setShowReportDialog(true);
-                            }}
-                          >
-                            Report User
-                          </MenuItem>
-                          <MenuItem icon={<PersonProhibitedRegular/>}>
-                            Block User
-                          </MenuItem>
-                        </MenuList>
-                      </MenuPopover>
-                    </Menu>
+                    <div style={{marginTop: 'auto', marginBottom: 'auto', marginLeft: 'auto', marginRight: '6px'}}>
+                      <Menu>
+                        <MenuTrigger>
+                          <Button appearance="subtle" icon={<MoreHorizontalRegular/>}/>
+                        </MenuTrigger>
+                        <MenuPopover>
+                          <MenuList>
+                            <MenuItem 
+                              icon={<ShieldErrorRegular/>}
+                              onClick={() => {
+                                setReportedUserId(participant.user_id);
+                                setReportedUserName(participant.user_name);
+                                setShowReportDialog(true);
+                              }}
+                            >
+                              Report User
+                            </MenuItem>
+                            <MenuItem icon={<PersonProhibitedRegular/>}>
+                              Block User
+                            </MenuItem>
+                          </MenuList>
+                        </MenuPopover>
+                      </Menu>
+                    </div>
                   )}
                 </ListItem>
               ))}

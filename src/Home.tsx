@@ -72,7 +72,7 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
-  const isAdmin = session?.user && (session.user as any).isAdmin;
+  const isAdmin = !!(session?.user as any)?.isAdmin;
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -182,10 +182,10 @@ function Home() {
             {isAdmin && (
               <>
               <NavDivider/>
-                <NavSectionHeader>Administration</NavSectionHeader>
-                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color/>}>
-                  Admin Panel
-                </NavItem>
+              <NavSectionHeader>Administration</NavSectionHeader>
+              <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color/>}>
+                Admin Panel
+              </NavItem>
               </>
             )}
           </NavDrawerBody>
