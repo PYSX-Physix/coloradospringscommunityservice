@@ -103,7 +103,7 @@ export default function Post() {
 
       if (res.ok) {
         alert('Successfully joined the event!');
-        setHasJoined(true); // Add this line
+        setHasJoined(true);
         fetchPost();
       } else {
         const error = await res.json();

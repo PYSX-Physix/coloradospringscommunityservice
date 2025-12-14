@@ -183,7 +183,7 @@ export default function NotificationPanel() {
                       <Text size={200} style={{ display: 'block', color: '#666', marginBottom: '4px' }}>
                         {notification.message}
                       </Text>
-                      <Text size={100} style={{ color: '#999' }}>
+                      <Text size={100}>
                         {formatTime(notification.created_at)}
                       </Text>
                     </div>
