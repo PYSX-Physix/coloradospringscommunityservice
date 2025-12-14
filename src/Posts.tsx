@@ -27,6 +27,7 @@ interface PostData {
   current_participants: number;
   user_name: string;
   created_at: string;
+  image_url?: string;
 }
 
 function Posts() {
@@ -76,7 +77,7 @@ function PostCard({ post }: { post: PostData }) {
   type ReportState = "closed" | "form" | "confirmation";
   const [reportState, setReportState] = React.useState<ReportState>("closed");
   const [reportCategory, setReportCategory] = React.useState("");
-  const [reportDetails, setReportDetails] = React.useState("");
+  const [reportDetails, setReportDetails] = React.useState<string>("");
   const [isSaved, setIsSaved] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(true);
@@ -132,14 +133,14 @@ function PostCard({ post }: { post: PostData }) {
     ev.preventDefault();
     
     try {
-      const res = await fetch('/api/reports/create', {
+      const res = await fetch('/api/reports', {  // Changed from '/api/reports/create' to '/api/reports'
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
           postId: post.id,
           category: reportCategory,
-          details: reportDetails,
+          description: reportDetails || 'No additional details provided',  // Changed from 'details' to 'description'
         }),
       });
 
@@ -148,7 +149,8 @@ function PostCard({ post }: { post: PostData }) {
         setReportCategory("");
         setReportDetails("");
       } else {
-        alert('Failed to submit report. Please sign in.');
+        const error = await res.json();
+        alert(error.error || 'Failed to submit report. Please sign in.');
       }
     } catch (error) {
       console.error('Report error:', error);
@@ -161,7 +163,7 @@ function PostCard({ post }: { post: PostData }) {
       <Card className={styles.card}>
         <CardPreview>
           <img 
-            src="https://www.colorado.com/_next/image?url=https%3A%2F%2Fapi.colorado.com%2F%2Fsites%2Fdefault%2Ffiles%2Flegacy_drupal_7_images%2F8_Pikes%2520Peak-Garden%2520of%2520the%2520Gods.jpg&w=2048&q=75"
+            src={post.image_url}
             alt="Event" 
           />
         </CardPreview>
@@ -206,19 +208,20 @@ function PostCard({ post }: { post: PostData }) {
                     value={reportCategory}
                     onChange={(_, data) => setReportCategory(data.value)}
                     required>
-                    <Radio value="spam" label="Spam" />
-                    <Radio value="offensive" label="Offensive or Harmful Content" />
-                    <Radio value="misinformation" label="Misinformation" />
-                    <Radio value="safety concerns" label="Safety Concerns" />
-                    <Radio value="duplicate" label="Duplicate Post" />
+                    <Radio value="spam_misleading" label="Spam or Misleading" />
+                    <Radio value="inappropriate_content" label="Offensive or Harmful Content" />
+                    <Radio value="safety_concerns" label="Safety Concerns" />
+                    <Radio value="terms_violation" label="Violation of Terms" />
                     <Radio value="other" label="Other" />
                   </RadioGroup>
                 </Field>
-                <Field label={"Additional Details (Optional)"}>
+                <Field label={"Additional Details"} required>
                   <Textarea 
-                    placeholder='Details...'
+                    placeholder='Please provide details about the issue...'
                     value={reportDetails}
                     onChange={(_, data) => setReportDetails(data.value)}
+                    required
+                    minLength={10}
                   />
                 </Field>
               </DialogContent>
