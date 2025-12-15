@@ -148,7 +148,7 @@ export default function NotificationPanel() {
               Loading notifications...
             </Text>
           ) : notifications.length === 0 ? (
-            <Text style={{ display: 'block', padding: '16px', textAlign: 'center', color: '#666' }}>
+            <Text style={{ display: 'block', padding: '16px', textAlign: 'center' }}>
               No notifications yet
             </Text>
           ) : (
@@ -162,7 +162,7 @@ export default function NotificationPanel() {
                     marginBottom: '8px',
                     borderRadius: '4px',
                     cursor: notification.link ? 'pointer' : 'default',
-                    backgroundColor: notification.read ? 'transparent' : '#f0f0f0',
+                    backgroundColor: notification.read ? 'transparent' : 'transparent',
                     border: '1px solid #ddd',
                     transition: 'background-color 0.2s',
                   }}
