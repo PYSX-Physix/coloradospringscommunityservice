@@ -43,7 +43,22 @@ export async function getSession() {
   const res = await fetch("/api/auth/session", {
     credentials: "include",
   });
-  return res.json();
+  const data = await res.json();
+  
+  // Ensure email_verified is included
+  if (data.session?.user) {
+    return {
+      ...data,
+      session: {
+        ...data.session,
+        user: {
+          ...data.session.user,
+          email_verified: data.session.user.isAdmin ? 1 : (data.session.user.email_verified || 0)
+        }
+      }
+    };
+  }
+  return data;
 }
 
 export function useSession() {

@@ -23,7 +23,7 @@ export async function onRequestGet(context: {
 
     // Get session and user
     const result = await context.env.DB.prepare(
-      `SELECT s.id, s.expires_at, u.id as user_id, u.email, u.name, u.isAdmin
+      `SELECT s.id, s.expires_at, u.id as user_id, u.email, u.name, u.isAdmin, u.email_verified
        FROM session s
        JOIN user u ON s.user_id = u.id
        WHERE s.id = ? AND s.expires_at > ?`
@@ -46,7 +46,8 @@ export async function onRequestGet(context: {
           id: result.user_id,
           email: result.email,
           name: result.name,
-          isAdmin: result.isAdmin
+          isAdmin: result.isAdmin,
+          email_verified: result.email_verified
         }
       }
     }), {
