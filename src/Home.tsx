@@ -43,12 +43,11 @@ import {
   SettingsColor,
   Info20Filled,
   DocumentMultiple20Filled,
-  MegaphoneLoud20Color,
   ArrowExitRegular,
   QuestionCircle20Color, Shield20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
-import Announcements from './Announcements';
+import { AnnouncementBanner, AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
@@ -68,7 +67,7 @@ const HELPHOME = '10'
 const ADMINPANEL = '11';
 
 function Home() {
-  const [ isOpen, setIsOpen ] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,7 +78,7 @@ function Home() {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 500);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -116,10 +115,10 @@ function Home() {
         >
           <NavDrawerHeader>
             {isMobile && <Tooltip content="Close navigation" relationship='label'>
-              <Hamburger onClick={() => setIsOpen(!isOpen)}/>
+              <Hamburger onClick={() => setIsOpen(!isOpen)} />
             </Tooltip>}
-            
-            <div style={{ display: 'flex', gap: '8px'}}>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
                   <AppItem icon={<Person32Color />} as="a">
@@ -131,9 +130,9 @@ function Home() {
                     {session ? (
                       <>
                         <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                        <MenuItemLink icon={<SettingsColor/>} href='/settings'>Settings</MenuItemLink>
-                        <MenuDivider/>
-                        <MenuItem icon={<ArrowExitRegular/>} onClick={handleSignOut}>Sign Out</MenuItem>
+                        <MenuItemLink icon={<SettingsColor />} href='/settings'>Settings</MenuItemLink>
+                        <MenuDivider />
+                        <MenuItem icon={<ArrowExitRegular />} onClick={handleSignOut}>Sign Out</MenuItem>
                       </>
                     ) : (
                       <MenuItemLink href='/auth'>Sign In</MenuItemLink>
@@ -142,16 +141,13 @@ function Home() {
                 </MenuPopover>
               </Menu>
 
-              {session && <div style={{marginLeft: 'auto', marginTop: 'auto', marginBottom: 'auto'}}><NotificationPanel /></div>}
+              {session && <div style={{ marginLeft: 'auto', marginTop: 'auto', marginBottom: 'auto', display: 'flex', gap: '8px' }}><NotificationPanel /><AnnouncementPopover /></div>}
             </div>
           </NavDrawerHeader>
 
           <NavDrawerBody>
             <NavDivider />
             <NavSectionHeader>General</NavSectionHeader>
-            <NavItem as="a" href="/announcements" value={ANNOUCEMENTS} icon={<MegaphoneLoud20Color/>}>
-              Announcements
-            </NavItem>
             <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
               Posts
             </NavItem>
@@ -161,36 +157,36 @@ function Home() {
             <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
               My Posts
             </NavItem>
-            <NavDivider/>
+            <NavDivider />
             <NavSectionHeader>Info</NavSectionHeader>
-            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled/>}>
+            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />}>
               About Us
             </NavItem>
             <NavCategory value={POLICIESMENU}>
-                  <NavCategoryItem icon={<DocumentMultiple20Filled/>}>
-                    Policies
-                  </NavCategoryItem>
-                  <NavSubItemGroup>
-                    <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
-                      Privacy Policy
-                    </NavSubItem>
-                    <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
-                      Terms of Service
-                    </NavSubItem>
-                  </NavSubItemGroup>
+              <NavCategoryItem icon={<DocumentMultiple20Filled />}>
+                Policies
+              </NavCategoryItem>
+              <NavSubItemGroup>
+                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
+                  Privacy Policy
+                </NavSubItem>
+                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
+                  Terms of Service
+                </NavSubItem>
+              </NavSubItemGroup>
             </NavCategory>
-            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color/>}>Help</NavItem>
+            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />}>Help</NavItem>
             {isAdmin && (
               <>
-              <NavDivider/>
-              <NavSectionHeader>Administration</NavSectionHeader>
-              <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color/>}>
-                Admin Panel
-              </NavItem>
+                <NavDivider />
+                <NavSectionHeader>Administration</NavSectionHeader>
+                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />}>
+                  Admin Panel
+                </NavItem>
               </>
             )}
           </NavDrawerBody>
-          <NavDrawerFooter style={{marginBottom: '6px'}}>
+          <NavDrawerFooter style={{ marginBottom: '6px' }}>
             <Tag shape='circular' appearance='brand'>App in beta</Tag>
           </NavDrawerFooter>
         </NavDrawer>
@@ -201,28 +197,28 @@ function Home() {
           />
         )}
         <div className="content">
-            {!isOpen && (
-                <div className="hamburger-container">
-                <Tooltip content={"Open navigation"} relationship='label'>
-                    <Hamburger onClick={() => setIsOpen(!isOpen)}/>
-                </Tooltip>
-                </div>
-            )}
-            <div className="content-scroll">
-                <Routes>
-                    <Route path="/" element={<Posts />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/saved/my-posts" element={<YourPosts />} />
-                    <Route path="/about" element={<About/>}/>
-                    <Route path='/post' element={<Post/>}/>
-                    <Route path='/announcements' element={<Announcements/>}/>
-                    <Route path='/policies/privacy-policy' element={<Privacy/>}/>
-                    <Route path='/policies/terms-of-service' element={<Terms/>}/>
-                    <Route path='/profile' element={<Profile/>}/>
-                    <Route path='/help' element={<HelpHome/>}/>
-                    <Route path="/admin" element={<AdminPanel />} />
-                </Routes>
+          {!isOpen && (
+            <div className="hamburger-container">
+              <Tooltip content={"Open navigation"} relationship='label'>
+                <Hamburger onClick={() => setIsOpen(!isOpen)} />
+              </Tooltip>
             </div>
+          )}
+          <AnnouncementBanner />
+          <div className="content-scroll">
+            <Routes>
+              <Route path="/" element={<Posts />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/saved/my-posts" element={<YourPosts />} />
+              <Route path="/about" element={<About />} />
+              <Route path='/post' element={<Post />} />
+              <Route path='/policies/privacy-policy' element={<Privacy />} />
+              <Route path='/policies/terms-of-service' element={<Terms />} />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/help' element={<HelpHome />} />
+              <Route path="/admin" element={<AdminPanel />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </div>
