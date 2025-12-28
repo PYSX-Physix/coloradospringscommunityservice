@@ -47,7 +47,7 @@ import {
   QuestionCircle20Color, Shield20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
-import { AnnouncementBanner, AnnouncementPopover } from './Announcements';
+import { AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
@@ -204,7 +204,6 @@ function Home() {
               </Tooltip>
             </div>
           )}
-          <AnnouncementBanner />
           <div className="content-scroll">
             <Routes>
               <Route path="/" element={<Posts />} />
