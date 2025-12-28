@@ -26,6 +26,7 @@ interface PostData {
   current_participants: number;
   user_name: string;
   created_at: string;
+  image_url?: string;
 }
 
 function Search() {
@@ -115,10 +116,7 @@ function Search() {
             {posts.map((post) => (
               <Card key={post.id} className={styles.card}>
                 <CardPreview>
-                  <img 
-                    src="https://www.colorado.com/_next/image?url=https%3A%2F%2Fapi.colorado.com%2F%2Fsites%2Fdefault%2Ffiles%2Flegacy_drupal_7_images%2F8_Pikes%2520Peak-Garden%2520of%2520the%2520Gods.jpg&w=2048&q=75"
-                    alt="Event" 
-                  />
+                  <img src={post.image_url} alt="Event Keyart" />
                 </CardPreview>
                 <CardHeader
                   header={

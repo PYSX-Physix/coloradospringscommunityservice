@@ -1,4 +1,4 @@
-import { Card, CardHeader, Text, Title1, Title3 } from "@fluentui/react-components";
+import { Card, CardHeader, Divider, Text, Title1, Title3 } from "@fluentui/react-components";
 import { WrenchScrewdriver24Color } from "@fluentui/react-icons";
 
 export default function Announcements()
@@ -6,6 +6,7 @@ export default function Announcements()
     return(
         <div>
             <Title1>Announcements</Title1>
+            <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V12.07.2025.01</Title3>}/>
                 <p>

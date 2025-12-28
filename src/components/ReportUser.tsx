@@ -205,12 +205,7 @@ export const ReportUser: React.FC<ReportUserProps> = ({
                 />
               </Field>
 
-              <div style={{ 
-                padding: "12px", 
-                backgroundColor: "#fff4ce", 
-                borderRadius: "4px",
-                border: "1px solid #ffd60a"
-              }}>
+              <div>
                 <Text size={300}>
                   <strong>Note:</strong> False or malicious reports may result in action against your account. 
                   Reports are reviewed by our moderation team.
