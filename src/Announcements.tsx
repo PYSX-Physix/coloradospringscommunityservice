@@ -1,109 +1,274 @@
-import { Card, CardHeader, Divider, Text, Title1, Title3 } from "@fluentui/react-components";
-import { WrenchScrewdriver24Color } from "@fluentui/react-icons";
+import React from 'react';
+import {
+  Button,
+  Badge,
+  Text,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Popover,
+  PopoverTrigger,
+  PopoverSurface,
+  Divider,
+  Link
+} from "@fluentui/react-components";
+import {
+  MegaphoneLoud20Regular,
+  Dismiss20Regular,
+  ChevronRight20Regular
+} from "@fluentui/react-icons";
 
-export default function Announcements()
-{
-    return(
-        <div>
-            <Title1>Announcements</Title1>
-            <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V12.07.2025.01</Title3>}/>
-                <p>
-                    <Text>
-                        Here are the new features added in this update:<br/>
-                        <strong>Addition:</strong> Add new notifications feature. This will be used for reminders about events, telling you that you were marked present, and moderation notifications.<br/>
-                        <strong>Change:</strong> The hamburger icons will now only show for users that have a device displaying the site with 500 pixels or less.<br/>
-                        <strong>Issue:</strong> Aware of an issue where the buttons for signing up for events are clipped on smaller displays. A fix is being worked on.<br/>
-                        <br/>
-                        We are still working on adding email notifications to remind you of upcoming events you've signed up for. 
-                        We're also trying to add email verification for less botted accounts, any accounts that aren't verified at the time of the release of the feature will be sent a notification about the issue. 
-                        If this notification is ignored the account will be disabled to avoid inactive/botted accounts. Stay tuned for more updates!
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Content Update: V11.29.2025.01</Title3>}/>
-                <p>
-                    <Text>
-                        Hey everyone! We've added new features to help with verification of attending events. The event organizer can now mark attendees as "attended" or "no-show". This will help organizers keep track of who actually participated in their events.
-                        This will also give credit to people who actually deserve the credit. 
-                        <br/>
-                        Here are the new features added in this update:<br/>
-                        <strong>Addition:</strong> Event organizers can now mark attendees as "attended" or "no-show".<br/>
-                        <strong>Addition:</strong> Attendees can view their attendance status for events they signed up for under their profile page.<br/>
-                        <strong>Fix:</strong> Resolved minor bugs related to event sign-up and attendance tracking.<br/>
-                        <strong>Addition:</strong> Event organizers can print attendance reports for their events.<br/>
-                        <strong>Change:</strong> Improved the user interface for event sign-up and attendance tracking.<br/>
-                        <strong>Addition:</strong> We're working on adding calendar events so you can easily add your signed-up events to your personal calendar (Outlook, Google, Yahoo, etc.).<br/>
-                        <strong>Work-In-Progress:</strong> We're also working on email notifications to remind you of upcoming events you've signed up for.<br/>
-                        <br/>
-                        We hope these new features enhance your experience on our platform. As always, thank you for being part of our community! 
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Update: V11.25.2025.01</Title3>}/>
-                <p>
-                    <Text>
-                        Hey everyone! I'm so excited to finally say this is the first version of the app that is in beta! You're able to sign up with email and passwords.
-                        If anyone is curious about how we'll store your passwords, they will be hashed meaning it's hard for bad actors to decrypt passwords easily.
-                        You're now able to start posting (only if you're signed in) keep in mind posts can be reported and reviewed.<br/>
-                        Here some of the new, fixed, and modified things are in this update!<br/>
-                        <strong>Addition:</strong> Authentication is now available!<br/>
-                        <strong>Addition:</strong> We now show user created posts and have removed all sample data so say bye to that one card on the post screen.<br/>
-                        <strong>Addition:</strong> You're now able to sign-up for events! This will show your name on a list with others.<br/>
-                        <strong>Change:</strong> The "Your Posts" page recived and new layout! It's more organized and sorted out then our original layouts.<br/>
-                        <strong>Issue:</strong> The "Sign-Up" button is clipped out of the users view. You're able to zoom out if you're on a small display to fix the issue.<br/>
-                        <strong>Disabled:</strong> We disabled the Search feature since that is not our main priority at the moment.<br/>
-                        <br/>
-                        A lot has gone into this update and we can't wait for you guys to start creating community service events/opportunities. Keep in mind this site is free and will always be free
-                        to use. Good luck everyone!
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Major Backend Update: V11.20.2025.02</Title3>}/>
-                <p>
-                    <Text>
-                        Hey everyone! We have made a major change the backend of the site. Previously we were using the "Create React App" package which had depricated packages that
-                        were vulnerable and were a security risk. To fix this major issue, we migrated the website to Vite + React to mitigate these security risks. We are now using 
-                        packages that are maintained and up-to-date to keep you safe while on this site. 
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Frontend Update: V11.20.2025.01</Title3>}/>
-                <p>
-                    <Text>
-                        <strong>Change:</strong> The "post" page shows real data from a post rather than dummy data.<br/>
-                        <strong>Fix:</strong> Fixed a minor issue with the "View Post" button is the "Your Post" page.<br/>
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Backend Update: V11.18.2025.01</Title3>}/>
-                <p>
-                    <Text>
-                        Hey everyone! I've been working behind the scenes to get posting your service opportunities onto our system. 
-                        I've been working on creating an linking databases to this site so your posts are saved and shown to everyone. 
-                        You're able to create your posts however they won't show up because this site is not made to find your posts yet.
-                        I'll be working on making sure your posts are visable, editable, viewable, and joinable for others. Anyway here are the changes.<br/><br/>
-                        <strong>Addition:</strong> When creating a form, it now creates a post in our database.<br/>
-                        <strong>Note:</strong> Creating a post for community service events it's only stored in our database and will not display at the moment.<br/>
-                    </Text>
-                </p>
-            </Card>
-            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
-                <CardHeader header={<Title3><WrenchScrewdriver24Color /> Minor Update: V11.17.2025.03</Title3>}/>
-                <p>
-                    <Text>
-                        <strong>Fix:</strong> Height of the page doesn't adjust to the size of the display.<br/>
-                        <strong>Addition:</strong> Announcements page. This will be used to show update patch notes and disclosures.<br/>
-                        <strong>Temp Additon:</strong> Warning for the application being in development.
-                    </Text>
-                </p>
-            </Card>
+// Latest announcement data
+interface Announcement {
+  id: string;
+  version: string;
+  date: string;
+  title: string;
+  type: 'info' | 'warning' | 'success' | 'error';
+  message: string;
+  items?: string[];
+  link?: string;
+  dismissible: boolean;
+}
+
+const latestAnnouncement: Announcement = {
+  id: 'dec-27-2025',
+  version: 'V12.27.2025.01',
+  date: 'December 27, 2025',
+  title: 'Privacy Policy & Terms of Service Updated',
+  type: 'info',
+  message: 'We\'ve updated our legal documents to provide more transparency about data handling.',
+  items: [
+    'New comprehensive Privacy Policy',
+    'Updated Terms of Service',
+    'Better clarity on data rights'
+  ],
+  link: '/policies/privacy-policy',
+  dismissible: true
+};
+
+// Component 1: Top Banner (shows once per announcement)
+export function AnnouncementBanner() {
+  const [dismissed, setDismissed] = React.useState(() => {
+    // Check if user has already dismissed this announcement
+    const dismissedAnnouncements = localStorage.getItem('dismissed-announcements');
+    if (dismissedAnnouncements) {
+      const parsed = JSON.parse(dismissedAnnouncements);
+      return parsed.includes(latestAnnouncement.id);
+    }
+    return false;
+  });
+
+  const handleDismiss = () => {
+    const dismissedAnnouncements = localStorage.getItem('dismissed-announcements');
+    const parsed = dismissedAnnouncements ? JSON.parse(dismissedAnnouncements) : [];
+    parsed.push(latestAnnouncement.id);
+    localStorage.setItem('dismissed-announcements', JSON.stringify(parsed));
+    setDismissed(true);
+  };
+
+  if (dismissed) return null;
+
+  return (
+    <MessageBar
+      intent={latestAnnouncement.type}
+      style={{ margin: '16px 0' }}
+    >
+      <MessageBarBody>
+        <MessageBarTitle>{latestAnnouncement.title}</MessageBarTitle>
+        <Text>{latestAnnouncement.message}</Text>
+        {latestAnnouncement.link && (
+          <Link href={latestAnnouncement.link} style={{ marginLeft: '8px' }}>
+            Learn more <ChevronRight20Regular />
+          </Link>
+        )}
+      </MessageBarBody>
+      {latestAnnouncement.dismissible && (
+        <Button
+          appearance="transparent"
+          icon={<Dismiss20Regular />}
+          onClick={handleDismiss}
+          aria-label="Dismiss"
+        />
+      )}
+    </MessageBar>
+  );
+}
+
+// Component 2: Announcement Icon with Popover (always accessible)
+export function AnnouncementPopover() {
+  const [hasUnread, setHasUnread] = React.useState(() => {
+    const lastSeen = localStorage.getItem('last-seen-announcement');
+    return lastSeen !== latestAnnouncement.id;
+  });
+
+  const handleOpen = () => {
+    setHasUnread(false);
+    localStorage.setItem('last-seen-announcement', latestAnnouncement.id);
+  };
+
+  return (
+    <Popover onOpenChange={(_, data) => data.open && handleOpen()}>
+      <PopoverTrigger disableButtonEnhancement>
+        <Button
+          appearance="subtle"
+          icon={<MegaphoneLoud20Regular />}
+          style={{ position: 'relative', minWidth: '32px' }}
+        >
+          {hasUnread && (
+            <Badge
+              appearance="filled"
+              color="important"
+              size="small"
+              style={{
+                position: 'absolute',
+                top: '4px',
+                right: '4px',
+                minWidth: '8px',
+                height: '8px',
+                padding: 0
+              }}
+            />
+          )}
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverSurface style={{ width: '400px', maxWidth: '90vw' }}>
+        <div style={{ padding: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <Text weight="bold" size={400}>What's New</Text>
+            <Badge appearance="tint" color="informative" size="small">
+              {latestAnnouncement.version}
+            </Badge>
+          </div>
+          
+          <Text size={300} style={{ display: 'block', marginBottom: '4px' }}>
+            {latestAnnouncement.title}
+          </Text>
+          
+          <Text size={200} style={{ display: 'block', marginBottom: '16px', color: '#666' }}>
+            {latestAnnouncement.date}
+          </Text>
+
+          <Divider style={{ marginBottom: '16px' }} />
+
+          <Text style={{ display: 'block', marginBottom: '12px' }}>
+            {latestAnnouncement.message}
+          </Text>
+
+          {latestAnnouncement.items && latestAnnouncement.items.length > 0 && (
+            <ul style={{ margin: '12px 0', paddingLeft: '20px' }}>
+              {latestAnnouncement.items.map((item, index) => (
+                <li key={index} style={{ marginBottom: '4px' }}>
+                  <Text size={300}>{item}</Text>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {latestAnnouncement.link && (
+            <Button
+              appearance="primary"
+              as="a"
+              href={latestAnnouncement.link}
+              style={{ marginTop: '16px', width: '100%' }}
+            >
+              Learn More
+            </Button>
+          )}
         </div>
-    );
+      </PopoverSurface>
+    </Popover>
+  );
+}
+
+// Component 3: Compact Announcement Section (for homepage/dashboard)
+export function AnnouncementSection() {
+  return (
+    <div style={{ 
+      padding: '16px', 
+      border: '1px solid #333',
+      borderRadius: '8px',
+      background: 'linear-gradient(135deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 120, 212, 0.05) 100%)',
+      marginBottom: '24px'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+        <MegaphoneLoud20Regular style={{ marginTop: '2px', color: '#0078d4' }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <Text weight="semibold">{latestAnnouncement.title}</Text>
+            <Badge appearance="tint" color="informative" size="small">
+              New
+            </Badge>
+          </div>
+          <Text size={300} style={{ display: 'block', marginBottom: '8px' }}>
+            {latestAnnouncement.message}
+          </Text>
+          <Text size={200} style={{ color: '#666' }}>
+            {latestAnnouncement.date}
+          </Text>
+        </div>
+        {latestAnnouncement.link && (
+          <Button
+            appearance="subtle"
+            size="small"
+            as="a"
+            href={latestAnnouncement.link}
+            icon={<ChevronRight20Regular />}
+          >
+            Details
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Component 4: Mini Version History Popover
+export function VersionHistory() {
+  const recentVersions = [
+    { version: 'V12.27.2025', title: 'Privacy & Terms Update', date: 'Dec 27' },
+    { version: 'V12.07.2025', title: 'Notifications Feature', date: 'Dec 7' },
+    { version: 'V11.29.2025', title: 'Attendance Tracking', date: 'Nov 29' },
+    { version: 'V11.25.2025', title: 'Beta Launch', date: 'Nov 25' }
+  ];
+
+  return (
+    <Popover>
+      <PopoverTrigger disableButtonEnhancement>
+        <Button appearance="subtle" size="small">
+          Version {latestAnnouncement.version}
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverSurface style={{ width: '300px' }}>
+        <div style={{ padding: '16px' }}>
+          <Text weight="bold" style={{ display: 'block', marginBottom: '12px' }}>
+            Recent Updates
+          </Text>
+          
+          {recentVersions.map((v, index) => (
+            <div key={index} style={{ 
+              padding: '8px', 
+              borderLeft: index === 0 ? '3px solid #0078d4' : '3px solid transparent',
+              marginBottom: '8px'
+            }}>
+              <Text size={300} weight={index === 0 ? 'semibold' : 'regular'} style={{ display: 'block' }}>
+                {v.title}
+              </Text>
+              <Text size={200} style={{ color: '#666' }}>
+                {v.version} • {v.date}
+              </Text>
+            </div>
+          ))}
+
+          <Divider style={{ margin: '12px 0' }} />
+          
+          <Link href="/announcements" style={{ fontSize: '14px' }}>
+            View all updates
+          </Link>
+        </div>
+      </PopoverSurface>
+    </Popover>
+  );
 }
