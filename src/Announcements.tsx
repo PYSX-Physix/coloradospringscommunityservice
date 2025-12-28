@@ -8,6 +8,27 @@ export default function Announcements()
             <Title1>Announcements</Title1>
             <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
             <Card style={{marginTop: '16px', marginBottom: '16px'}}>
+                <CardHeader header={<Title3><WrenchScrewdriver24Color />Policy Update: V12.28.2025.01 or 1.0.25</Title3>}/>
+                <p>
+                    <Text>
+                        We've made some changes to our policies that match up correctly with our source code to ensure a safer and more reliable experience for all users.
+                        Please take a moment to review the updated policies on our website. Your continued use of our platform signifies your acceptance of these changes.
+                        <br/>
+                        Here are the changes made in this update:<br/>
+                        <strong>Change:</strong> Updated Privacy Policy to reflect data handling practices.<br/>
+                        <strong>Change:</strong> Revised Terms of Service to clarify user responsibilities.<br/>
+                        <strong>Addition:</strong> Introduced Community Guidelines to promote respectful interactions.<br/>
+                        <strong>Addition:</strong> Added a new requirement for a user to be over the age of 13.<br/>
+                        <strong>Change:</strong> Modified user rights to be more specific and understandable.<br/>
+                        <br/>
+                        We encourage all users to read through the updated policies to stay informed about how we are committed to protecting your rights and ensuring a positive community environment.<br/>
+                        <br/>
+                        We'll also be changing the way we create version numbers. The new format will be "Major.Minor.Year" where Major is for big changes, Minor is for smaller updates, and Year is the year of the update. 
+                        Starting now the latest version of this app is 1.0.25. Happy New Year everyone!
+                    </Text>
+                </p>
+            </Card>
+            <Card style={{marginTop: '16px', marginBottom: '16px'}}>
                 <CardHeader header={<Title3><WrenchScrewdriver24Color />Minor Content Update: V12.07.2025.01</Title3>}/>
                 <p>
                     <Text>
