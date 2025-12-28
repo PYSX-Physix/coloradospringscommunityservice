@@ -1,4 +1,4 @@
-import { Title1, Title2, Text, Divider } from "@fluentui/react-components";
+import { Title1, Title2, Title3, Text, Divider } from "@fluentui/react-components";
 
 export function Privacy() {
   return (
