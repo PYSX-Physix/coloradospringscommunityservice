@@ -474,7 +474,7 @@ export function Terms() {
         <li><Text>Maintain a history of community service participation</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>3. User Accounts</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>3. User Accounts<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>3.1 Account Creation</Title3>
       <ul style={{ marginBottom: '16px' }}>
