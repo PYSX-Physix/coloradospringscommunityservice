@@ -451,7 +451,7 @@ export function Privacy() {
 
 export function Terms() {
   return (
-    <div style={{ maxWidth: '900px' }}>
+    <div style={{ maxWidth: '900px', display: 'block', margin: '0 auto', padding: '24px' }}>
       <Title1>Terms of Service</Title1>
       <Text style={{ display: 'block', marginTop: '8px', marginBottom: '24px' }}>
         Last Updated: November 28, 2024
