@@ -580,9 +580,9 @@ export function Terms() {
         Falsifying attendance records (either as an organizer or participant) may result in immediate account termination and may be reported to relevant authorities or institutions.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Content Moderation and Reporting<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Content Moderation and Reporting<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>7.1 Automated Content Filtering</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Automated Content Filtering</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We implement automated content filtering to maintain platform quality:
       </Text>
@@ -593,9 +593,9 @@ export function Terms() {
         <li><Text>Repeated violations or false reports may result in account termination</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Disclaimers and Limitations of Liability<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>9. Disclaimers and Limitations of Liability<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Platform Provided "As Is"</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>9.1 Platform Provided "As Is"</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         The Platform is provided "as is" without warranties of any kind. We do not guarantee:
       </Text>
@@ -607,7 +607,7 @@ export function Terms() {
       </ul>
 
       <Text style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-        8.2 No Liability for User-Created Content
+        9.2 No Liability for User-Created Content
       </Text>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We are not responsible for:
@@ -621,13 +621,13 @@ export function Terms() {
       </ul>
 
       <Text style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-        8.3 Limitation of Damages
+        9.3 Limitation of Damages
       </Text>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, consequential, or punitive damages arising from your use of the Platform.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>9. Indemnification</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Indemnification</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         You agree to indemnify and hold us harmless from any claims, damages, losses, or expenses (including legal fees) arising from:
       </Text>
@@ -639,9 +639,9 @@ export function Terms() {
         <li><Text>Your violation of any rights of another person or entity</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Termination<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>11. Termination<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>10.1 Our Right to Terminate</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>11.1 Our Right to Terminate</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We reserve the right to suspend or terminate your account at any time for:
       </Text>
@@ -655,7 +655,7 @@ export function Terms() {
         Upon termination, your right to use the Platform will immediately cease. Your attendance history may be retained for record-keeping purposes.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>11. Beta/Development Status</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>12. Beta/Development Status</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         This Platform is currently in development and considered a beta product. You acknowledge that:
       </Text>
@@ -666,56 +666,56 @@ export function Terms() {
         <li><Text>The service is provided free of charge and without warranty</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>12. Privacy</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>13. Privacy</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Your use of the Platform is also governed by our Privacy Policy. Please review it to understand how we collect, use, and protect your information.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>13. Changes to Terms</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>14. Changes to Terms</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We may modify these Terms at any time. Material changes will be indicated by updating the "Last Updated" date. Continued use of the Platform after changes constitutes acceptance of the modified Terms.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>14. Dispute Resolution</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>15. Dispute Resolution</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Any disputes arising from these Terms or use of the Platform shall be resolved through informal negotiation. If resolution cannot be reached, disputes shall be subject to the laws of the State of Colorado.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>15. Dispute Resolution and Governing Law<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>16. Dispute Resolution and Governing Law<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>15.1 Informal Resolution</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.1 Informal Resolution</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in full effect.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>16. Contact Information</Title2>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.2 Governing Law</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         These Terms shall be governed by and construed in accordance with the laws of the State of Colorado, United States, without regard to its conflict of law provisions.
       </Text>
 
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>15.3 Jurisdiction</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.3 Jurisdiction</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Any legal action or proceeding arising under these Terms will be brought exclusively in the courts located in Colorado Springs, Colorado, and you consent to personal jurisdiction in such courts.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>16. Severability and Waiver<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>17. Severability and Waiver<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.1 Severability</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>17.1 Severability</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that these Terms remain in full force and effect.
       </Text>
 
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.2 Waiver</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>17.2 Waiver</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. Any waiver must be in writing and signed by us.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>17. Entire Agreement</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>18. Entire Agreement</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         These Terms, together with our Privacy Policy, constitute the entire agreement between you and us regarding the use of the Platform and supersede all prior agreements and understandings.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>18. Contact Information</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>19. Contact Information</Title2>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         For questions about these Terms of Service, please contact us:
       </Text>
@@ -727,9 +727,9 @@ export function Terms() {
         <li><Text><strong>Visit:</strong> Check our About page for current contact information</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>19. Additional Terms for Specific Features<br/></Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>20. Additional Terms for Specific Features<br/></Title2>
       
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>19.1 Notifications</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>20.1 Notifications</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         By using the Platform, you consent to receive notifications about:
       </Text>
@@ -740,7 +740,7 @@ export function Terms() {
         <li><Text>Important platform updates</Text></li>
       </ul>
 
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>19.2 Calendar Exports</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>20.2 Calendar Exports</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Calendar export features (Google Calendar, Outlook, Yahoo, Apple Calendar) are provided for convenience. We are not responsible for:
       </Text>
@@ -750,7 +750,7 @@ export function Terms() {
         <li><Text>Changes to third-party calendar APIs</Text></li>
       </ul>
 
-      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>19.3 Downloadable Content</Title3>
+      <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>20.3 Downloadable Content</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Attendance sheets and other downloadable content are provided "as is" for your personal use. You may not redistribute or commercially exploit such content.
       </Text>
