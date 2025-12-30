@@ -451,7 +451,7 @@ export function Privacy() {
 
 export function Terms() {
   return (
-    <div style={{ maxWidth: '900px', display: 'block', margin: '0 auto', padding: '24px' }}>
+    <div style={{ maxWidth: '900px' }}>
       <Title1>Terms of Service</Title1>
       <Text style={{ display: 'block', marginTop: '8px', marginBottom: '24px' }}>
         Last Updated: November 28, 2024
@@ -492,7 +492,7 @@ export function Terms() {
         You agree to notify us immediately of any unauthorized access to your account. We are not liable for any loss or damage from your failure to maintain account security.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. User Conduct and Responsibilities</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. User Conduct and Responsibilities<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>4.1 Prohibited Activities</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -542,7 +542,7 @@ export function Terms() {
         <li><Text>Behave respectfully toward organizers and other participants</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>5. Content and Intellectual Property</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>5. Content and Intellectual Property<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>5.1 Your Content</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -580,7 +580,7 @@ export function Terms() {
         Falsifying attendance records (either as an organizer or participant) may result in immediate account termination and may be reported to relevant authorities or institutions.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Content Moderation and Reporting</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Content Moderation and Reporting<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>7.1 Automated Content Filtering</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -593,7 +593,7 @@ export function Terms() {
         <li><Text>Repeated violations or false reports may result in account termination</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Disclaimers and Limitations of Liability</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Disclaimers and Limitations of Liability<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Platform Provided "As Is"</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -639,7 +639,7 @@ export function Terms() {
         <li><Text>Your violation of any rights of another person or entity</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Termination</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Termination<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>10.1 Our Right to Terminate</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -681,7 +681,7 @@ export function Terms() {
         Any disputes arising from these Terms or use of the Platform shall be resolved through informal negotiation. If resolution cannot be reached, disputes shall be subject to the laws of the State of Colorado.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>15. Dispute Resolution and Governing Law</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>15. Dispute Resolution and Governing Law<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>15.1 Informal Resolution</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -698,7 +698,7 @@ export function Terms() {
         Any legal action or proceeding arising under these Terms will be brought exclusively in the courts located in Colorado Springs, Colorado, and you consent to personal jurisdiction in such courts.
       </Text>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>16. Severability and Waiver</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>16. Severability and Waiver<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>16.1 Severability</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -727,7 +727,7 @@ export function Terms() {
         <li><Text><strong>Visit:</strong> Check our About page for current contact information</Text></li>
       </ul>
 
-      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>19. Additional Terms for Specific Features</Title2>
+      <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>19. Additional Terms for Specific Features<br/></Title2>
       
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>19.1 Notifications</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
