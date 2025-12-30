@@ -16,7 +16,7 @@ export function Privacy() {
         By using our platform, you agree to the collection and use of information in accordance with this Privacy Policy.
       </Text>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>2. Information We Collect</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>2. Information We Collect<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>2.1 Personal Information</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -69,7 +69,7 @@ export function Privacy() {
     <li><Text>Improve and secure our platform</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. Information Sharing and Disclosure</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. Information Sharing and Disclosure<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>4.1 Public Information</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -155,7 +155,7 @@ export function Privacy() {
     <li><Text>The event details are modified</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>6. Data Security</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>6. Data Security<br/></Title2>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
     We implement security measures to protect your information:
   </Text>
@@ -187,7 +187,7 @@ export function Privacy() {
     However, no method of transmission over the internet is 100% secure. While we strive to protect your data using commercially acceptable means, we cannot guarantee absolute security.
   </Text>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Your Rights and Choices</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Your Rights and Choices<br/></Title2>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
     You have the right to:
   </Text>
@@ -230,7 +230,7 @@ export function Privacy() {
     <li><Text>Export your attendance history (accessible through your profile)</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Cookies and Tracking</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Cookies and Tracking<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Cookies We Use</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -262,7 +262,7 @@ export function Privacy() {
     <li><Text>We will delete such information from our records</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Content Moderation and Reporting</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Content Moderation and Reporting<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>10.1 Content Filtering</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -317,7 +317,7 @@ export function Privacy() {
     <li><Text>Add notes explaining their decision</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>11. Third-Party Services</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>11. Third-Party Services<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>11.1 Address Autocomplete</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -368,7 +368,7 @@ export function Privacy() {
     <li><Text>Any external analytics or marketing tools</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>12. Notifications</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>12. Notifications<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>12.1 Types of Notifications</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
@@ -401,7 +401,7 @@ export function Privacy() {
     <li><Text>Read/unread status</Text></li>
   </ul>
 
-  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>13. Changes to This Privacy Policy</Title2>
+  <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>13. Changes to This Privacy Policy<br/></Title2>
   
   <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>13.1 Updates</Title3>
   <Text style={{ display: 'block', marginBottom: '16px' }}>
