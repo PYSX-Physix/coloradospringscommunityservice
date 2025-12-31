@@ -5,9 +5,6 @@ pages_build_output_dir = "dist"
 [vars]
 SITE_URL = "https://coloradospringscommunityservice.pages.dev"
 
-[triggers]
-crons = ["0 10 * * *"] # Run daily at 10 AM UTC
-
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "cospringscs-db"
