@@ -4,7 +4,8 @@ import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogC
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
   MenuDivider,
   SpinButton, Spinner,
-  MenuItemLink} from "@fluentui/react-components";
+  MenuItemLink,
+  TabList, Tab} from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular } from "@fluentui/react-icons";
@@ -30,6 +31,8 @@ interface PostData {
   created_at: string;
   image_url?: string;
 }
+
+type TabValue = 'created' | 'saved' | 'joined';
 
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
@@ -59,7 +62,7 @@ function YourPosts() {
   const [savedPosts, setSavedPosts] = React.useState<PostData[]>([]);
   const [joinedPosts, setJoinedPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [activeTab, setActiveTab] = React.useState<'created' | 'saved' | 'joined'>('created');
+  const [activeTab, setActiveTab] = React.useState<TabValue>('created');
 
   const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
 
@@ -389,24 +392,11 @@ function YourPosts() {
       
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <Button 
-          appearance={activeTab === 'created' ? 'primary' : 'subtle'}
-          onClick={() => setActiveTab('created')}
-        >
-          Created Events ({posts.length})
-        </Button>
-        <Button 
-          appearance={activeTab === 'saved' ? 'primary' : 'subtle'}
-          onClick={() => setActiveTab('saved')}
-        >
-          Saved Events ({savedPosts.length})
-        </Button>
-        <Button 
-          appearance={activeTab === 'joined' ? 'primary' : 'subtle'}
-          onClick={() => setActiveTab('joined')}
-        >
-          Joined Events ({joinedPosts.length})
-        </Button>
+        <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '24px' }}>
+          <Tab value="created">Created Events</Tab>
+          <Tab value="saved">Saved Events</Tab>
+          <Tab value="joined">Joined Events</Tab>
+        </TabList>
       </div>
 
       <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>

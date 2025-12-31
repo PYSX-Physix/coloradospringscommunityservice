@@ -33,7 +33,8 @@ export async function onRequestGet(context: {
         max_participants,
         current_participants,
         user_name,
-        created_at
+        created_at,
+        image_url
       FROM posts 
       WHERE visible = 1
         AND (
