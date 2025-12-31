@@ -58,11 +58,6 @@ export async function onRequestGet(context: {
       `SELECT COUNT(*) as count FROM posts WHERE visible = 1`
     ).first();
 
-    // In /functions/api/admin/stats.ts
-    const unverifiedCount = await context.env.DB.prepare(
-      `SELECT COUNT(*) as count FROM user WHERE email_verified = 0`
-    ).first();
-
     // Get reports from today
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -78,7 +73,6 @@ export async function onRequestGet(context: {
       totalUsers: (totalUsersResult?.count as number) || 0,
       totalPosts: (totalPostsResult?.count as number) || 0,
       reportsToday: (reportsTodayResult?.count as number) || 0,
-      unverifiedUsers: (unverifiedCount?.count as number) || 0,
     };
 
     return new Response(JSON.stringify(stats), {

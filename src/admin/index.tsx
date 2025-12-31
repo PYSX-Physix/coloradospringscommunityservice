@@ -196,7 +196,7 @@ export default function AdminPanel() {
 
       {/* Stats Dashboard */}
       {stats && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px'}}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           <Card>
             <CardHeader header={<Title2>{stats.pendingReports}</Title2>} />
             <Text>Pending Reports</Text>
@@ -222,7 +222,7 @@ export default function AdminPanel() {
 
       {/* Reports Section */}
       <Card>
-        <div style={{ padding: '24px', overflow: 'hidden' }}>
+        <div style={{ padding: '24px' }}>
           <Title2 style={{ marginBottom: '16px' }}>Reports Management</Title2>
 
           <TabList
@@ -280,7 +280,7 @@ export default function AdminPanel() {
                     <TableCell>
                       <div>
                         <Text weight="semibold">{report.reporter_name || 'Unknown'}</Text>
-                        <Text size={200} style={{textOverflow: 'clip'}}>
+                        <Text size={200}>
                           {report.reporter_email || ''}
                         </Text>
                       </div>
@@ -289,7 +289,7 @@ export default function AdminPanel() {
                       {report.reported_user_id ? (
                         <div>
                           <Text weight="semibold">{report.reported_user_name || 'Unknown'}</Text>
-                          <Text size={200} style={{textOverflow: 'clip'}}>
+                          <Text size={200}>
                             {report.reported_user_email || ''}
                           </Text>
                         </div>

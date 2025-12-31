@@ -51,7 +51,6 @@ import { AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
-import VerificationBanner from './components/VerificationBanner';
 
 const ANNOUCEMENTS = '0'
 const POSTSMENU = '1';
@@ -190,12 +189,7 @@ function Home() {
             <Tag shape='circular' appearance='brand'>App in beta</Tag>
           </NavDrawerFooter>
         </NavDrawer>
-        {session?.user && (
-          <VerificationBanner
-            userEmail={session.user.email}
-            isVerified={(session.user as any).email_verified}
-          />
-        )}
+
         <div className="content">
           {!isOpen && (
             <div className="hamburger-container">
