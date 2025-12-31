@@ -19,4 +19,5 @@ database_name = "cospringscs-db-preview"
 database_id = "3acb55c2-d4b9-43f1-a701-9986cc2a62c4"
 
 [env.preview.vars]
+SITE_URL = "https://react-dev.coloradospringscommunityservice.pages.dev"
 RESEND_API_KEY = "re_XD1Gw78Y_C678RAKecJmuNsrng8AxhHgb"
