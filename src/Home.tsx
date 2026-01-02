@@ -66,7 +66,14 @@ const HELPHOME = '10'
 const ADMINPANEL = '11';
 
 function Home() {
-  const [isOpen, setIsOpen] = useState(true);
+  // Initialize drawer state from in-memory variable (or default based on screen size)
+  const getInitialDrawerState = () => {
+    const isMobileSize = window.innerWidth <= 500;
+    // Use a simple in-memory approach - drawer starts open on desktop, closed on mobile
+    return !isMobileSize;
+  };
+
+  const [isOpen, setIsOpen] = useState(getInitialDrawerState);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
   const location = useLocation();
   const navigate = useNavigate();
@@ -75,12 +82,17 @@ function Home() {
 
   React.useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 500);
+      const mobile = window.innerWidth <= 500;
+      setIsMobile(mobile);
+      // Optionally close drawer when resizing to mobile
+      if (mobile && isOpen) {
+        setIsOpen(false);
+      }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [isOpen]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -189,7 +201,6 @@ function Home() {
             <Tag shape='circular' appearance='brand'>App in beta</Tag>
           </NavDrawerFooter>
         </NavDrawer>
-
         <div className="content">
           {!isOpen && (
             <div className="hamburger-container">
