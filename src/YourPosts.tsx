@@ -391,7 +391,7 @@ function YourPosts() {
       <Title1 style={{marginBottom: '16px'}}>My Events</Title1>
       
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', gap: '8px' }}>
         <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '24px' }}>
           <Tab value="created">Created Events</Tab>
           <Tab value="saved">Saved Events</Tab>
@@ -399,7 +399,7 @@ function YourPosts() {
         </TabList>
       </div>
 
-      <Divider style={{marginTop: "16px", marginBottom: "16px"}}/>
+      <Divider style={{marginTop: '16px', marginBottom: '16px'}}/>
       
       {/* Created Events Tab */}
       {activeTab === 'created' && (
