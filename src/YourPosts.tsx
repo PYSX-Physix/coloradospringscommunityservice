@@ -399,7 +399,7 @@ function YourPosts() {
         </TabList>
       </div>
 
-      <Divider style={{marginTop: '16px', marginBottom: '16px'}}/>
+      <Divider style={{ marginBottom: '6px'}}/>
       
       {/* Created Events Tab */}
       {activeTab === 'created' && (
@@ -411,7 +411,7 @@ function YourPosts() {
               icon={<AddCircle32Color/>} 
               appearance="subtle" 
               onClick={() => setCreateModalState("modal")}
-              style={{alignSelf: "start", marginLeft: '16px'}}
+              style={{alignSelf: "start", marginLeft: '16px', marginTop: 'auto', marginBottom: 'auto'}}
             />
           </div>
 
