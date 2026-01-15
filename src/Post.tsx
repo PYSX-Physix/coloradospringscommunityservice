@@ -7,6 +7,10 @@ import { useSession } from "./lib/auth-client";
 import CalendarExport from "./components/CalendarExport";
 import { ReportUser } from "./components/ReportUser";
 
+// I feel like this UI could be improved A LOT. Mainly because of qol changes.
+// Possibly clean the start, end times, and location, fix the alignment with certain areas,
+// and overall clean up the interface
+
 interface PostData {
   id: number;
   title: string;
