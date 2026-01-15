@@ -187,7 +187,7 @@ export default function Post() {
 
       <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
       <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, maxWidth: '900px' }}>
           <Image 
             style={{ maxWidth: '900px', borderRadius: '5px' }} 
             fit='contain' 
