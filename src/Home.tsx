@@ -110,6 +110,7 @@ function Home() {
   else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
   else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
   else if (location.pathname === '/profile') selectedValue = PROFILE;
+  else if (location.pathname === '/help') selectedValue = HELPHOME;
   else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else selectedValue = '50';

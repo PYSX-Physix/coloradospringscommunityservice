@@ -218,7 +218,7 @@ export default function Post() {
               <Persona name={post.user_name} style={{ marginTop: '16px' }} />
               <Menu>
                 <MenuTrigger>
-                  <Button appearance="subtle" icon={<MoreHorizontalRegular/>}/>
+                  <Button style={{marginTop: 'auto', marginBottom: 'auto'}} appearance="subtle" icon={<MoreHorizontalRegular/>}/>
                 </MenuTrigger>
                 <MenuPopover>
                   <MenuList>
