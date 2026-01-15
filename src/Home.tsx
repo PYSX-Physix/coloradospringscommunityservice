@@ -6,6 +6,7 @@ import { Privacy, Terms } from './Policies';
 import AdminPanel from './admin';
 import About from './About'
 import Profile from './Profile';
+import Contribute from './Contribute';
 import { useSession, signOut } from "./lib/auth-client";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import './Home.css';
@@ -42,9 +43,10 @@ import {
   PersonColor,
   SettingsColor,
   Info20Filled,
-  DocumentMultiple20Filled,
   ArrowExitRegular,
-  QuestionCircle20Color, Shield20Color
+  QuestionCircle20Color, Shield20Color,
+  Code20Color,
+  DocumentFolder20Color
 } from "@fluentui/react-icons";
 import Post from './Post';
 import { AnnouncementPopover } from './Announcements';
@@ -52,18 +54,20 @@ import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
 
-const ANNOUCEMENTS = '0'
+const ANNOUCEMENTS = '0';
 const POSTSMENU = '1';
 const SEARCHMENU = '2';
 const SAVEDPOSTSMENU = '3';
 const YOURPOSTSMENU = '4';
-const ABOUTMENU = '5'
-const POLICIESMENU = '6'
-const PRIVACYPOLICY = '7'
-const TERMSOFSERVICE = '8'
-const PROFILE = '9'
-const HELPHOME = '10'
+const ABOUTMENU = '5';
+const POLICIESMENU = '6';
+const PRIVACYPOLICY = '7';
+const TERMSOFSERVICE = '8';
+const PROFILE = '9';
+const HELPHOME = '10';
 const ADMINPANEL = '11';
+const CONTRIBUTE = '12';
+
 
 function Home() {
   // Initialize drawer state from in-memory variable (or default based on screen size)
@@ -113,6 +117,7 @@ function Home() {
   else if (location.pathname === '/help') selectedValue = HELPHOME;
   else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
+  else if (location.pathname === '/contribute') selectedValue = CONTRIBUTE;
   else selectedValue = '50';
 
   return (
@@ -175,7 +180,7 @@ function Home() {
               About Us
             </NavItem>
             <NavCategory value={POLICIESMENU}>
-              <NavCategoryItem icon={<DocumentMultiple20Filled />}>
+              <NavCategoryItem icon={<DocumentFolder20Color />}>
                 Policies
               </NavCategoryItem>
               <NavSubItemGroup>
@@ -199,6 +204,7 @@ function Home() {
             )}
           </NavDrawerBody>
           <NavDrawerFooter style={{ marginBottom: '6px' }}>
+            <NavItem as='a' href='/contribute' value={CONTRIBUTE} icon={<Code20Color/>}>Contribute</NavItem>
             <Tag shape='circular' appearance='brand'>App in beta</Tag>
           </NavDrawerFooter>
         </NavDrawer>
@@ -222,6 +228,7 @@ function Home() {
               <Route path='/profile' element={<Profile />} />
               <Route path='/help' element={<HelpHome />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path='/contribute' element={<Contribute />} />
             </Routes>
           </div>
         </div>
