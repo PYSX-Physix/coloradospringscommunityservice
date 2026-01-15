@@ -194,7 +194,6 @@ export default function Post() {
             src={post.image_url || '/default-event-image.jpg'} 
             alt="Event" 
           />
-          <Title2 style={{ marginTop: '15px' }}>Description</Title2>
           <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
           <Text>{post.description}</Text>
           
