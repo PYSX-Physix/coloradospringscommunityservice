@@ -1,5 +1,5 @@
 import { Title1, Image, Divider, Title2, Text, List, ListItem, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People20Regular } from "@fluentui/react-icons";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
@@ -243,7 +243,7 @@ export default function Post() {
           {/* Date, Time & Location Card */}
           <Card>
             <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', width: '100%' }}>
                 <Calendar16Color style={{ marginTop: '4px', fontSize: '20px' }} />
                 <div style={{ flex: 1 }}>
                   <Text weight="semibold" size={400} style={{ display: 'block', marginBottom: '4px' }}>
@@ -258,7 +258,7 @@ export default function Post() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', width: '100%' }}>
                 <LocationRipple16Color style={{ marginTop: '4px', fontSize: '20px' }} />
                 <div style={{ flex: 1 }}>
                   <Text weight="semibold" size={400} style={{ display: 'block', marginBottom: '4px' }}>
@@ -275,7 +275,7 @@ export default function Post() {
           {/* Description Card */}
           <Card>
             <Title2 style={{ marginBottom: '16px' }}>About This Event</Title2>
-            <Text style={{ lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+            <Text style={{ lineHeight: '1.0', whiteSpace: 'pre-wrap' }}>
               {post.description}
             </Text>
           </Card>
@@ -286,7 +286,7 @@ export default function Post() {
           <Card style={{ position: 'sticky', top: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <Title2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <People20Regular />
+                <People48Regular />
                 Participants
               </Title2>
               <Badge 
@@ -319,7 +319,7 @@ export default function Post() {
                 padding: '32px 16px',
                 color: '#616161'
               }}>
-                <People20Regular style={{ fontSize: '32px', marginBottom: '12px', opacity: 0.5 }} />
+                <People48Regular style={{ fontSize: '32px', marginBottom: '12px', opacity: 0.5 }} />
                 <Text size={300} style={{ display: 'block' }}>
                   No participants yet. Be the first to join!
                 </Text>
