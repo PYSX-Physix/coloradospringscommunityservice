@@ -32,18 +32,16 @@ interface Announcement {
 }
 
 const latestAnnouncement: Announcement = {
-  id: 'dec-27-2025',
-  version: 'V12.27.2025.01',
-  date: 'December 27, 2025',
-  title: 'Privacy Policy & Terms of Service Updated',
+  id: 'jan-18-2026',
+  version: 'V26.1.0',
+  date: 'January 18, 2026',
+  title: 'Updated Event Page Layput',
   type: 'info',
-  message: 'We\'ve updated our legal documents to provide more transparency about data handling.',
+  message: 'We\'ve built off of the old event page which was very unfinished. The new UI is cleaner and much easier to work with. We\'ve also fixed an issue with the formatting of the polices and the titles',
   items: [
-    'New comprehensive Privacy Policy',
-    'Updated Terms of Service',
-    'Better clarity on data rights'
+    'New event page UI design',
+    'Fixed policies title formatting'
   ],
-  link: '/policies/privacy-policy',
   dismissible: true
 };
 

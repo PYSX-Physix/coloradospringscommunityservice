@@ -7,6 +7,11 @@ import {
 import { useSession } from "./lib/auth-client";
 import { useNavigate } from "react-router-dom";
 
+/*
+There can definetly be a lot more that can go into this menu. Mainly cause I think that
+this is where people should be able to change their email, passwords, and name.
+*/
+
 interface Event {
   id: number;
   event_title: string;
