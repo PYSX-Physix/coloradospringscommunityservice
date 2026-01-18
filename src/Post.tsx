@@ -167,8 +167,10 @@ export default function Post() {
           <div style={{ flex: 1, minWidth: '300px' }}>
             <Title1 style={{ marginBottom: '8px' }}>{post.title}</Title1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-              <Persona name={post.user_name} size="small" />
-              <Text size={300} style={{ color: '#616161' }}>Organized by {post.user_name}</Text>
+              <div style={{flexDirection: 'row'}}>
+                <Text>Organized by: </Text>
+                <Persona name={post.user_name} size="small" />
+              </div>
               <Menu>
                 <MenuTrigger>
                   <Button size="small" appearance="subtle" icon={<MoreHorizontalRegular/>}/>
@@ -240,23 +242,21 @@ export default function Post() {
 
           {/* Date, Time & Location Card */}
           <Card>
-            <div style={{ display: 'grid', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
                 <Calendar16Color style={{ marginTop: '4px', fontSize: '20px' }} />
                 <div style={{ flex: 1 }}>
                   <Text weight="semibold" size={400} style={{ display: 'block', marginBottom: '4px' }}>
                     Date & Time
                   </Text>
-                  <Text size={300} style={{ display: 'block', color: '#424242' }}>
+                  <Text size={300} style={{ display: 'block' }}>
                     {formatDateTime(post.start_datetime)}
                   </Text>
-                  <Text size={300} style={{ display: 'block', color: '#616161', marginTop: '4px' }}>
+                  <Text size={300} style={{ display: 'block', marginTop: '4px' }}>
                     Ends at {formatTime(post.end_datetime)}
                   </Text>
                 </div>
               </div>
-
-              <Divider />
 
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
                 <LocationRipple16Color style={{ marginTop: '4px', fontSize: '20px' }} />
@@ -264,7 +264,7 @@ export default function Post() {
                   <Text weight="semibold" size={400} style={{ display: 'block', marginBottom: '4px' }}>
                     Location
                   </Text>
-                  <Text size={300} style={{ display: 'block', color: '#424242' }}>
+                  <Text size={300} style={{ display: 'block' }}>
                     {post.location}
                   </Text>
                 </div>
