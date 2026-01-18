@@ -191,21 +191,9 @@ export default function Post() {
           </div>
           
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            {!hasJoined && !isOrganizer && (
-              <Button 
-                appearance="primary" 
-                size="large"
-                onClick={handleJoin}
-                disabled={isFull || joining}
-              >
-                {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
-              </Button>
-            )}
-            
             {hasJoined && (
               <Button
                 appearance="outline"
-                size="large"
                 icon={<CalendarAdd20Regular />}
                 onClick={() => setShowCalendarExport(true)}
               >
@@ -216,7 +204,6 @@ export default function Post() {
             {isOrganizer && (
               <Button 
                 appearance="primary"
-                size="large"
                 onClick={() => setShowCheckIn(true)}
               >
                 Manage Attendance
@@ -274,7 +261,8 @@ export default function Post() {
 
           {/* Description Card */}
           <Card>
-            <Title2 style={{ marginBottom: '16px' }}>About This Event</Title2>
+            <Title2>About This Event</Title2>
+            <Divider  style={{ marginBottom: '16px', marginTop: '16px' }}/>
             <Text style={{ lineHeight: '1.0', whiteSpace: 'pre-wrap' }}>
               {post.description}
             </Text>
@@ -296,7 +284,17 @@ export default function Post() {
                 {post.current_participants}/{post.max_participants}
               </Badge>
             </div>
-
+            {!hasJoined && !isOrganizer && (
+              <Button 
+                appearance="primary"
+                onClick={handleJoin}
+                disabled={isFull || joining}
+              >
+                {joining ? 'Joining...' : isFull ? 'Event Full' : 'Sign Up'}
+              </Button>
+            )}
+            
+            
             {!isFull && spotsRemaining <= 5 && spotsRemaining > 0 && (
               <div style={{ 
                 padding: '12px', 
