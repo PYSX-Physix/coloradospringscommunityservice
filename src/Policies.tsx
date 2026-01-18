@@ -18,7 +18,7 @@ export function Privacy() {
       </Text>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>2. Information We Collect</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>2.1 Personal Information</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         When you create an account, we collect:
@@ -71,7 +71,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. Information Sharing and Disclosure</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>4.1 Public Information</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         The following information is <strong>visible to other users</strong>:
@@ -232,7 +232,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Cookies and Tracking</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Cookies We Use</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We use cookies for:
@@ -264,7 +264,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Content Moderation and Reporting</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>10.1 Content Filtering</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We implement:
@@ -319,7 +319,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>11. Third-Party Services</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>11.1 Address Autocomplete</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We use <strong>Nominatim (OpenStreetMap)</strong> for address autocomplete:
@@ -370,7 +370,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>12. Notifications</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>12.1 Types of Notifications</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We may send you notifications for:
@@ -403,7 +403,7 @@ export function Privacy() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>13. Changes to This Privacy Policy</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>13.1 Updates</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We may update this Privacy Policy from time to time. We will notify users of any material changes by:
@@ -476,7 +476,7 @@ export function Terms() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>3. User Accounts</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>3.1 Account Creation</Title3>
       <ul style={{ marginBottom: '16px' }}>
         <li><Text>You must be at least 13 years old to create an account</Text></li>
@@ -492,7 +492,7 @@ export function Terms() {
       </Text>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>4. User Conduct and Responsibilities</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>4.1 Prohibited Activities</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         You agree NOT to:
@@ -538,7 +538,7 @@ export function Terms() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>5. Content and Intellectual Property</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>5.1 Your Content</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         You retain ownership of content you post (event descriptions, titles, etc.). By posting content, you grant us a non-exclusive, worldwide, royalty-free license to use, display, and distribute your content on the Platform.
@@ -570,7 +570,7 @@ export function Terms() {
       </Text>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>7. Content Moderation and Reporting</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>7.1 Automated Content Filtering</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We implement automated content filtering to maintain platform quality:
@@ -583,7 +583,7 @@ export function Terms() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>8. Disclaimers and Limitations of Liability</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>8.1 Platform Provided "As Is"</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         The Platform is provided "as is" without warranties of any kind. We do not guarantee:
@@ -625,7 +625,7 @@ export function Terms() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>10. Termination</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>10.1 Our Right to Terminate</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         We reserve the right to suspend or terminate your account at any time for:
@@ -662,7 +662,7 @@ export function Terms() {
       </Text>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>14. Dispute Resolution and Governing Law</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>14.1 Informal Resolution</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         Any disputes arising from these Terms or use of the Platform shall first be resolved through informal negotiation.
@@ -679,7 +679,7 @@ export function Terms() {
       </Text>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>15. Severability and Waiver</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>15.1 Severability</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that these Terms remain in full force and effect.
@@ -708,7 +708,7 @@ export function Terms() {
       </ul>
 
       <Title2 style={{ marginTop: '24px', marginBottom: '16px' }}>18. Additional Terms for Specific Features</Title2>
-      
+      <br/>
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>18.1 Notifications</Title3>
       <Text style={{ display: 'block', marginBottom: '16px' }}>
         By using the Platform, you consent to receive notifications about:
