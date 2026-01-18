@@ -263,7 +263,7 @@ export default function Post() {
           <Card>
             <Title2>About This Event</Title2>
             <Divider  style={{ marginBottom: '6px', marginTop: '6px' }}/>
-            <Text style={{ lineHeight: '1.0', whiteSpace: 'pre-wrap' }}>
+            <Text style={{ lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
               {post.description}
             </Text>
           </Card>
