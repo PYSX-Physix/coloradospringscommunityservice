@@ -455,7 +455,7 @@ export function Terms() {
     <div style={{ maxWidth: '900px' }}>
       <Title1>Terms of Service</Title1>
       <Text style={{ display: 'block', marginTop: '8px', marginBottom: '24px' }}>
-        Last Updated: November 28, 2024
+        Last Updated: December 27, 2025
       </Text>
       <Divider style={{ marginBottom: '24px' }} />
 
@@ -742,7 +742,7 @@ export function Terms() {
       </Text>
       
       <Text style={{ display: 'block', fontStyle: 'italic', color: '#666' }}>
-        Effective Date: November 28, 2024
+        Effective Date: December 27, 2025
       </Text>
     </div>
   );
