@@ -170,7 +170,7 @@ export default function Post() {
               <div style={{flexDirection: 'row'}}>
                 <Text>Organized by: </Text>
                 <Avatar name={post.user_name}/>
-                <Text>{post.user_name}</Text>
+                <Text style={{marginLeft: '4px'}}>{post.user_name}</Text>
               </div>
               <Menu>
                 <MenuTrigger>
