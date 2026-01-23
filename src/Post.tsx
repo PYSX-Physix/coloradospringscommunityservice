@@ -160,7 +160,7 @@ export default function Post() {
   const spotsRemaining = post.max_participants - post.current_participants;
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px' }}>
       {/* Header Section */}
       <div style={{ marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
@@ -169,7 +169,7 @@ export default function Post() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
               <div style={{flexDirection: 'row'}}>
                 <Text>Organized by: </Text>
-                <Persona name={post.user_name} size="small" />
+                <Persona name={post.user_name} size="small" textAlignment="center"/>
               </div>
               <Menu>
                 <MenuTrigger>

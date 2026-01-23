@@ -37,7 +37,7 @@ const latestAnnouncement: Announcement = {
   date: 'January 18, 2026',
   title: 'Updated Event Page Layput',
   type: 'info',
-  message: 'We\'ve built off of the old event page which was very unfinished. The new UI is cleaner and much easier to work with. We\'ve also fixed an issue with the formatting of the polices and the titles',
+  message: 'We\'ve built off of the old event page which was very unfinished. The new UI is cleaner and much easier to work with. We\'ve also fixed an issue with the formatting of the polices and the titles.',
   items: [
     'New event page UI design',
     'Fixed policies title formatting'
