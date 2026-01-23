@@ -1,4 +1,4 @@
-import { Title1, Image, Divider, Title2, Text, List, ListItem, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
+import { Title1, Image, Divider, Title2, Text, List, ListItem, Avatar, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
 import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
@@ -169,7 +169,8 @@ export default function Post() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
               <div style={{flexDirection: 'row'}}>
                 <Text>Organized by: </Text>
-                <Persona name={post.user_name} size="small" textAlignment="center"/>
+                <Avatar name={post.user_name}/>
+                <Text>{post.user_name}</Text>
               </div>
               <Menu>
                 <MenuTrigger>
