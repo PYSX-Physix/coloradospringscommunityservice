@@ -1,5 +1,5 @@
 import { Title1, Image, Divider, Title2, Text, List, ListItem, Avatar, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular } from "@fluentui/react-icons";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular, Share20Filled } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
@@ -192,6 +192,9 @@ export default function Post() {
           </div>
           
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <Button appearance="secondary" icon={<Share20Filled />}>
+              Share Event
+            </Button>
             {hasJoined && (
               <Button
                 appearance="outline"
@@ -304,7 +307,7 @@ export default function Post() {
                 marginBottom: '16px',
                 border: '1px solid #F7C548'
               }}>
-                <Text size={300} weight="semibold" style={{ color: '#8B6914' }}>
+                <Text size={300} weight="semibold">
                   Only {spotsRemaining} spot{spotsRemaining !== 1 ? 's' : ''} remaining!
                 </Text>
               </div>
