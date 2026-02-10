@@ -29,21 +29,9 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
             <DialogContent>
                 <DialogTitle>Share Event</DialogTitle>
                 <DialogBody>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div>
-                            <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <Input 
-                                type="text" 
-                                defaultValue={eventUrl} 
-                                readOnly 
-                                style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <Button onClick={handleCopyLink}>Copy</Button>
-                            </div>
-                        </div>
-                        <Button appearance="secondary" onClick={onClose}>Close</Button>
-                    </div>
+                    <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
+                    <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink}>Copy</Button> }/>
+                    <Button appearance="secondary" onClick={onClose}>Close</Button>
                 </DialogBody>
             </DialogContent>
         </DialogSurface>
