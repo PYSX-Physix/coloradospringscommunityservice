@@ -34,10 +34,10 @@ interface Announcement {
 const latestAnnouncement: Announcement = {
   id: 'jan-18-2026',
   version: 'V26.1.0',
-  date: 'January 18, 2026',
-  title: 'Updated Event Page Layput',
+  date: 'February 9, 2026',
+  title: 'Event Sharing Released!',
   type: 'info',
-  message: 'We\'ve built off of the old event page which was very unfinished. The new UI is cleaner and much easier to work with. We\'ve also fixed an issue with the formatting of the polices and the titles.',
+  message: 'We\'re launching a new feature that allows you to share community service events to others. It\'s very easy to use, go to an event and click on the share button to copy the link. Sharing on platforms is planned and being worked on such as Twitter, Facebook, and your native sharing systems.',
   items: [
     'New event page UI design',
     'Fixed policies title formatting'
