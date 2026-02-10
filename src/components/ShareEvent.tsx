@@ -29,12 +29,10 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
         <DialogSurface>
             <DialogContent>
                 <DialogTitle>Share Event</DialogTitle>
-                <DialogBody>
-                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
-                        <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink} icon={<Copy20Regular/>} appearance="transparent"/> }/>
-                        <Button appearance="secondary" onClick={onClose}>Close</Button>
-                    </div>
+                <DialogBody style={{display: 'flex', flexDirection: 'column'}}>
+                    <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
+                    <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink} icon={<Copy20Regular/>} appearance="transparent"/> }/>
+                    <Button appearance="secondary" onClick={onClose}>Close</Button>
                 </DialogBody>
             </DialogContent>
         </DialogSurface>
