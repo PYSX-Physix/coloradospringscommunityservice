@@ -6,6 +6,7 @@ import CheckInManager from "./components/CheckInManager";
 import { useSession } from "./lib/auth-client";
 import CalendarExport from "./components/CalendarExport";
 import { ReportUser } from "./components/ReportUser";
+import ShareEvent from "./components/ShareEvent";
 
 interface PostData {
   id: number;
@@ -49,6 +50,8 @@ export default function Post() {
   const [showReportDialog, setShowReportDialog] = React.useState(false);
   const [reportedUserId, setReportedUserId] = React.useState<string | null>(null);
   const [reportedUserName, setReportedUserName] = React.useState("");
+
+  const [showShareDialog, setShowShareDialog] = React.useState(false);
 
   const { data: session } = useSession();
 
@@ -192,7 +195,7 @@ export default function Post() {
           </div>
           
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <Button appearance="secondary" icon={<Share20Filled />}>
+            <Button appearance="secondary" icon={<Share20Filled />} onClick={() => setShowShareDialog(true)}>
               Share Event
             </Button>
             {hasJoined && (
@@ -302,7 +305,7 @@ export default function Post() {
             {!isFull && spotsRemaining <= 5 && spotsRemaining > 0 && (
               <div style={{ 
                 padding: '12px', 
-                backgroundColor: '#FFF4CE', 
+                backgroundColor: '#323232', 
                 borderRadius: '4px', 
                 marginBottom: '16px',
                 border: '1px solid #F7C548'
@@ -437,6 +440,18 @@ export default function Post() {
         participants={participants}
         isOrganizer={isOrganizer}
         onRefresh={fetchPost}
+      />
+      <ShareEvent
+        open={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        event={{
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          location: post.location,
+          start_time: post.start_datetime,
+          image_url: post.image_url,
+        }}
       />
     </div>
   );

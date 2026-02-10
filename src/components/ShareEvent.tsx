@@ -1,127 +1,50 @@
-import React from "react";
-import { Dialog, DialogContent, DialogBody, DialogSurface, DialogTitle, Text, Input, Tooltip, Button } from "@fluentui/react-components";
-import { Checkmark20Regular, Copy20Regular } from "@fluentui/react-icons"
-interface ShareEventProps
-{
-    open: boolean;
-    onClose: () => void;
-    event:
-    {
-        id: number;
-        title: string;
-        description: string;
-        location: string;
-        start_time: string;
-        image_url?: string;
-    }
+import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text } from "@fluentui/react-components";
+
+interface ShareEventEvent {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  start_time: string;
+  image_url?: string;
 }
 
-export default function ShareEvent({open, onClose, event}: ShareEventProps)
-{
-    const [copied, setCopied] = React.useState(false);
+interface ShareEventProps {
+  open: boolean;
+  onClose: () => void;
+  event: ShareEventEvent;
+}
 
-    // Create a shareable url
-    const shareUrl = `${window.location.origin}/post?id=${event.id}`;
+export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
+  const eventUrl = `${window.location.origin}?id=${event.id}`;
 
-    // Format the date for sharing
-    /*
-    const formatDate = (isoString: string) => {
-        return new Date(isoString).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit'
-        });
-    };
-    */
-    // The text displayed when presenting the community service
-    // const shareMessage = `Hey! I found this community service event you might want to do: ${event.title} | ${formatDate(event.start_time)} at ${event.location}`;
-    
-    // This function will handle copying the link
-    const handleCopyLink = async () =>
-    {
-        try
-        {
-            await navigator.clipboard.writeText(shareUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(eventUrl);
+    alert('Event link copied to clipboard!');
+  };
 
-        } catch (err)
-        {
-            console.error('Failed to Copy: ', err);
-        }
-    }   
-    /*
-    const facebookShare = () =>
-    {
-        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
-        window.open(url, '_blank', 'width=600, height=400');
-    }        
-
-    const twitterShare = () =>
-    {
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`
-        window.open(url, '_blank', 'width=600, height=400');
-    }
-
-    const linkedInShare = () =>
-    {
-        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-        window.open(url, '_blank', 'width=600, height=400');
-    }
-
-    const emailShare = () =>
-    {
-        const subject = encodeURIComponent(`Community Service Opportunity: ${event.title}`);
-        const body = encodeURIComponent(
-            `I found this community service event that you might want to do:` +
-            `${event.title}\n` +
-            `${formatDate(event.start_time)}\n` +
-            `${event.location}\n\n` +
-            `${event.description}\n\n` +
-            `Learn more and sign up: ${shareUrl}`
-        );
-
-        window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }
-    
-    const nativeShare = async () =>
-    {
-       if (navigator.share) {
-            try {
-                await navigator.share({
-                title: event.title,
-                text: shareMessage,
-                url: shareUrl,
-                });
-            } catch (err) {
-                console.error('Error sharing:', err);
-            }
-        }
-
-    }
-    */
-    // Main HTML
-    return
-    {
-        <div>
-            <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
-                <DialogSurface>
-                    <DialogBody>
-                        <DialogTitle>Share Event</DialogTitle>
-                        <DialogContent>
-                            <Text>Share Link</Text>
-                            <Input readOnly value={shareUrl}
-                            contentAfter={
-                                <Tooltip content={copied ? "Copied" : "Copy Link"} relationship="label">
-                                    <Button appearance="transparent" icon={copied ? <Checkmark20Regular/> : <Copy20Regular/>} onClick={handleCopyLink}/>
-                                </Tooltip>
-                            }/>
-                        </DialogContent>
-                    </DialogBody>
-                </DialogSurface>
-            </Dialog>
-        </div>
-    }
+  return (
+    <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
+      <DialogContent>
+        <DialogTitle>Share Event</DialogTitle>
+        <DialogBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input 
+                  type="text" 
+                  value={eventUrl} 
+                  readOnly 
+                  style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                />
+                <Button onClick={handleCopyLink}>Copy</Button>
+              </div>
+            </div>
+            <Button appearance="secondary" onClick={onClose}>Close</Button>
+          </div>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
+  );
 }

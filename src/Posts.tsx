@@ -5,8 +5,9 @@ import {
   Field, RadioGroup, Radio, Divider, Textarea, Card, CardPreview,
   makeStyles, CardHeader, CardFooter, Spinner
 } from "@fluentui/react-components";
-import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkCircle48Color, MoreHorizontal20Regular } from "@fluentui/react-icons";
+import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkCircle48Color, MoreHorizontal20Regular, Share20Regular } from "@fluentui/react-icons";
 import './App.css';
+import ShareEvent from './components/ShareEvent';
 
 const cardStyles = makeStyles({
   card: {
@@ -81,6 +82,7 @@ function PostCard({ post }: { post: PostData }) {
   const [isSaved, setIsSaved] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(true);
+  const [showShareDialog, setShowShareDialog] = React.useState(false);
 
   const styles = cardStyles();
 
@@ -186,6 +188,7 @@ function PostCard({ post }: { post: PostData }) {
                 >
                   {checkingStatus ? 'Loading...' : (isSaved ? 'Unsave Post' : 'Save Post')}
                 </MenuItem>
+                <MenuItem icon={<Share20Regular/>} onClick={() => setShowShareDialog(true)}>Share Post</MenuItem>
                 <MenuItem icon={<Warning20Regular />} onClick={() => setReportState("form")}>
                   Report Post
                 </MenuItem>
@@ -194,6 +197,19 @@ function PostCard({ post }: { post: PostData }) {
           </Menu>
         </CardFooter>
       </Card>
+
+      <ShareEvent
+        open={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        event={{
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          location: post.location,
+          start_time: post.start_datetime,
+          image_url: post.image_url,
+        }}
+      />
 
       <Dialog open={reportState === "form"} onOpenChange={(_, data) => !data.open && setReportState("closed")}>
         <DialogSurface>
