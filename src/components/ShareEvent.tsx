@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text } from "@fluentui/react-components";
+import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text, DialogSurface } from "@fluentui/react-components";
 
 interface ShareEventEvent {
   id: number;
@@ -25,7 +25,8 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
 
   return (
     <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
-      <DialogContent>
+      <DialogSurface>
+        <DialogContent>
         <DialogTitle>Share Event</DialogTitle>
         <DialogBody>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -44,7 +45,8 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
             <Button appearance="secondary" onClick={onClose}>Close</Button>
           </div>
         </DialogBody>
-      </DialogContent>
+        </DialogContent>
+      </DialogSurface>
     </Dialog>
   );
 }
