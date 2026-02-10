@@ -198,19 +198,6 @@ function PostCard({ post }: { post: PostData }) {
         </CardFooter>
       </Card>
 
-      <ShareEvent
-        open={showShareDialog}
-        onClose={() => setShowShareDialog(false)}
-        event={{
-          id: post.id,
-          title: post.title,
-          description: post.description,
-          location: post.location,
-          start_time: post.start_datetime,
-          image_url: post.image_url,
-        }}
-      />
-
       <Dialog open={reportState === "form"} onOpenChange={(_, data) => !data.open && setReportState("closed")}>
         <DialogSurface>
           <form onSubmit={handleReportSubmit}>
@@ -264,6 +251,19 @@ function PostCard({ post }: { post: PostData }) {
           </DialogBody>
         </DialogSurface>
       </Dialog>
+
+      <ShareEvent
+        open={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        event={{
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          location: post.location,
+          start_time: post.start_datetime,
+          image_url: post.image_url,
+        }}
+      />
     </div>
   );
 }
