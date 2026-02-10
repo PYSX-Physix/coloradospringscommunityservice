@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text, DialogSurface, Input } from "@fluentui/react-components";
+import { Copy20Regular } from "@fluentui/react-icons";
 
 interface ShareEventEvent {
   id: number;
@@ -29,9 +30,9 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
             <DialogContent>
                 <DialogTitle>Share Event</DialogTitle>
                 <DialogBody>
-                    <div style={{display: 'block'}}>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
                         <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
-                        <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink}>Copy</Button> }/>
+                        <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink} icon={<Copy20Regular/>} appearance="transparent"/> }/>
                         <Button appearance="secondary" onClick={onClose}>Close</Button>
                     </div>
                 </DialogBody>
