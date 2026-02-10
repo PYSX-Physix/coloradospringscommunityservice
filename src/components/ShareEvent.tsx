@@ -34,7 +34,7 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
                     <Input type="text" defaultValue={eventUrl} readOnly contentAfter={ <Button onClick={handleCopyLink} icon={<Copy20Regular/>} appearance="transparent"/> }/>
                 </DialogBody>
             </DialogContent>
-            <DialogActions>
+            <DialogActions style={{marginTop: '16px'}}>
                 <Button appearance="secondary" onClick={onClose}>Close</Button>
             </DialogActions>
         </DialogSurface>
