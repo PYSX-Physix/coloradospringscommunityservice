@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text, DialogSurface } from "@fluentui/react-components";
+import { Dialog, DialogContent, DialogBody, DialogTitle, Button, Text, DialogSurface, Input } from "@fluentui/react-components";
 
 interface ShareEventEvent {
   id: number;
@@ -25,28 +25,28 @@ export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
 
   return (
     <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
-      <DialogSurface>
-        <DialogContent>
-        <DialogTitle>Share Event</DialogTitle>
-        <DialogBody>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div>
-              <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  type="text" 
-                  value={eventUrl} 
-                  readOnly 
-                  style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                />
-                <Button onClick={handleCopyLink}>Copy</Button>
-              </div>
-            </div>
-            <Button appearance="secondary" onClick={onClose}>Close</Button>
-          </div>
-        </DialogBody>
-        </DialogContent>
-      </DialogSurface>
+        <DialogSurface>
+            <DialogContent>
+                <DialogTitle>Share Event</DialogTitle>
+                <DialogBody>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <div>
+                            <Text weight="semibold" block style={{ marginBottom: '8px' }}>Event Link</Text>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <Input 
+                                type="text" 
+                                defaultValue={eventUrl} 
+                                readOnly 
+                                style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                                <Button onClick={handleCopyLink}>Copy</Button>
+                            </div>
+                        </div>
+                        <Button appearance="secondary" onClick={onClose}>Close</Button>
+                    </div>
+                </DialogBody>
+            </DialogContent>
+        </DialogSurface>
     </Dialog>
   );
 }
