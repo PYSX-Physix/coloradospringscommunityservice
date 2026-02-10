@@ -6,7 +6,6 @@ This project is mean't to help people find community service opportunities in th
 You can view community service events on the "Posts" page and view them and their description. You can see the start/end dates and times, location, and person who orginized it.
 
 ## Notes and Bugs
-* `Post.tsx` needs to have a better layout it looks bad and unfinished.
 * `Announcements.tsx` might want to have links to articles about the patch.
 * `Search.tsx` could definitely have a better layout. It's also inconsistant with the cards in `Posts.tsx` cause it provides way more info.
 * **Bug**: When deleting an event, the event is erased from every profile that attended the event.
