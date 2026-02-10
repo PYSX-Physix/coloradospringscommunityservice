@@ -32,15 +32,14 @@ interface Announcement {
 }
 
 const latestAnnouncement: Announcement = {
-  id: 'jan-18-2026',
-  version: 'V26.1.0',
+  id: 'feb-9-2026',
+  version: 'V26.2.0',
   date: 'February 9, 2026',
   title: 'Event Sharing Released!',
   type: 'info',
   message: 'We\'re launching a new feature that allows you to share community service events to others. It\'s very easy to use, go to an event and click on the share button to copy the link. Sharing on platforms is planned and being worked on such as Twitter, Facebook, and your native sharing systems.',
   items: [
-    'New event page UI design',
-    'Fixed policies title formatting'
+    'Added new sharing feature'
   ],
   dismissible: true
 };
