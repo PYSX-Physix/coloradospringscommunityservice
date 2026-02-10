@@ -1,11 +1,12 @@
-import { Title1, Image, Divider, Title2, Text, List, ListItem, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
-import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular } from "@fluentui/react-icons";
+import { Title1, Image, Divider, Title2, Text, List, ListItem, Avatar, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
+import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular, Share20Filled } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 import CheckInManager from "./components/CheckInManager";
 import { useSession } from "./lib/auth-client";
 import CalendarExport from "./components/CalendarExport";
 import { ReportUser } from "./components/ReportUser";
+import ShareEvent from "./components/ShareEvent";
 
 interface PostData {
   id: number;
@@ -49,6 +50,8 @@ export default function Post() {
   const [showReportDialog, setShowReportDialog] = React.useState(false);
   const [reportedUserId, setReportedUserId] = React.useState<string | null>(null);
   const [reportedUserName, setReportedUserName] = React.useState("");
+
+  const [showShareDialog, setShowShareDialog] = React.useState(false);
 
   const { data: session } = useSession();
 
@@ -160,7 +163,7 @@ export default function Post() {
   const spotsRemaining = post.max_participants - post.current_participants;
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px' }}>
       {/* Header Section */}
       <div style={{ marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
@@ -169,7 +172,8 @@ export default function Post() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
               <div style={{flexDirection: 'row'}}>
                 <Text>Organized by: </Text>
-                <Persona name={post.user_name} size="small" />
+                <Avatar name={post.user_name}/>
+                <Text style={{marginLeft: '4px'}}>{post.user_name}</Text>
               </div>
               <Menu>
                 <MenuTrigger>
@@ -191,6 +195,9 @@ export default function Post() {
           </div>
           
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <Button appearance="secondary" icon={<Share20Filled />} onClick={() => setShowShareDialog(true)}>
+              Share Event
+            </Button>
             {hasJoined && (
               <Button
                 appearance="outline"
@@ -298,12 +305,12 @@ export default function Post() {
             {!isFull && spotsRemaining <= 5 && spotsRemaining > 0 && (
               <div style={{ 
                 padding: '12px', 
-                backgroundColor: '#FFF4CE', 
+                backgroundColor: '#323232', 
                 borderRadius: '4px', 
                 marginBottom: '16px',
                 border: '1px solid #F7C548'
               }}>
-                <Text size={300} weight="semibold" style={{ color: '#8B6914' }}>
+                <Text size={300} weight="semibold">
                   Only {spotsRemaining} spot{spotsRemaining !== 1 ? 's' : ''} remaining!
                 </Text>
               </div>
@@ -433,6 +440,18 @@ export default function Post() {
         participants={participants}
         isOrganizer={isOrganizer}
         onRefresh={fetchPost}
+      />
+      <ShareEvent
+        open={showShareDialog}
+        onClose={() => setShowShareDialog(false)}
+        event={{
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          location: post.location,
+          start_time: post.start_datetime,
+          image_url: post.image_url,
+        }}
       />
     </div>
   );

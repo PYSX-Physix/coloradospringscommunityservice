@@ -121,9 +121,8 @@ function Home() {
   else selectedValue = '50';
 
   return (
-    <div className="App">
-      <div className="root">
-        <NavDrawer
+    <div className='root'>
+      <NavDrawer
           className="nav"
           type="inline"
           open={isOpen}
@@ -232,7 +231,6 @@ function Home() {
             </Routes>
           </div>
         </div>
-      </div>
     </div>
   );
 }
