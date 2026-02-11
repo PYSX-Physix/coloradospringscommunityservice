@@ -314,9 +314,16 @@ function YourPosts() {
     const endDateTime = new Date(post.end_datetime);
     
     setStartDate(startDateTime);
-    setStartTime(startDateTime);
     setEndDate(endDateTime);
-    setEndTime(endDateTime);
+
+    const startTime = new Date();
+    startTime.setHours(startDateTime.getHours(), startDateTime.getMinutes(), 0, 0);
+    
+    const endTime = new Date();
+    endTime.setHours(endDateTime.getHours(), endDateTime.getMinutes(), 0, 0);
+    
+    setStartTime(startTime);
+    setEndTime(endTime);
     setParticipants(post.max_participants);
     
     setEditModalState('modal');
