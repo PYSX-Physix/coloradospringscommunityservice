@@ -259,15 +259,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setImageUrl("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setCreateModalState("confirmation")
@@ -309,21 +301,24 @@ function YourPosts() {
     setLocation(post.location);
     setImageUrl(post.image_url || "");
     
-    // Parse dates and times
-    const startDateTime = new Date(post.start_datetime);
-    const endDateTime = new Date(post.end_datetime);
+    // Parse the stored datetime
+    const startDT = new Date(post.start_datetime);
+    const endDT = new Date(post.end_datetime);
     
-    setStartDate(startDateTime);
-    setEndDate(endDateTime);
-
-    const startTime = new Date();
-    startTime.setHours(startDateTime.getHours(), startDateTime.getMinutes(), 0, 0);
+    // For DatePicker: set the date portion only
+    setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
+    setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
     
-    const endTime = new Date();
-    endTime.setHours(endDateTime.getHours(), endDateTime.getMinutes(), 0, 0);
+    // For TimePicker: create a new Date with just the time (using epoch as base date)
+    const startTimeObj = new Date(0); // Jan 1, 1970
+    startTimeObj.setHours(startDT.getHours(), startDT.getMinutes(), 0, 0);
     
-    setStartTime(startTime);
-    setEndTime(endTime);
+    const endTimeObj = new Date(0); // Jan 1, 1970
+    endTimeObj.setHours(endDT.getHours(), endDT.getMinutes(), 0, 0);
+    
+    setStartTime(startTimeObj);
+    setEndTime(endTimeObj);
+    
     setParticipants(post.max_participants);
     
     setEditModalState('modal');
@@ -362,14 +357,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setEditModalState("confirmation")
