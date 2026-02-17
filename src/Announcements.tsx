@@ -17,37 +17,13 @@ import {
   Dismiss20Regular,
   ChevronRight20Regular
 } from "@fluentui/react-icons";
-
-// Latest announcement data
-interface Announcement {
-  id: string;
-  version: string;
-  date: string;
-  title: string;
-  type: 'info' | 'warning' | 'success' | 'error';
-  message: string;
-  items?: string[];
-  link?: string;
-  dismissible: boolean;
-}
-
-const latestAnnouncement: Announcement = {
-  id: 'feb-9-2026',
-  version: 'V26.2.0',
-  date: 'February 9, 2026',
-  title: 'Event Sharing Released!',
-  type: 'info',
-  message: 'We\'re launching a new feature that allows you to share community service events to others. It\'s very easy to use, go to an event and click on the share button to copy the link. Sharing on platforms is planned and being worked on such as Twitter, Facebook, and your native sharing systems.',
-  items: [
-    'Added new sharing feature'
-  ],
-  dismissible: true
-};
+import { getLatestAnnouncement, announcements } from '../functions/api/announcements-data';
 
 // Component 1: Top Banner (shows once per announcement)
 export function AnnouncementBanner() {
+  const latestAnnouncement = getLatestAnnouncement();
+  
   const [dismissed, setDismissed] = React.useState(() => {
-    // Check if user has already dismissed this announcement
     const dismissedAnnouncements = localStorage.getItem('dismissed-announcements');
     if (dismissedAnnouncements) {
       const parsed = JSON.parse(dismissedAnnouncements);
@@ -64,7 +40,7 @@ export function AnnouncementBanner() {
     setDismissed(true);
   };
 
-  if (dismissed) return null;
+  if (dismissed || !latestAnnouncement.dismissible) return null;
 
   return (
     <MessageBar
@@ -74,8 +50,8 @@ export function AnnouncementBanner() {
       <MessageBarBody>
         <MessageBarTitle>{latestAnnouncement.title}</MessageBarTitle>
         <Text>{latestAnnouncement.message}</Text>
-        {latestAnnouncement.link && (
-          <Link href={latestAnnouncement.link} style={{ marginLeft: '8px' }}>
+        {latestAnnouncement.hasDetailPage && (
+          <Link href={`/announcements/${latestAnnouncement.id}`} style={{ marginLeft: '8px' }}>
             Learn more <ChevronRight20Regular />
           </Link>
         )}
@@ -94,6 +70,8 @@ export function AnnouncementBanner() {
 
 // Component 2: Announcement Icon with Popover (always accessible)
 export function AnnouncementPopover() {
+  const latestAnnouncement = getLatestAnnouncement();
+  
   const [hasUnread, setHasUnread] = React.useState(() => {
     const lastSeen = localStorage.getItem('last-seen-announcement');
     return lastSeen !== latestAnnouncement.id;
@@ -163,14 +141,14 @@ export function AnnouncementPopover() {
             </ul>
           )}
 
-          {latestAnnouncement.link && (
+          {latestAnnouncement.hasDetailPage && (
             <Button
               appearance="primary"
               as="a"
-              href={latestAnnouncement.link}
+              href={`/announcements/${latestAnnouncement.id}`}
               style={{ marginTop: '16px', width: '100%' }}
             >
-              Learn More
+              Read Full Article
             </Button>
           )}
         </div>
@@ -181,6 +159,8 @@ export function AnnouncementPopover() {
 
 // Component 3: Compact Announcement Section (for homepage/dashboard)
 export function AnnouncementSection() {
+  const latestAnnouncement = getLatestAnnouncement();
+  
   return (
     <div style={{ 
       padding: '16px', 
@@ -205,12 +185,12 @@ export function AnnouncementSection() {
             {latestAnnouncement.date}
           </Text>
         </div>
-        {latestAnnouncement.link && (
+        {latestAnnouncement.hasDetailPage && (
           <Button
             appearance="subtle"
             size="small"
             as="a"
-            href={latestAnnouncement.link}
+            href={`/announcements/${latestAnnouncement.id}`}
             icon={<ChevronRight20Regular />}
           >
             Details
@@ -223,18 +203,17 @@ export function AnnouncementSection() {
 
 // Component 4: Mini Version History Popover
 export function VersionHistory() {
-  const recentVersions = [
-    { version: 'V12.27.2025', title: 'Privacy & Terms Update', date: 'Dec 27' },
-    { version: 'V12.07.2025', title: 'Notifications Feature', date: 'Dec 7' },
-    { version: 'V11.29.2025', title: 'Attendance Tracking', date: 'Nov 29' },
-    { version: 'V11.25.2025', title: 'Beta Launch', date: 'Nov 25' }
-  ];
+  const recentVersions = announcements.slice(0, 4).map(a => ({
+    version: a.version,
+    title: a.title,
+    date: new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }));
 
   return (
     <Popover>
       <PopoverTrigger disableButtonEnhancement>
         <Button appearance="subtle" size="small">
-          Version {latestAnnouncement.version}
+          Version {getLatestAnnouncement().version}
         </Button>
       </PopoverTrigger>
 
