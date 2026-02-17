@@ -590,6 +590,7 @@ function YourPosts() {
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
                     required 
+                    resize="vertical"
                   />
                 </Field>
                 <Field label={"Image URL"}>
@@ -691,7 +692,8 @@ function YourPosts() {
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
-                    required 
+                    required
+                    resize="vertical"
                   />
                 </Field>
                 <Field label={"Image URL"}>
