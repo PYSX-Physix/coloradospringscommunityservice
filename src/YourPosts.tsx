@@ -259,15 +259,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setImageUrl("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setCreateModalState("confirmation")
@@ -309,14 +301,24 @@ function YourPosts() {
     setLocation(post.location);
     setImageUrl(post.image_url || "");
     
-    // Parse dates and times
-    const startDateTime = new Date(post.start_datetime);
-    const endDateTime = new Date(post.end_datetime);
+    // Parse the stored datetime
+    const startDT = new Date(post.start_datetime);
+    const endDT = new Date(post.end_datetime);
     
-    setStartDate(startDateTime);
-    setStartTime(startDateTime);
-    setEndDate(endDateTime);
-    setEndTime(endDateTime);
+    // For DatePicker: set the date portion only
+    setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
+    setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
+    
+    // For TimePicker: create a new Date with just the time (using epoch as base date)
+    const startTimeObj = new Date(0); // Jan 1, 1970
+    startTimeObj.setHours(startDT.getHours(), startDT.getMinutes(), 0, 0);
+    
+    const endTimeObj = new Date(0); // Jan 1, 1970
+    endTimeObj.setHours(endDT.getHours(), endDT.getMinutes(), 0, 0);
+    
+    setStartTime(startTimeObj);
+    setEndTime(endTimeObj);
+    
     setParticipants(post.max_participants);
     
     setEditModalState('modal');
@@ -355,14 +357,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setEditModalState("confirmation")
