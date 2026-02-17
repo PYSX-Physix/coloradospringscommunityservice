@@ -383,8 +383,6 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1 style={{marginBottom: '16px'}}>My Events</Title1>
-      
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px' }}>
         <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
