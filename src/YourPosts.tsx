@@ -588,7 +588,8 @@ function YourPosts() {
                   <Textarea 
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
-                    onChange={(_, data) => setDesc(data.value)} 
+                    onChange={(_, data) => setDesc(data.value)}
+                    resize="vertical"
                     required 
                   />
                 </Field>
@@ -691,6 +692,7 @@ function YourPosts() {
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
+                    resize="vertical"
                     required 
                   />
                 </Field>
