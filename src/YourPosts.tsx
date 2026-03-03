@@ -309,8 +309,8 @@ function YourPosts() {
     setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
     setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
     
-    startDT.setSeconds(0, 0);
-    endDT.setSeconds(0, 0);
+    setStartTime(new Date(startDT.getHours(), startDT.getMinutes()));
+    setEndTime(new Date(endDT.getHours(), endDT.getMinutes()));
     
     setParticipants(post.max_participants);
     
