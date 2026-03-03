@@ -309,15 +309,8 @@ function YourPosts() {
     setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
     setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
     
-    // For TimePicker: create a new Date with just the time (using epoch as base date)
-    const startTimeObj = new Date(0); // Jan 1, 1970
-    startTimeObj.setHours(startDT.getHours(), startDT.getMinutes(), 0, 0);
-    
-    const endTimeObj = new Date(0); // Jan 1, 1970
-    endTimeObj.setHours(endDT.getHours(), endDT.getMinutes(), 0, 0);
-    
-    setStartTime(startTimeObj);
-    setEndTime(endTimeObj);
+    startDT.setSeconds(0, 0);
+    endDT.setSeconds(0, 0);
     
     setParticipants(post.max_participants);
     
@@ -383,8 +376,6 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1 style={{marginBottom: '16px'}}>My Events</Title1>
-      
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px' }}>
         <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
@@ -590,7 +581,7 @@ function YourPosts() {
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)}
                     resize="vertical"
-                    required 
+                    required
                   />
                 </Field>
                 <Field label={"Image URL"}>
@@ -692,8 +683,8 @@ function YourPosts() {
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
+                    required
                     resize="vertical"
-                    required 
                   />
                 </Field>
                 <Field label={"Image URL"}>
