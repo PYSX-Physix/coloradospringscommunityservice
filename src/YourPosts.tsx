@@ -34,6 +34,12 @@ interface PostData {
 
 type TabValue = 'created' | 'saved' | 'joined';
 
+function ShortText(text: string, isMobile: boolean): string {
+  const maxChars = isMobile ? 3 : 20;
+  if (text.length <= maxChars) return text;
+  return text.substring(0, maxChars) + "...";
+}
+
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
   const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
@@ -68,7 +74,13 @@ function YourPosts() {
 
   const [showCalendarExport, setShowCalendarExport] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
 
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 500);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
@@ -259,15 +271,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setImageUrl("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setCreateModalState("confirmation")
@@ -309,14 +313,17 @@ function YourPosts() {
     setLocation(post.location);
     setImageUrl(post.image_url || "");
     
-    // Parse dates and times
-    const startDateTime = new Date(post.start_datetime);
-    const endDateTime = new Date(post.end_datetime);
+    // Parse the stored datetime
+    const startDT = new Date(post.start_datetime);
+    const endDT = new Date(post.end_datetime);
     
-    setStartDate(startDateTime);
-    setStartTime(startDateTime);
-    setEndDate(endDateTime);
-    setEndTime(endDateTime);
+    // For DatePicker: set the date portion only
+    setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
+    setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
+    
+    setStartTime(new Date(startDT.getHours(), startDT.getMinutes()));
+    setEndTime(new Date(endDT.getHours(), endDT.getMinutes()));
+    
     setParticipants(post.max_participants);
     
     setEditModalState('modal');
@@ -355,14 +362,7 @@ function YourPosts() {
 
       if (res.ok) {
         // Reset form
-        setTitle("");
-        setDesc("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
+        resetForm();
         
         // Close dialog and refresh posts
         setEditModalState("confirmation")
@@ -388,8 +388,6 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1 style={{marginBottom: '16px'}}>My Events</Title1>
-      
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px' }}>
         <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
@@ -427,7 +425,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
@@ -436,11 +434,11 @@ function YourPosts() {
               <TableBody>
                 {posts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
@@ -495,7 +493,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
@@ -504,11 +502,11 @@ function YourPosts() {
               <TableBody>
                 {savedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell>
                       <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
@@ -535,7 +533,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
@@ -544,11 +542,11 @@ function YourPosts() {
               <TableBody>
                 {joinedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
@@ -593,8 +591,9 @@ function YourPosts() {
                   <Textarea 
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
-                    onChange={(_, data) => setDesc(data.value)} 
-                    required 
+                    onChange={(_, data) => setDesc(data.value)}
+                    resize="vertical"
+                    required
                   />
                 </Field>
                 <Field label={"Image URL"}>
@@ -696,7 +695,8 @@ function YourPosts() {
                     placeholder="Be descriptive about the event here." 
                     value={desc} 
                     onChange={(_, data) => setDesc(data.value)} 
-                    required 
+                    required
+                    resize="vertical"
                   />
                 </Field>
                 <Field label={"Image URL"}>
