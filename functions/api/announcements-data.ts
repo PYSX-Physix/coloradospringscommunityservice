@@ -33,6 +33,21 @@ export interface AnnouncementData
 export const announcements: AnnouncementData[] =
 [
     {
+        id: 'march-5-2026',
+        version: '1.6.4',
+        date: 'March 5, 2026',
+        title: 'Fixed Minor Layout Issues',
+        type: 'info',
+        message: 'As known, the \'My Posts\' tables with joined events, saved events, and created events would overlap each other and cause readability issues. This update aims to fix and mitigate this issue',
+        items:
+        [
+            'Made system to truncate text',
+            'Fixed layout issue \'My Posts\' tab'
+        ],
+        dismissible: true,
+        hasDetailPage: false
+    },
+    {
         id: 'feb-17-2026',
         version: '1.6.3',
         date: 'February 17, 2026',
