@@ -35,7 +35,7 @@ interface PostData {
 type TabValue = 'created' | 'saved' | 'joined';
 
 function ShortText(text: string, isMobile: boolean): string {
-  const maxChars = isMobile ? 5 : 20;
+  const maxChars = isMobile ? 3 : 20;
   if (text.length <= maxChars) return text;
   return text.substring(0, maxChars) + "...";
 }
@@ -425,7 +425,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
@@ -493,7 +493,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
@@ -533,7 +533,7 @@ function YourPosts() {
                 <TableRow>
                   {columns.map((column) => (
                     <TableHeaderCell key={column.columnKey}>
-                      {column.label}
+                      {ShortText(column.label, isMobile)}
                     </TableHeaderCell>
                   ))}
                   <TableHeaderCell>Actions</TableHeaderCell>
