@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
@@ -33,6 +33,30 @@ interface PostData {
 }
 
 type TabValue = 'created' | 'saved' | 'joined';
+
+function ShortText(text: string)
+{
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const [maxChars, setMaxChars] = React.useState<number>(0);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 500;
+      setIsMobile(mobile);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
+
+  if (isMobile == true) setMaxChars(10);
+  else setMaxChars(20);
+
+  if (text.length <= maxChars) {
+      return text;
+    }
+  return text.substring(0, maxChars) + '...';
+}
 
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
@@ -422,11 +446,11 @@ function YourPosts() {
               <TableBody>
                 {posts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title)}</TableCell>
+                    <TableCell>{ShortText(post.location)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
                     <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
@@ -490,11 +514,11 @@ function YourPosts() {
               <TableBody>
                 {savedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title)}</TableCell>
+                    <TableCell>{ShortText(post.location)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell>
                       <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
@@ -530,11 +554,11 @@ function YourPosts() {
               <TableBody>
                 {joinedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
+                    <TableCell>{ShortText(post.title)}</TableCell>
+                    <TableCell>{ShortText(post.location)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
