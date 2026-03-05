@@ -34,21 +34,8 @@ interface PostData {
 
 type TabValue = 'created' | 'saved' | 'joined';
 
-function ShortText(text: string) {
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
-  const [maxChars, setMaxChars] = React.useState(isMobile ? 10 : 20);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 500;
-      setIsMobile(mobile);
-      setMaxChars(mobile ? 10 : 20);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
+function ShortText(text: string, isMobile: boolean): string {
+  const maxChars = isMobile ? 10 : 20;
   if (text.length <= maxChars) return text;
   return text.substring(0, maxChars) + "...";
 }
@@ -87,7 +74,13 @@ function YourPosts() {
 
   const [showCalendarExport, setShowCalendarExport] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
 
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 500);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
@@ -441,11 +434,11 @@ function YourPosts() {
               <TableBody>
                 {posts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title)}</TableCell>
-                    <TableCell>{ShortText(post.location)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
@@ -509,11 +502,11 @@ function YourPosts() {
               <TableBody>
                 {savedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title)}</TableCell>
-                    <TableCell>{ShortText(post.location)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell>
                       <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
@@ -549,11 +542,11 @@ function YourPosts() {
               <TableBody>
                 {joinedPosts.map((post) => (
                   <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title)}</TableCell>
-                    <TableCell>{ShortText(post.location)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime))}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime))}</TableCell>
+                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
                     <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
                     <TableCell role="gridcell">
                       <TableCellLayout>
