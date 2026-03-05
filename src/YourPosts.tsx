@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
@@ -34,28 +34,23 @@ interface PostData {
 
 type TabValue = 'created' | 'saved' | 'joined';
 
-function ShortText(text: string)
-{
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
-  const [maxChars, setMaxChars] = React.useState<number>(0);
+function ShortText(text: string) {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
+  const [maxChars, setMaxChars] = React.useState(isMobile ? 10 : 20);
 
   React.useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 500;
       setIsMobile(mobile);
+      setMaxChars(mobile ? 10 : 20);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  });
+  }, []);
 
-  if (isMobile == true) setMaxChars(10);
-  else setMaxChars(20);
-
-  if (text.length <= maxChars) {
-      return text;
-    }
-  return text.substring(0, maxChars) + '...';
+  if (text.length <= maxChars) return text;
+  return text.substring(0, maxChars) + "...";
 }
 
 function YourPosts() {
