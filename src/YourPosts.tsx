@@ -35,7 +35,7 @@ interface PostData {
 type TabValue = 'created' | 'saved' | 'joined';
 
 function ShortText(text: string, isMobile: boolean): string {
-  const maxChars = isMobile ? 10 : 20;
+  const maxChars = isMobile ? 5 : 20;
   if (text.length <= maxChars) return text;
   return text.substring(0, maxChars) + "...";
 }
