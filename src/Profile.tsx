@@ -21,12 +21,25 @@ interface Event {
   checked_in_at: string;
 }
 
+function ShortText(text: string, isMobile: boolean): string {
+  const maxChars = isMobile ? 3 : 20;
+  if (text.length <= maxChars) return text;
+  return text.substring(0, maxChars) + "...";
+}
+
 export default function Profile() {
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   
   const [eventHistory, setEventHistory] = React.useState<Event[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
+  
+    React.useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 500);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
   React.useEffect(() => {
     if (!isPending && !session) {
@@ -105,7 +118,7 @@ export default function Profile() {
                   {eventHistory.map((event) => (
                     <TableRow key={event.id}>
                       <TableCell>{event.event_title}</TableCell>
-                      <TableCell>{event.event_location}</TableCell>
+                      <TableCell>{ShortText(event.event_location, isMobile)}</TableCell>
                       <TableCell>{formatDateTime(event.event_start_datetime)}</TableCell>
                       <TableCell>{formatDateTime(event.checked_in_at)}</TableCell>
                     </TableRow>
