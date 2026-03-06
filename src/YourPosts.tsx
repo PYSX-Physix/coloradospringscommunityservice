@@ -207,7 +207,7 @@ function YourPosts() {
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString('en-US', {
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
