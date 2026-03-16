@@ -33,6 +33,21 @@ export interface AnnouncementData
 export const announcements: AnnouncementData[] =
 [
     {
+        id: 'march-16-2026',
+        version: '1.6.5',
+        date: 'March 16, 2026',
+        title: 'Fixed Mobile Layout Issues',
+        type: 'info',
+        message: 'We have fixed some layout issues on mobile devices, especially on the event details page and the my posts page. This is to make the site more accessible and user-friendly for mobile users.',
+        items:
+        [
+            'Improved mobile layout for event details page',
+            'Improved mobile layout for my posts page'
+        ],
+        dismissible: true,
+        hasDetailPage: false
+    },
+    {
         id: 'march-5-2026',
         version: '1.6.4',
         date: 'March 5, 2026',
