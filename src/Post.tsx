@@ -193,7 +193,7 @@ export default function Post() {
               </Menu>
             </div>
           </div>
-          
+          {/* Buttons at the top */}
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <Button appearance="secondary" icon={<Share20Filled />} onClick={() => setShowShareDialog(true)}>
               Share Event
