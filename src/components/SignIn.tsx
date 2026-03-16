@@ -60,7 +60,7 @@ export default function SignIn() {
         
         <form onSubmit={handleSubmit}>
           {isSignUp && (
-            <Field label="Name" required style={{ marginBottom: "16px" }}>
+            <Field label="Username" required style={{ marginBottom: "16px" }}>
               <Input
                 value={name}
                 onChange={(_, data) => setName(data.value)}
