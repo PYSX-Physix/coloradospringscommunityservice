@@ -7,6 +7,7 @@ import { useSession } from "./lib/auth-client";
 import CalendarExport from "./components/CalendarExport";
 import { ReportUser } from "./components/ReportUser";
 import ShareEvent from "./components/ShareEvent";
+import { useIsMobile } from "./hooks/useIsMobile";
 
 interface PostData {
   id: number;
@@ -54,6 +55,8 @@ export default function Post() {
   const [showShareDialog, setShowShareDialog] = React.useState(false);
 
   const { data: session } = useSession();
+
+  const isMobile = useIsMobile();
 
   const fetchPost = React.useCallback(async () => {
     if (!postId) {
@@ -193,8 +196,8 @@ export default function Post() {
               </Menu>
             </div>
           </div>
-          
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Buttons at the top */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
             <Button appearance="secondary" icon={<Share20Filled />} onClick={() => setShowShareDialog(true)}>
               Share Event
             </Button>
@@ -221,7 +224,9 @@ export default function Post() {
       </div>
 
       {/* Main Content Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px' }}>
+      <div style={{ display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 380px', 
+        gap: '24px' }}>
         {/* Left Column - Event Details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Event Image */}
@@ -236,7 +241,9 @@ export default function Post() {
 
           {/* Date, Time & Location Card */}
           <Card>
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+            <div style={{ display: 'flex', 
+              flexDirection: isMobile ? 'column' : 'row', 
+              gap: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', width: '100%' }}>
                 <Calendar16Color style={{ marginTop: '4px', fontSize: '20px' }} />
                 <div style={{ flex: 1 }}>

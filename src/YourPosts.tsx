@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 import CalendarExport from "./components/CalendarExport";
 import { AddressAutocomplete } from "./components/AddressAutoComplete";
+import { useIsMobile } from "./hooks/useIsMobile";
 
 interface PostData {
   id: number;
@@ -74,14 +75,8 @@ function YourPosts() {
 
   const [showCalendarExport, setShowCalendarExport] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 500);
+  const isMobile = useIsMobile();
 
-  React.useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 500);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
 
@@ -207,7 +202,7 @@ function YourPosts() {
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString('en-US', {
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
@@ -420,63 +415,65 @@ function YourPosts() {
           ) : posts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>No posts yet. Create your first event!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {ShortText(column.label, isMobile)}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {posts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                    <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
-                    <TableCell role="gridcell">
-                      <TableCellLayout>
-                        <Menu>
-                          <MenuTrigger>
-                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                          </MenuTrigger>
-                          <MenuPopover>
-                            <MenuList>
-                              <MenuItem 
-                                icon={<DocumentArrowDown20Regular />}
-                                onClick={() => handleDownloadAttendance(post.id)}
-                                disabled={downloadingAttendance === post.id}
-                              >
-                                {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
-                              </MenuItem>
-                              <MenuDivider />
-                              <MenuItem icon={<EditRegular />} onClick={ () => handleEdit(post)}>Edit</MenuItem>
-                              <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                              <MenuDivider/>
-                              <MenuItem 
-                                icon={<DeleteRegular/>} 
-                                onClick={() => {
-                                  setDeletePostId(post.id);
-                                  setDeleteModalState("modal");
-                                }}
-                              >
-                                Delete
-                              </MenuItem>
-                            </MenuList>
-                          </MenuPopover>
-                        </Menu>
-                      </TableCellLayout>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px', minWidth: '600px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {posts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem 
+                                  icon={<DocumentArrowDown20Regular />}
+                                  onClick={() => handleDownloadAttendance(post.id)}
+                                  disabled={downloadingAttendance === post.id}
+                                >
+                                  {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem icon={<EditRegular />} onClick={ () => handleEdit(post)}>Edit</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                                <MenuDivider/>
+                                <MenuItem 
+                                  icon={<DeleteRegular/>} 
+                                  onClick={() => {
+                                    setDeletePostId(post.id);
+                                    setDeleteModalState("modal");
+                                  }}
+                                >
+                                  Delete
+                                </MenuItem>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </>
       )}
@@ -488,35 +485,37 @@ function YourPosts() {
           {savedPosts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>No saved events yet. Browse events and save your favorites!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {ShortText(column.label, isMobile)}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {savedPosts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                    <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                    <TableCell>
-                      <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
-                        View
-                      </Button>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+                <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {savedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell>
+                        <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </>
       )}
@@ -528,45 +527,48 @@ function YourPosts() {
           {joinedPosts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>You haven't joined any events yet. Browse events and sign up!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {ShortText(column.label, isMobile)}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {joinedPosts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                    <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                    <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                    <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                    <TableCell role="gridcell">
-                      <TableCellLayout>
-                        <Menu>
-                          <MenuTrigger>
-                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                          </MenuTrigger>
-                          <MenuPopover>
-                            <MenuList>
-                              <MenuItem icon={<CalendarAddRegular />} onClick={() => setShowCalendarExport(true)}>Add to Calendar</MenuItem>
-                              <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                            </MenuList>
-                          </MenuPopover>
-                        </Menu>
-                      </TableCellLayout>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {joinedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem icon={<CalendarAddRegular />} onClick={() => setShowCalendarExport(true)}>Add to Calendar</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
           )}
         </>
       )}
@@ -604,7 +606,11 @@ function YourPosts() {
                   />
                 </Field>
                 <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{display: "flex", flexDirection: 'row'}}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                  gap: '8px' 
+                }}>
                   <Field label={"Start Day"} required>
                     <DatePicker 
                       placeholder="Select a Date..." 
@@ -622,7 +628,11 @@ function YourPosts() {
                     />
                   </Field>
                 </div>
-                <div style={{display: "flex", flexDirection: 'row'}}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                  gap: '8px' 
+                }}>
                   <Field label={"End Day"} required>
                     <DatePicker 
                       placeholder="Select a Date..." 
@@ -707,7 +717,11 @@ function YourPosts() {
                   />
                 </Field>
                 <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{display: "flex", flexDirection: 'row'}}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                  gap: '8px' 
+                }}>
                   <Field label={"Start Day"} required>
                     <DatePicker 
                       placeholder="Select a Date..." 
@@ -725,7 +739,11 @@ function YourPosts() {
                     />
                   </Field>
                 </div>
-                <div style={{display: "flex", flexDirection: 'row'}}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+                  gap: '8px' 
+                }}>
                   <Field label={"End Day"} required>
                     <DatePicker 
                       placeholder="Select a Date..." 

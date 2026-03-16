@@ -65,6 +65,7 @@ export default function SignIn() {
                 value={name}
                 onChange={(_, data) => setName(data.value)}
                 required
+                placeholder="Do not use your real name!"
               />
             </Field>
           )}

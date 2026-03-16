@@ -6,6 +6,7 @@ import {
 } from "@fluentui/react-components";
 import { useSession } from "./lib/auth-client";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "./hooks/useIsMobile";
 
 /*
 There can definetly be a lot more that can go into this menu. Mainly cause I think that
@@ -21,12 +22,19 @@ interface Event {
   checked_in_at: string;
 }
 
+function ShortText(text: string, isMobile: boolean): string {
+  const maxChars = isMobile ? 3 : 20;
+  if (text.length <= maxChars) return text;
+  return text.substring(0, maxChars) + "...";
+}
+
 export default function Profile() {
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   
   const [eventHistory, setEventHistory] = React.useState<Event[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const isMobile = useIsMobile()
 
   React.useEffect(() => {
     if (!isPending && !session) {
@@ -92,26 +100,28 @@ export default function Profile() {
               <Badge appearance="filled" color="success" style={{ marginBottom: '16px' }}>
                 Total Events Attended: {eventHistory.length}
               </Badge>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHeaderCell>Event</TableHeaderCell>
-                    <TableHeaderCell>Location</TableHeaderCell>
-                    <TableHeaderCell>Event Date</TableHeaderCell>
-                    <TableHeaderCell>Attended On</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {eventHistory.map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell>{event.event_title}</TableCell>
-                      <TableCell>{event.event_location}</TableCell>
-                      <TableCell>{formatDateTime(event.event_start_datetime)}</TableCell>
-                      <TableCell>{formatDateTime(event.checked_in_at)}</TableCell>
+              <div style={{overflowX: 'auto', width: '100%'}}>
+                <Table style={{minWidth: '500px'}}>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHeaderCell>Event</TableHeaderCell>
+                      <TableHeaderCell>Location</TableHeaderCell>
+                      <TableHeaderCell>Event Date</TableHeaderCell>
+                      <TableHeaderCell>Attended On</TableHeaderCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {eventHistory.map((event) => (
+                      <TableRow key={event.id}>
+                        <TableCell>{event.event_title}</TableCell>
+                        <TableCell>{ShortText(event.event_location, isMobile)}</TableCell>
+                        <TableCell>{formatDateTime(event.event_start_datetime)}</TableCell>
+                        <TableCell>{formatDateTime(event.checked_in_at)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </>
           )}
         </div>
