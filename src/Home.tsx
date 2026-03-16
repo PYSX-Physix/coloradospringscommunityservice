@@ -164,39 +164,39 @@ function Home() {
           <NavDrawerBody>
             <NavDivider />
             <NavSectionHeader>General</NavSectionHeader>
-            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
+            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />} onClick={() => isMobile && setIsOpen(false)}>
               Posts
             </NavItem>
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
+            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />} onClick={() => isMobile && setIsOpen(false)}>
               Search
             </NavItem>
-            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
+            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />} onClick={() => isMobile && setIsOpen(false)}>
               My Posts
             </NavItem>
             <NavDivider />
             <NavSectionHeader>Info</NavSectionHeader>
-            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />}>
+            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />} onClick={() => isMobile && setIsOpen(false)}>
               About Us
             </NavItem>
             <NavCategory value={POLICIESMENU}>
-              <NavCategoryItem icon={<DocumentFolder20Color />}>
+              <NavCategoryItem icon={<DocumentFolder20Color />} onClick={() => isMobile && setIsOpen(false)}>
                 Policies
               </NavCategoryItem>
               <NavSubItemGroup>
-                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
+                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY} onClick={() => isMobile && setIsOpen(false)}>
                   Privacy Policy
                 </NavSubItem>
-                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
+                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE} onClick={() => isMobile && setIsOpen(false)}>
                   Terms of Service
                 </NavSubItem>
               </NavSubItemGroup>
             </NavCategory>
-            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />}>Help</NavItem>
+            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />} onClick={() => isMobile && setIsOpen(false)}>Help</NavItem>
             {isAdmin && (
               <>
                 <NavDivider />
                 <NavSectionHeader>Administration</NavSectionHeader>
-                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />}>
+                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />} onClick={() => isMobile && setIsOpen(false)}>
                   Admin Panel
                 </NavItem>
               </>
@@ -208,13 +208,13 @@ function Home() {
           </NavDrawerFooter>
         </NavDrawer>
         <div className="content">
-          {!isOpen && (
-            <div className="hamburger-container">
-              <Tooltip content={"Open navigation"} relationship='label'>
-                <Hamburger onClick={() => setIsOpen(!isOpen)} />
-              </Tooltip>
-            </div>
-          )}
+          <div className="hamburger-container" style={{ 
+            display: (!isOpen || isMobile) ? 'block' : 'none' 
+          }}>
+            <Tooltip content={isOpen ? "Close navigation" : "Open navigation"} relationship='label'>
+              <Hamburger onClick={() => setIsOpen(!isOpen)} />
+            </Tooltip>
+          </div>
           <div className="content-scroll">
             <Routes>
               <Route path="/" element={<Posts />} />
@@ -231,6 +231,17 @@ function Home() {
             </Routes>
           </div>
         </div>
+        {isMobile && isOpen && (
+          <div
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 1,
+            }}
+          />
+        )}
     </div>
   );
 }
