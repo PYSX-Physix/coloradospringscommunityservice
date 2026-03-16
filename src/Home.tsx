@@ -1,4 +1,3 @@
-import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
@@ -53,6 +52,7 @@ import { AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
+import { useIsMobile } from './hooks/useIsMobile';
 
 const ANNOUCEMENTS = '0';
 const POSTSMENU = '1';
@@ -78,25 +78,11 @@ function Home() {
   };
 
   const [isOpen, setIsOpen] = useState(getInitialDrawerState);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
   const isAdmin = !!(session?.user as any)?.isAdmin;
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 500;
-      setIsMobile(mobile);
-      // Optionally close drawer when resizing to mobile
-      if (mobile && isOpen) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
 
   const handleSignOut = async () => {
     await signOut();
