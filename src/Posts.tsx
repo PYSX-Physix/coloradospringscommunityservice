@@ -167,7 +167,7 @@ function PostCard({ post }: { post: PostData }) {
         <CardPreview>
           <img 
             src={post.image_url || defaultArt}
-            alt="Event Image" 
+            alt="Event Image"
           />
         </CardPreview>
         <CardHeader

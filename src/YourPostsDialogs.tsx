@@ -297,7 +297,7 @@ function YourPostsDialogs({
                       required
                     />
                   </Field>
-                  <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
+                  <Field label={"Start Time"} required>
                     <TimePicker 
                       placeholder="Select a Time..." 
                       selectedTime={startTime}
@@ -319,7 +319,7 @@ function YourPostsDialogs({
                       required
                     />
                   </Field>
-                  <Field style={{marginLeft: '16px'}} label={"End Time"} required>
+                  <Field label={"End Time"} required>
                     <TimePicker 
                       placeholder="Select a Time..." 
                       selectedTime={endTime}
@@ -408,7 +408,7 @@ function YourPostsDialogs({
                       required
                     />
                   </Field>
-                  <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
+                  <Field label={"Start Time"} required>
                     <TimePicker 
                       placeholder="Select a Time..." 
                       selectedTime={startTime}
@@ -430,7 +430,7 @@ function YourPostsDialogs({
                       required
                     />
                   </Field>
-                  <Field style={{marginLeft: '16px'}} label={"End Time"} required>
+                  <Field label={"End Time"} required>
                     <TimePicker 
                       placeholder="Select a Time..." 
                       selectedTime={endTime}
