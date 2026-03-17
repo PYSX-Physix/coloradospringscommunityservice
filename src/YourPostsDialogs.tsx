@@ -40,7 +40,7 @@ interface YourPostsDialogsProps {
   setSelectedEvent: React.Dispatch<React.SetStateAction<PostData | null>>;
   showCalendarExport: boolean;
   setShowCalendarExport: React.Dispatch<React.SetStateAction<boolean>>;
-  session: any; // or proper type
+  session: any;
   onPostCreated: () => void;
   onPostUpdated: () => void;
   onPostDeleted: () => void;
@@ -66,7 +66,6 @@ function YourPostsDialogs({
   onPostDeleted,
   isMobile,
 }: YourPostsDialogsProps) {
-  // Event Post details
   const [title, setTitle] = React.useState("");
   const [desc, setDesc] = React.useState("");
   const [location, setLocation] = React.useState("");
@@ -82,7 +81,6 @@ function YourPostsDialogs({
 
   const combineDateAndTime = (date: Date | null, time: Date | null): string => {
     if (!date || !time) return '';
-    
     const combined = new Date(date);
     combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return combined.toISOString();
@@ -100,30 +98,24 @@ function YourPostsDialogs({
     setParticipants(1);
   };
 
-  // Populate form when editing
   React.useEffect(() => {
     if (editModalState === 'modal' && currentEditingPost) {
       setTitle(currentEditingPost.title);
       setDesc(currentEditingPost.description);
       setLocation(currentEditingPost.location);
       setImageUrl(currentEditingPost.image_url || "");
-      
-      // Parse the stored datetime
+
       const startDT = new Date(currentEditingPost.start_datetime);
       const endDT = new Date(currentEditingPost.end_datetime);
-      
-      // For DatePicker: set the date portion only
+
       setStartDate(new Date(startDT.getFullYear(), startDT.getMonth(), startDT.getDate()));
       setEndDate(new Date(endDT.getFullYear(), endDT.getMonth(), endDT.getDate()));
-      
       setStartTime(new Date(startDT.getHours(), startDT.getMinutes()));
       setEndTime(new Date(endDT.getHours(), endDT.getMinutes()));
-      
       setParticipants(currentEditingPost.max_participants);
     }
   }, [editModalState, currentEditingPost]);
 
-  // Reset form when creating
   React.useEffect(() => {
     if (createModalState === 'modal') {
       resetForm();
@@ -132,7 +124,7 @@ function YourPostsDialogs({
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const startDateTime = combineDateAndTime(startDate, startTime);
     const endDateTime = combineDateAndTime(endDate, endTime);
 
@@ -140,12 +132,12 @@ function YourPostsDialogs({
       alert('Please select both date and time for start and end');
       return;
     }
-    
-    const newPost = { 
-      title, 
-      desc, 
+
+    const newPost = {
+      title,
+      desc,
       imageUrl,
-      location, 
+      location,
       startDateTime,
       endDateTime,
       participants: participants.toString(),
@@ -153,28 +145,21 @@ function YourPostsDialogs({
       userName
     };
 
-    console.log('Sending:', newPost);
-
     try {
       const res = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(newPost),
       });
 
-      const responseText = await res.text();
-      console.log('Response:', responseText);
-
       if (res.ok) {
-        // Reset form
         resetForm();
-        
-        // Close dialog and refresh posts
-        setCreateModalState("confirmation")
+        setCreateModalState("confirmation");
         onPostCreated();
       } else {
-        const error = JSON.parse(responseText);
-        alert('Error: ' + JSON.stringify(error));
+        const error = await res.json();
+        alert('Error: ' + (error.error || JSON.stringify(error)));
       }
     } catch (error) {
       console.error('Fetch error:', error);
@@ -186,15 +171,19 @@ function YourPostsDialogs({
     if (!deletePostId) return;
 
     try {
+      // credentials: 'include' is required — without it the session cookie
+      // is not sent and the server returns 401 Unauthorized.
       const res = await fetch(`/api/posts/${deletePostId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (res.ok) {
         setDeleteModalState('confirmation');
         onPostDeleted();
       } else {
-        alert('Failed to delete post');
+        const error = await res.json();
+        alert(error.error || 'Failed to delete post');
       }
     } catch (error) {
       console.error('Delete error:', error);
@@ -204,7 +193,7 @@ function YourPostsDialogs({
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!currentEditingPost) return;
 
     const startDateTime = combineDateAndTime(startDate, startTime);
@@ -214,12 +203,12 @@ function YourPostsDialogs({
       alert('Please select both date and time for start and end');
       return;
     }
-    
-    const updateData = { 
-      title, 
+
+    const updateData = {
+      title,
       description: desc,
       imageUrl,
-      location, 
+      location,
       startDateTime,
       endDateTime,
       maxParticipants: participants.toString(),
@@ -234,11 +223,8 @@ function YourPostsDialogs({
       });
 
       if (res.ok) {
-        // Reset form
         resetForm();
-        
-        // Close dialog and refresh posts
-        setEditModalState("confirmation")
+        setEditModalState("confirmation");
         onPostUpdated();
       } else {
         const error = await res.json();
@@ -249,6 +235,7 @@ function YourPostsDialogs({
       alert('Failed to update post');
     }
   };
+
   return (
     <>
       {/* Create Event Dialog */}
@@ -260,68 +247,68 @@ function YourPostsDialogs({
               <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
                 <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
                 <Field label={"Event Name:"} required>
-                  <Input 
-                    placeholder="ex: Swim Competition Volunteer" 
-                    value={title} 
-                    onChange={(_, data) => setTitle(data.value)} 
+                  <Input
+                    placeholder="ex: Swim Competition Volunteer"
+                    value={title}
+                    onChange={(_, data) => setTitle(data.value)}
                     required
                   />
                 </Field>
                 <Field label={"Description:"} required>
-                  <Textarea 
-                    placeholder="Be descriptive about the event here." 
-                    value={desc} 
+                  <Textarea
+                    placeholder="Be descriptive about the event here."
+                    value={desc}
                     onChange={(_, data) => setDesc(data.value)}
                     resize="vertical"
                     required
                   />
                 </Field>
                 <Field label={"Image URL"}>
-                  <Input 
-                    placeholder="Optional image URL for the event" 
-                    value={imageUrl} 
+                  <Input
+                    placeholder="Optional image URL for the event"
+                    value={imageUrl}
                     onChange={(_, data) => setImageUrl(data.value)}
                   />
                 </Field>
                 <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-                  gap: '8px' 
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '8px'
                 }}>
                   <Field label={"Start Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={startDate} 
-                      onSelectDate={(date) => setStartDate(date || null)} 
+                    <DatePicker
+                      placeholder="Select a Date..."
+                      value={startDate}
+                      onSelectDate={(date) => setStartDate(date || null)}
                       required
                     />
                   </Field>
                   <Field label={"Start Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
+                    <TimePicker
+                      placeholder="Select a Time..."
                       selectedTime={startTime}
                       onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
                       required
                     />
                   </Field>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-                  gap: '8px' 
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '8px'
                 }}>
                   <Field label={"End Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={endDate} 
-                      onSelectDate={(date) => setEndDate(date || null)} 
+                    <DatePicker
+                      placeholder="Select a Date..."
+                      value={endDate}
+                      onSelectDate={(date) => setEndDate(date || null)}
                       required
                     />
                   </Field>
                   <Field label={"End Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
+                    <TimePicker
+                      placeholder="Select a Time..."
                       selectedTime={endTime}
                       onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
                       required
@@ -329,12 +316,12 @@ function YourPostsDialogs({
                   </Field>
                 </div>
                 <Field label={"Number of Participants"} required>
-                  <SpinButton 
-                    value={participants} 
-                    onChange={(_, data) => setParticipants(data.value || 1)} 
-                    min={1} 
-                    max={40} 
-                    required 
+                  <SpinButton
+                    value={participants}
+                    onChange={(_, data) => setParticipants(data.value || 1)}
+                    min={1}
+                    max={40}
+                    required
                   />
                 </Field>
               </DialogContent>
@@ -347,7 +334,7 @@ function YourPostsDialogs({
         </DialogSurface>
       </Dialog>
 
-      {/* Event Created Confirmation Dialog */}
+      {/* Event Created Confirmation */}
       <Dialog open={createModalState === 'confirmation'} onOpenChange={() => setCreateModalState("closed")}>
         <DialogSurface>
           <DialogBody>
@@ -360,6 +347,7 @@ function YourPostsDialogs({
         </DialogSurface>
       </Dialog>
 
+      {/* Edit Event Dialog */}
       <Dialog open={editModalState === 'modal'} onOpenChange={() => {
         setEditModalState("closed");
         resetForm();
@@ -371,68 +359,68 @@ function YourPostsDialogs({
               <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
                 <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
                 <Field label={"Event Name:"} required>
-                  <Input 
-                    placeholder="ex: Swim Competition Volunteer" 
-                    value={title} 
-                    onChange={(_, data) => setTitle(data.value)} 
+                  <Input
+                    placeholder="ex: Swim Competition Volunteer"
+                    value={title}
+                    onChange={(_, data) => setTitle(data.value)}
                     required
                   />
                 </Field>
                 <Field label={"Description:"} required>
-                  <Textarea 
-                    placeholder="Be descriptive about the event here." 
-                    value={desc} 
-                    onChange={(_, data) => setDesc(data.value)} 
+                  <Textarea
+                    placeholder="Be descriptive about the event here."
+                    value={desc}
+                    onChange={(_, data) => setDesc(data.value)}
                     required
                     resize="vertical"
                   />
                 </Field>
                 <Field label={"Image URL"}>
-                  <Input 
-                    placeholder="Optional image URL for the event" 
-                    value={imageUrl} 
+                  <Input
+                    placeholder="Optional image URL for the event"
+                    value={imageUrl}
                     onChange={(_, data) => setImageUrl(data.value)}
                   />
                 </Field>
                 <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-                  gap: '8px' 
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '8px'
                 }}>
                   <Field label={"Start Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={startDate} 
-                      onSelectDate={(date) => setStartDate(date || null)} 
+                    <DatePicker
+                      placeholder="Select a Date..."
+                      value={startDate}
+                      onSelectDate={(date) => setStartDate(date || null)}
                       required
                     />
                   </Field>
                   <Field label={"Start Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
+                    <TimePicker
+                      placeholder="Select a Time..."
                       selectedTime={startTime}
                       onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
                       required
                     />
                   </Field>
                 </div>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-                  gap: '8px' 
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '8px'
                 }}>
                   <Field label={"End Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={endDate} 
-                      onSelectDate={(date) => setEndDate(date || null)} 
+                    <DatePicker
+                      placeholder="Select a Date..."
+                      value={endDate}
+                      onSelectDate={(date) => setEndDate(date || null)}
                       required
                     />
                   </Field>
                   <Field label={"End Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
+                    <TimePicker
+                      placeholder="Select a Time..."
                       selectedTime={endTime}
                       onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
                       required
@@ -440,12 +428,12 @@ function YourPostsDialogs({
                   </Field>
                 </div>
                 <Field label={"Number of Participants"} required>
-                  <SpinButton 
-                    value={participants} 
-                    onChange={(_, data) => setParticipants(data.value || 1)} 
-                    min={1} 
-                    max={40} 
-                    required 
+                  <SpinButton
+                    value={participants}
+                    onChange={(_, data) => setParticipants(data.value || 1)}
+                    min={1}
+                    max={40}
+                    required
                   />
                 </Field>
               </DialogContent>
@@ -461,7 +449,7 @@ function YourPostsDialogs({
         </DialogSurface>
       </Dialog>
 
-      {/* Event Updated Confirmation Dialog */}
+      {/* Event Updated Confirmation */}
       <Dialog open={editModalState === 'confirmation'} onOpenChange={() => setEditModalState("closed")}>
         <DialogSurface>
           <DialogBody>
@@ -474,7 +462,7 @@ function YourPostsDialogs({
         </DialogSurface>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <Dialog open={deleteModalState === "modal"} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
         <DialogSurface>
           <DialogBody>
@@ -491,7 +479,7 @@ function YourPostsDialogs({
         </DialogSurface>
       </Dialog>
 
-      {/* Delete Success Dialog */}
+      {/* Delete Success */}
       <Dialog open={deleteModalState === 'confirmation'} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
         <DialogSurface>
           <DialogBody>

@@ -53,6 +53,7 @@ import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
 import { useIsMobile } from './hooks/useIsMobile';
+import Settings from './Settings';
 
 const ANNOUCEMENTS = '0';
 const POSTSMENU = '1';
@@ -67,6 +68,7 @@ const PROFILE = '9';
 const HELPHOME = '10';
 const ADMINPANEL = '11';
 const CONTRIBUTE = '12';
+const SETTINGS = '13'
 
 
 function Home() {
@@ -104,6 +106,7 @@ function Home() {
   else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else if (location.pathname === '/contribute') selectedValue = CONTRIBUTE;
+  else if (location.pathname === '/settings') selectedValue = SETTINGS;
   else selectedValue = '50';
 
   return (
@@ -214,6 +217,7 @@ function Home() {
               <Route path='/help' element={<HelpHome />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path='/contribute' element={<Contribute />} />
+              <Route path='/settings' element={<Settings />} />
             </Routes>
           </div>
         </div>
