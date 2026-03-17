@@ -234,7 +234,7 @@ export default function Post() {
             <Image 
               style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} 
               fit='cover' 
-              src={post.image_url || '/default-event-image.jpg'} 
+              src={post.image_url || '/default-art.jpeg'} 
               alt={post.title}
             />
           </Card>
