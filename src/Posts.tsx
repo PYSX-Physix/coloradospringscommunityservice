@@ -8,6 +8,7 @@ import {
 import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkCircle48Color, MoreHorizontal20Regular, Share20Regular } from "@fluentui/react-icons";
 import './App.css';
 import ShareEvent from './components/ShareEvent';
+import defaultArt from "./assets/default-art.jpeg"
 
 const cardStyles = makeStyles({
   card: {
@@ -165,8 +166,8 @@ function PostCard({ post }: { post: PostData }) {
       <Card className={styles.card}>
         <CardPreview>
           <img 
-            src={post.image_url}
-            alt="Event" 
+            src={post.image_url || defaultArt}
+            alt="Event Image"
           />
         </CardPreview>
         <CardHeader

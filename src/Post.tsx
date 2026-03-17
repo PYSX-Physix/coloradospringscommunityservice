@@ -8,6 +8,7 @@ import CalendarExport from "./components/CalendarExport";
 import { ReportUser } from "./components/ReportUser";
 import ShareEvent from "./components/ShareEvent";
 import { useIsMobile } from "./hooks/useIsMobile";
+import defaultArt from "./assets/default-art.jpeg"
 
 interface PostData {
   id: number;
@@ -234,7 +235,7 @@ export default function Post() {
             <Image 
               style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} 
               fit='cover' 
-              src={post.image_url || '/default-event-image.jpg'} 
+              src={post.image_url || defaultArt} 
               alt={post.title}
             />
           </Card>

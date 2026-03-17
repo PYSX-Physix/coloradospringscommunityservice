@@ -17,7 +17,7 @@ interface ShareEventProps {
 }
 
 export default function ShareEvent({ open, onClose, event }: ShareEventProps) {
-  const eventUrl = `${window.location.origin}?id=${event.id}`;
+  const eventUrl = `${window.location.origin}/post?id=${event.id}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(eventUrl);
