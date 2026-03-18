@@ -209,7 +209,7 @@ export default function Settings() {
                 required
                 minLength={6}
                 contentAfter={(
-                  <Button appearance="transparent" icon={ showPassword ? <Eye20Regular/> : <EyeOff20Regular/> } onClick={() => {
+                  <Button appearance="secondary" icon={ showPassword ? <Eye20Regular/> : <EyeOff20Regular/> } onClick={() => {
                     setShowPassword(!showPassword);
                   }}>
                     <Tooltip content={showPassword ? "Show Password" : "Hide Password"} relationship="label"/>
