@@ -2,7 +2,8 @@ import React from "react";
 import {
   Title1, Title2, Divider, Card, CardHeader,
   Field, Input, Button, Text, Spinner,
-  MessageBar, MessageBarBody, MessageBarTitle
+  MessageBar, MessageBarBody, MessageBarTitle,
+  Tooltip
 } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from '@fluentui/react-icons';
 import { useSession } from "./lib/auth-client";
@@ -208,9 +209,11 @@ export default function Settings() {
                 required
                 minLength={6}
                 contentAfter={(
-                  <Button icon={ showPassword ? <Eye20Regular/> : <EyeOff20Regular/> } onClick={() => {
+                  <Button appearance="transparent" icon={ showPassword ? <Eye20Regular/> : <EyeOff20Regular/> } onClick={() => {
                     setShowPassword(!showPassword);
-                  }}/>
+                  }}>
+                    <Tooltip content={showPassword ? "Show Password" : "Hide Password"} relationship="label"/>
+                  </Button>
                 )}
               />
             </Field>
