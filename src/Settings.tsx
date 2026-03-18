@@ -4,6 +4,7 @@ import {
   Field, Input, Button, Text, Spinner,
   MessageBar, MessageBarBody, MessageBarTitle
 } from "@fluentui/react-components";
+import { Eye20Regular, EyeOff20Regular } from '@fluentui/react-icons';
 import { useSession } from "./lib/auth-client";
 import { useNavigate } from "react-router-dom";
 
@@ -27,6 +28,9 @@ export default function Settings() {
   const [passwordSave, setPasswordSave] = React.useState<SaveState>("idle");
   const [profileError, setProfileError] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
+
+  // Password view states
+  const [showPassword, setShowPassword] = React.useState<Boolean>(false);
 
   React.useEffect(() => {
     if (!isPending && !session) {
@@ -198,11 +202,16 @@ export default function Settings() {
 
             <Field label="New Password" required style={{ marginBottom: "16px" }}>
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(_, data) => setNewPassword(data.value)}
                 required
                 minLength={6}
+                contentAfter={(
+                  <Button icon={ showPassword ? <Eye20Regular/> : <EyeOff20Regular/> } onClick={() => {
+                    setShowPassword(!showPassword);
+                  }}/>
+                )}
               />
             </Field>
 
