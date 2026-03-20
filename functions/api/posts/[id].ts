@@ -27,7 +27,6 @@ export async function onRequestGet(context: {
       });
     }
 
-    // Get participants
     const { results: participants } = await context.env.DB.prepare(
       `SELECT user_id, user_name, joined_at, attended, checked_in_at
        FROM participants 
@@ -35,10 +34,7 @@ export async function onRequestGet(context: {
        ORDER BY joined_at ASC`
     ).bind(id).all();
 
-    return new Response(JSON.stringify({ 
-      post, 
-      participants 
-    }), {
+    return new Response(JSON.stringify({ post, participants }), {
       headers: { 
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
@@ -62,7 +58,6 @@ export async function onRequestDelete(context: {
   try {
     const { id } = context.params;
     
-    // Get user from session to verify they're the organizer
     const cookie = context.request.headers.get("Cookie");
     const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
 
@@ -90,7 +85,6 @@ export async function onRequestDelete(context: {
       });
     }
 
-    // Get the post details
     const post = await context.env.DB.prepare(
       `SELECT user_id, title, description, location, start_datetime, end_datetime 
        FROM posts WHERE id = ?`
@@ -106,7 +100,6 @@ export async function onRequestDelete(context: {
       });
     }
 
-    // Verify the user is the organizer
     if (post.user_id !== session.user_id) {
       return new Response(JSON.stringify({ error: 'Only the organizer can delete this event' }), {
         status: 403,
@@ -117,15 +110,24 @@ export async function onRequestDelete(context: {
       });
     }
 
-    // CRITICAL: Save event details for all participants who attended (attended = 1)
-    // This preserves their attendance record even after the event is deleted
+    // -------------------------------------------------------------------------
+    // STEP 1: Snapshot event details into each attended participant row, then
+    // set post_id = NULL to detach them from the foreign key before deletion.
+    //
+    // Without this, DELETE FROM posts triggers ON DELETE CASCADE which wipes
+    // every participants row that still has post_id = this id — including the
+    // attended ones whose snapshot we just wrote. Nulling post_id first breaks
+    // that relationship so the cascade has nothing to touch on those rows,
+    // preserving the attendance record permanently in the user's profile.
+    // -------------------------------------------------------------------------
     await context.env.DB.prepare(
       `UPDATE participants 
-       SET event_title = ?,
-           event_description = ?,
-           event_location = ?,
+       SET event_title          = ?,
+           event_description    = ?,
+           event_location       = ?,
            event_start_datetime = ?,
-           event_end_datetime = ?
+           event_end_datetime   = ?,
+           post_id              = NULL
        WHERE post_id = ? AND attended = 1`
     ).bind(
       post.title,
@@ -136,23 +138,22 @@ export async function onRequestDelete(context: {
       id
     ).run();
 
-    console.log('Event details saved for attended participants');
-    
-    // Now delete the post
-    await context.env.DB.prepare(
-      `DELETE FROM posts WHERE id = ?`
-    ).bind(id).run();
-
-    console.log('Post deleted');
-
-    // Clean up participants who didn't attend (attended = 0)
-    // These are people who only registered but never showed up
-    // Their registration record is removed completely
+    // -------------------------------------------------------------------------
+    // STEP 2: Remove participants who registered but never attended.
+    // Their post_id still points at the post so the cascade would remove them
+    // anyway, but doing it explicitly is clearer about intent.
+    // -------------------------------------------------------------------------
     await context.env.DB.prepare(
       `DELETE FROM participants WHERE post_id = ? AND attended = 0`
     ).bind(id).run();
 
-    console.log('Non-attended participants cleaned up');
+    // -------------------------------------------------------------------------
+    // STEP 3: Delete the post. The cascade now only affects rows where
+    // post_id = id — after steps 1 and 2 there should be none, so this is safe.
+    // -------------------------------------------------------------------------
+    await context.env.DB.prepare(
+      `DELETE FROM posts WHERE id = ?`
+    ).bind(id).run();
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { 
@@ -173,7 +174,6 @@ export async function onRequestDelete(context: {
   }
 }
 
-// Handle CORS
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {
