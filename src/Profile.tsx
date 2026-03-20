@@ -116,6 +116,7 @@ export default function Profile() {
                       <TableHeaderCell>Organizer</TableHeaderCell>
                       <TableHeaderCell>Location</TableHeaderCell>
                       <TableHeaderCell>Event Date</TableHeaderCell>
+                      <TableHeaderCell>Event End Date</TableHeaderCell>
                       <TableHeaderCell>Attended On</TableHeaderCell>
                     </TableRow>
                   </TableHeader>
