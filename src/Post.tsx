@@ -179,22 +179,24 @@ export default function Post() {
                 <Avatar name={post.user_name}/>
                 <Text style={{marginLeft: '4px'}}>{post.user_name}</Text>
               </div>
-              <Menu>
-                <MenuTrigger>
-                  <Button size="small" appearance="subtle" icon={<MoreHorizontalRegular/>}/>
-                </MenuTrigger>
-                <MenuPopover>
-                  <MenuList>
-                    <MenuItem icon={<ShieldErrorRegular/>} onClick={() => {
-                      setReportedUserId(post.user_id);
-                      setReportedUserName(post.user_name);
-                      setShowReportDialog(true);
-                    }}>
-                      Report Organizer
-                    </MenuItem>
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
+              { !isOrganizer && (
+                <Menu>
+                  <MenuTrigger>
+                    <Button size="small" appearance="subtle" icon={<MoreHorizontalRegular/>}/>
+                  </MenuTrigger>
+                  <MenuPopover>
+                    <MenuList>
+                      <MenuItem icon={<ShieldErrorRegular/>} onClick={() => {
+                        setReportedUserId(post.user_id);
+                        setReportedUserName(post.user_name);
+                        setShowReportDialog(true);
+                      }}>
+                        Report Organizer
+                      </MenuItem>
+                    </MenuList>
+                  </MenuPopover>
+                </Menu>
+              )}
             </div>
           </div>
           {/* Buttons at the top */}
