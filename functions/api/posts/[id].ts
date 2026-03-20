@@ -57,17 +57,14 @@ export async function onRequestDelete(context: {
 }) {
   try {
     const { id } = context.params;
-    
+
     const cookie = context.request.headers.get("Cookie");
     const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
 
     if (!sessionId) {
       return new Response(JSON.stringify({ error: 'Not authenticated' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
@@ -78,97 +75,78 @@ export async function onRequestDelete(context: {
     if (!session) {
       return new Response(JSON.stringify({ error: 'Session expired' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
     const post = await context.env.DB.prepare(
-      `SELECT user_id, title, description, location, start_datetime, end_datetime 
+      `SELECT user_id, title, location, start_datetime, user_name
        FROM posts WHERE id = ?`
     ).bind(id).first();
 
     if (!post) {
       return new Response(JSON.stringify({ error: 'Post not found' }), {
         status: 404,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
     if (post.user_id !== session.user_id) {
       return new Response(JSON.stringify({ error: 'Only the organizer can delete this event' }), {
         status: 403,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
     // -------------------------------------------------------------------------
-    // STEP 1: Snapshot event details into each attended participant row, then
-    // set post_id = NULL to detach them from the foreign key before deletion.
+    // Save the five fields that matter to each attended participant's permanent
+    // record. attendance_history has no foreign key to posts so these rows
+    // survive indefinitely after the post is deleted.
     //
-    // Without this, DELETE FROM posts triggers ON DELETE CASCADE which wipes
-    // every participants row that still has post_id = this id — including the
-    // attended ones whose snapshot we just wrote. Nulling post_id first breaks
-    // that relationship so the cascade has nothing to touch on those rows,
-    // preserving the attendance record permanently in the user's profile.
+    // INSERT OR IGNORE means re-running this (e.g. after a failed deploy) is
+    // safe — existing history rows are never overwritten or duplicated.
     // -------------------------------------------------------------------------
-    await context.env.DB.prepare(
-      `UPDATE participants 
-       SET event_title          = ?,
-           event_description    = ?,
-           event_location       = ?,
-           event_start_datetime = ?,
-           event_end_datetime   = ?,
-           post_id              = NULL
+    const { results: attended } = await context.env.DB.prepare(
+      `SELECT user_id, checked_in_at FROM participants
        WHERE post_id = ? AND attended = 1`
-    ).bind(
-      post.title,
-      post.description,
-      post.location,
-      post.start_datetime,
-      post.end_datetime,
-      id
-    ).run();
+    ).bind(id).all();
 
-    // -------------------------------------------------------------------------
-    // STEP 2: Remove participants who registered but never attended.
-    // Their post_id still points at the post so the cascade would remove them
-    // anyway, but doing it explicitly is clearer about intent.
-    // -------------------------------------------------------------------------
+    for (const p of attended) {
+      await context.env.DB.prepare(
+        `INSERT OR IGNORE INTO attendance_history
+           (user_id, event_title, event_organizer, event_location,
+            event_start_datetime, checked_in_at, original_post_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        p.user_id,
+        post.title,
+        post.user_name,
+        post.location,
+        post.start_datetime,
+        p.checked_in_at,
+        id
+      ).run();
+    }
+
+    // Delete all participants for this post explicitly before deleting the post.
+    // This prevents ON DELETE CASCADE from firing — though after the loop above
+    // the cascade would only hit unattended rows anyway.
     await context.env.DB.prepare(
-      `DELETE FROM participants WHERE post_id = ? AND attended = 0`
+      `DELETE FROM participants WHERE post_id = ?`
     ).bind(id).run();
 
-    // -------------------------------------------------------------------------
-    // STEP 3: Delete the post. The cascade now only affects rows where
-    // post_id = id — after steps 1 and 2 there should be none, so this is safe.
-    // -------------------------------------------------------------------------
     await context.env.DB.prepare(
       `DELETE FROM posts WHERE id = ?`
     ).bind(id).run();
 
     return new Response(JSON.stringify({ success: true }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       status: 200
     });
   } catch (error: any) {
     console.error('Error deleting post:', error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       status: 500
     });
   }
