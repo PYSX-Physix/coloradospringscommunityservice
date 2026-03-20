@@ -5,7 +5,7 @@ export function Privacy() {
     <div style={{ maxWidth: '900px' }}>
       <Title1>Privacy Policy</Title1>
       <Text style={{ display: 'block', marginTop: '8px', marginBottom: '24px' }}>
-        Last Updated: December 27, 2025
+        Last Updated: March 20, 2026
       </Text>
       <Divider style={{ marginBottom: '24px' }} />
 
@@ -163,9 +163,10 @@ export function Privacy() {
 
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>6.1 Password Security</Title3>
       <ul style={{ marginBottom: '16px' }}>
-        <li><Text>Passwords are hashed using SHA-256 encryption</Text></li>
+        <li><Text>Passwords are hashed using PBKDF2 with 100,000 iterations and a unique random salt per password</Text></li>
         <li><Text>Passwords are never stored in plain text</Text></li>
         <li><Text>Passwords are never visible to administrators or anyone else</Text></li>
+        <li><Text>Accounts created before March 2026 used SHA-256 and are automatically upgraded to PBKDF2 on next sign-in</Text></li>
       </ul>
 
       <Title3 style={{ marginTop: '16px', marginBottom: '12px' }}>6.2 Connection Security</Title3>
