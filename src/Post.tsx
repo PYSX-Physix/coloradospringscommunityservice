@@ -1,4 +1,4 @@
-import { Title1, Image, Divider, Title2, Text, List, ListItem, Avatar, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge} from "@fluentui/react-components";
+import { Title1, Image, Divider, Title2, Text, List, ListItem, Avatar, Persona, Button, Spinner, MenuTrigger, Menu, MenuPopover, MenuList, MenuItem, Card, Badge, Dialog, DialogSurface, DialogTitle, DialogContent, DialogActions} from "@fluentui/react-components";
 import { Calendar16Color, LocationRipple16Color, CalendarAdd20Regular, MoreHorizontalRegular, ShieldErrorRegular, People48Regular, Share20Filled } from "@fluentui/react-icons";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
@@ -54,6 +54,8 @@ export default function Post() {
   const [reportedUserName, setReportedUserName] = React.useState("");
 
   const [showShareDialog, setShowShareDialog] = React.useState(false);
+  const [noticeOpen, setNoticeOpen] = React.useState(false);
+  const [noticeMessage, setNoticeMessage] = React.useState({ title: "", description: "" });
 
   const { data: session } = useSession();
 
@@ -109,16 +111,19 @@ export default function Post() {
       });
 
       if (res.ok) {
-        alert('Successfully joined the event!');
+        setNoticeMessage({ title: "Event Joined", description: "Successfully joined this event." });
+        setNoticeOpen(true);
         setHasJoined(true);
         fetchPost();
       } else {
         const error = await res.json();
-        alert(error.error || 'Failed to join event');
+        setNoticeMessage({ title: "Failed to Join Event", description: error.error.toLocaleString() });
+        setNoticeOpen(true);
       }
     } catch (err) {
       console.error('Join error:', err);
-      alert('Failed to join event');
+      setNoticeMessage({ title: "Failed to Join Event", description: "Check your developer console for more information" });
+      setNoticeOpen(true);
     } finally {
       setJoining(false);
     }
@@ -463,6 +468,36 @@ export default function Post() {
           image_url: post.image_url,
         }}
       />
+
+      <NoticeDialog
+        open={noticeOpen}
+        title={noticeMessage.title}
+        description={noticeMessage.description}
+        onClose={() => setNoticeOpen(false)}
+      />
     </div>
+  );
+}
+
+interface NoticeDialogProps {
+  open: boolean;
+  title: string;
+  description: string;
+  onClose: () => void;
+}
+
+export function NoticeDialog({ open, title, description, onClose }: NoticeDialogProps) {
+  return (
+    <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
+      <DialogSurface>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent>
+          <Text>{description}</Text>
+        </DialogContent>
+        <DialogActions>
+          <Button appearance="primary" onClick={onClose}>Ok</Button>
+        </DialogActions>
+      </DialogSurface>
+    </Dialog>
   );
 }
