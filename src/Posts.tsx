@@ -9,6 +9,7 @@ import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkC
 import './App.css';
 import ShareEvent from './components/ShareEvent';
 import defaultArt from "./assets/default-art.jpeg"
+import { NoticeDialog } from './Post';
 
 const cardStyles = makeStyles({
   card: {
@@ -84,6 +85,8 @@ function PostCard({ post }: { post: PostData }) {
   const [saving, setSaving] = React.useState(false);
   const [checkingStatus, setCheckingStatus] = React.useState(true);
   const [showShareDialog, setShowShareDialog] = React.useState(false);
+  const [noticeOpen, setNoticeOpen] = React.useState(false);
+  const [noticeMessage, setNoticeMessage] = React.useState({ title: "", description: "" });
 
   const styles = cardStyles();
 
@@ -123,7 +126,8 @@ function PostCard({ post }: { post: PostData }) {
         const data = await res.json();
         setIsSaved(data.saved);
       } else {
-        alert('Failed to save post. Please sign in.');
+        setNoticeMessage({ title: "Failed to Save Post", description: "You need to be signed in to save an event." });
+        setNoticeOpen(true);
       }
     } catch (error) {
       console.error('Save error:', error);
@@ -153,11 +157,13 @@ function PostCard({ post }: { post: PostData }) {
         setReportDetails("");
       } else {
         const error = await res.json();
-        alert(error.error || 'Failed to submit report. Please sign in.');
+        setNoticeMessage({ title: "Failed to Submit Report", description: error.error.toLocaleString() });
+        setNoticeOpen(true);
       }
     } catch (error) {
       console.error('Report error:', error);
-      alert('Failed to submit report');
+      setNoticeMessage({ title: "Failed to Submit Report", description: "Please check the developer console for more information." });
+      setNoticeOpen(true);
     }
   };
 
@@ -264,6 +270,13 @@ function PostCard({ post }: { post: PostData }) {
           start_time: post.start_datetime,
           image_url: post.image_url,
         }}
+      />
+
+      <NoticeDialog
+        open={noticeOpen}
+        title={noticeMessage.title}
+        description={noticeMessage.description}
+        onClose={() => setNoticeOpen(false)}
       />
     </div>
   );
