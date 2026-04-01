@@ -11,7 +11,7 @@ import defaultArt from "./assets/default-art.jpeg"
 
 const cardStyles = makeStyles({
   card: {
-    maxWidth: '100%',
+    maxWidth: '400px',
     height: 'fit-content'
   }
 });
