@@ -115,14 +115,15 @@ export async function onRequestDelete(context: {
       await context.env.DB.prepare(
         `INSERT OR IGNORE INTO attendance_history
            (user_id, event_title, event_organizer, event_location,
-            event_start_datetime, checked_in_at, original_post_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`
+            event_start_datetime, event_end_datetime, checked_in_at, original_post_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(
         p.user_id,
         post.title,
         post.user_name,
         post.location,
         post.start_datetime,
+        post.end_datetime,
         p.checked_in_at,
         id
       ).run();
