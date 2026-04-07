@@ -27,7 +27,6 @@ export async function onRequestGet(context: {
       });
     }
 
-    // Get participants
     const { results: participants } = await context.env.DB.prepare(
       `SELECT user_id, user_name, joined_at, attended, checked_in_at
        FROM participants 
@@ -35,10 +34,7 @@ export async function onRequestGet(context: {
        ORDER BY joined_at ASC`
     ).bind(id).all();
 
-    return new Response(JSON.stringify({ 
-      post, 
-      participants 
-    }), {
+    return new Response(JSON.stringify({ post, participants }), {
       headers: { 
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
@@ -61,18 +57,14 @@ export async function onRequestDelete(context: {
 }) {
   try {
     const { id } = context.params;
-    
-    // Get user from session to verify they're the organizer
+
     const cookie = context.request.headers.get("Cookie");
     const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
 
     if (!sessionId) {
       return new Response(JSON.stringify({ error: 'Not authenticated' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
@@ -83,97 +75,84 @@ export async function onRequestDelete(context: {
     if (!session) {
       return new Response(JSON.stringify({ error: 'Session expired' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    // Get the post details
     const post = await context.env.DB.prepare(
-      `SELECT user_id, title, description, location, start_datetime, end_datetime 
+      `SELECT user_id, title, location, start_datetime, user_name
        FROM posts WHERE id = ?`
     ).bind(id).first();
 
     if (!post) {
       return new Response(JSON.stringify({ error: 'Post not found' }), {
         status: 404,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    // Verify the user is the organizer
     if (post.user_id !== session.user_id) {
       return new Response(JSON.stringify({ error: 'Only the organizer can delete this event' }), {
         status: 403,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    // CRITICAL: Save event details for all participants who attended (attended = 1)
-    // This preserves their attendance record even after the event is deleted
-    await context.env.DB.prepare(
-      `UPDATE participants 
-       SET event_title = ?,
-           event_description = ?,
-           event_location = ?,
-           event_start_datetime = ?,
-           event_end_datetime = ?
+    // -------------------------------------------------------------------------
+    // Save the five fields that matter to each attended participant's permanent
+    // record. attendance_history has no foreign key to posts so these rows
+    // survive indefinitely after the post is deleted.
+    //
+    // INSERT OR IGNORE means re-running this (e.g. after a failed deploy) is
+    // safe — existing history rows are never overwritten or duplicated.
+    // -------------------------------------------------------------------------
+    const { results: attended } = await context.env.DB.prepare(
+      `SELECT user_id, checked_in_at FROM participants
        WHERE post_id = ? AND attended = 1`
-    ).bind(
-      post.title,
-      post.description,
-      post.location,
-      post.start_datetime,
-      post.end_datetime,
-      id
-    ).run();
+    ).bind(id).all();
 
-    console.log('Event details saved for attended participants');
-    
-    // Now delete the post
+    for (const p of attended) {
+      await context.env.DB.prepare(
+        `INSERT OR IGNORE INTO attendance_history
+           (user_id, event_title, event_organizer, event_location,
+            event_start_datetime, event_end_datetime, checked_in_at, original_post_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        p.user_id,
+        post.title,
+        post.user_name,
+        post.location,
+        post.start_datetime,
+        post.end_datetime,
+        p.checked_in_at,
+        id
+      ).run();
+    }
+
+    // Delete all participants for this post explicitly before deleting the post.
+    // This prevents ON DELETE CASCADE from firing — though after the loop above
+    // the cascade would only hit unattended rows anyway.
+    await context.env.DB.prepare(
+      `DELETE FROM participants WHERE post_id = ?`
+    ).bind(id).run();
+
     await context.env.DB.prepare(
       `DELETE FROM posts WHERE id = ?`
     ).bind(id).run();
 
-    console.log('Post deleted');
-
-    // Clean up participants who didn't attend (attended = 0)
-    // These are people who only registered but never showed up
-    // Their registration record is removed completely
-    await context.env.DB.prepare(
-      `DELETE FROM participants WHERE post_id = ? AND attended = 0`
-    ).bind(id).run();
-
-    console.log('Non-attended participants cleaned up');
-
     return new Response(JSON.stringify({ success: true }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       status: 200
     });
   } catch (error: any) {
     console.error('Error deleting post:', error);
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       status: 500
     });
   }
 }
 
-// Handle CORS
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {

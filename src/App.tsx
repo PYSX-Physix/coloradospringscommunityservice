@@ -6,14 +6,12 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <div className="root">
-        <div className="content" style={{width: '100%'}}>
+      <div className="content" style={{width: '100%'}}>
           <Routes>
             <Route path='/auth' element={<SignIn/>}/>
             <Route path="/*" element={<Home />} />
           </Routes>
         </div>
-      </div>
     </div>
   );
 }

@@ -7,17 +7,13 @@ export async function onRequestGet(context: {
   env: Env;
 }) {
   try {
-    // Get user from session
     const cookie = context.request.headers.get("Cookie");
     const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
 
     if (!sessionId) {
       return new Response(JSON.stringify({ error: 'Not authenticated' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
@@ -28,33 +24,48 @@ export async function onRequestGet(context: {
     if (!session) {
       return new Response(JSON.stringify({ error: 'Session expired' }), {
         status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    // Get complete event history - ONLY events they actually attended
+    // Two sources, same five columns surfaced to the UI:
+    //   event_title, event_organizer, event_location, event_start_datetime, checked_in_at
+    //
+    // Source 1 — participants: events the user attended where the post still exists.
+    //   Reads organizer name and location from the live posts table via JOIN.
+    //
+    // Source 2 — attendance_history: events where the post has been deleted.
+    //   All five fields were written here at deletion time, no JOIN needed.
+
     const { results } = await context.env.DB.prepare(
-      `SELECT 
-        id,
-        post_id,
+      `SELECT
+        p.title              AS event_title,
+        p.user_name          AS event_organizer,
+        p.location           AS event_location,
+        p.start_datetime     AS event_start_datetime,
+        p.end_datetime       AS event_end_datetime,
+        pt.checked_in_at
+      FROM participants pt
+      JOIN posts p ON pt.post_id = p.id
+      WHERE pt.user_id = ? AND pt.attended = 1
+
+      UNION ALL
+
+      SELECT
         event_title,
-        event_description,
+        event_organizer,
         event_location,
         event_start_datetime,
         event_end_datetime,
-        joined_at,
-        attended,
         checked_in_at
-      FROM participants
-      WHERE user_id = ? AND attended = 1
+      FROM attendance_history
+      WHERE user_id = ?
+
       ORDER BY checked_in_at DESC`
-    ).bind(session.user_id).all();
+    ).bind(session.user_id, session.user_id).all();
 
     return new Response(JSON.stringify({ history: results }), {
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': 'true',
@@ -64,10 +75,7 @@ export async function onRequestGet(context: {
     console.error('Error fetching event history:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     });
   }
 }
