@@ -1,10 +1,40 @@
--- Drop existing tables to start fresh
+-- ============================================================
+-- Full schema — drop and recreate all tables
+-- Run this on a fresh database.
+-- For existing databases, see the Migration section at the bottom.
+-- ============================================================
+
+DROP TABLE IF EXISTS attendance_history;
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS saved_posts;
 DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS session;
+DROP TABLE IF EXISTS blacklisted_words;
+DROP TABLE IF EXISTS user;
 
--- Posts table with COMBINED datetime columns
+-- Users
+CREATE TABLE user (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  name TEXT,
+  isAdmin INTEGER DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+-- Sessions
+CREATE TABLE session (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+-- Posts (events)
 CREATE TABLE posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
@@ -17,47 +47,148 @@ CREATE TABLE posts (
   user_id TEXT NOT NULL,
   user_name TEXT NOT NULL,
   visible INTEGER DEFAULT 1,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
+  image_url TEXT,
+  created_at INTEGER DEFAULT (unixepoch() * 1000),
+  updated_at INTEGER DEFAULT (unixepoch() * 1000)
 );
 
--- Participants table
+-- Participants
+-- attended and the event_* snapshot columns are NULL until the organizer
+-- checks the participant in. The event_* columns duplicate post data so that
+-- the information survives if the post is later edited or deleted.
 CREATE TABLE participants (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL,
   user_id TEXT NOT NULL,
   user_name TEXT NOT NULL,
-  joined_at TEXT DEFAULT (datetime('now')),
+  joined_at INTEGER DEFAULT (unixepoch() * 1000),
+  -- attendance
+  attended INTEGER DEFAULT 0,
+  checked_in_at INTEGER,
+  checked_in_by TEXT,
+  -- snapshot of post data at check-in time (for attendance sheet downloads)
+  event_title TEXT,
+  event_description TEXT,
+  event_location TEXT,
+  event_start_datetime TEXT,
+  event_end_datetime TEXT,
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   UNIQUE(post_id, user_id)
 );
 
--- Saved posts table
+-- Attendance history
+-- Permanent record of attended events. Rows are written here when a post is
+-- deleted so that participants keep their service history indefinitely.
+-- original_post_id is kept for deduplication (INSERT OR IGNORE) but has no
+-- foreign key so it survives post deletion.
+CREATE TABLE attendance_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  original_post_id INTEGER,       -- no FK — post may be deleted
+  event_title TEXT NOT NULL,
+  event_organizer TEXT,
+  event_location TEXT,
+  event_start_datetime TEXT,
+  event_end_datetime TEXT,
+  checked_in_at INTEGER,
+  UNIQUE(user_id, original_post_id)
+);
+
+-- Saved posts
 CREATE TABLE saved_posts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL,
   user_id TEXT NOT NULL,
-  saved_at TEXT DEFAULT (datetime('now')),
+  saved_at INTEGER DEFAULT (unixepoch() * 1000),
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   UNIQUE(post_id, user_id)
 );
 
--- Reports table
+-- Reports
 CREATE TABLE reports (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  post_id INTEGER NOT NULL,
-  user_id TEXT NOT NULL,
+  id TEXT PRIMARY KEY,             -- UUID
+  reporter_id TEXT NOT NULL,
+  reported_user_id TEXT,
+  post_id INTEGER,                 -- nullable: user reports may not reference a post
   category TEXT NOT NULL,
-  details TEXT,
-  status TEXT DEFAULT 'pending',
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+  description TEXT,
+  status TEXT DEFAULT 'pending',   -- pending | under_review | resolved | dismissed | duplicate
+  action_taken TEXT,
+  notes TEXT,
+  reviewed_by TEXT,
+  reviewed_at INTEGER,
+  created_at INTEGER NOT NULL,
+  FOREIGN KEY (reporter_id) REFERENCES user(id) ON DELETE CASCADE,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE SET NULL
 );
 
--- Create indexes for better performance
-CREATE INDEX idx_posts_visible ON posts(visible);
-CREATE INDEX idx_posts_start_datetime ON posts(start_datetime);
-CREATE INDEX idx_participants_post_id ON participants(post_id);
-CREATE INDEX idx_participants_user_id ON participants(user_id);
-CREATE INDEX idx_saved_posts_user_id ON saved_posts(user_id);
-CREATE INDEX idx_reports_status ON reports(status);
+-- Notifications
+CREATE TABLE notifications (
+  id TEXT PRIMARY KEY,             -- UUID
+  user_id TEXT NOT NULL,
+  type TEXT NOT NULL,              -- e.g. checked_in | event_reminder
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  link TEXT,
+  read INTEGER DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+-- Blacklisted words (admin-managed, supplementary to the hardcoded list)
+CREATE TABLE blacklisted_words (
+  word TEXT PRIMARY KEY,
+  added_at INTEGER NOT NULL
+);
+
+-- ============================================================
+-- Indexes
+-- ============================================================
+
+CREATE INDEX idx_session_user_id        ON session(user_id);
+CREATE INDEX idx_session_expires        ON session(expires_at);
+CREATE INDEX idx_posts_visible          ON posts(visible);
+CREATE INDEX idx_posts_start_datetime   ON posts(start_datetime);
+CREATE INDEX idx_posts_user_id          ON posts(user_id);
+CREATE INDEX idx_participants_post_id   ON participants(post_id);
+CREATE INDEX idx_participants_user_id   ON participants(user_id);
+CREATE INDEX idx_attendance_history_uid ON attendance_history(user_id);
+CREATE INDEX idx_saved_posts_user_id    ON saved_posts(user_id);
+CREATE INDEX idx_reports_status         ON reports(status);
+CREATE INDEX idx_reports_post_id        ON reports(post_id);
+CREATE INDEX idx_notifications_user_id  ON notifications(user_id);
+CREATE INDEX idx_notifications_read     ON notifications(user_id, read);
+
+-- ============================================================
+-- Migration — run these on an existing database instead of
+-- dropping and recreating everything above.
+-- Skip any statement that fails with "duplicate column name".
+-- ============================================================
+
+-- user table
+-- ALTER TABLE user ADD COLUMN isAdmin INTEGER DEFAULT 0;
+
+-- participants table
+-- ALTER TABLE participants ADD COLUMN attended INTEGER DEFAULT 0;
+-- ALTER TABLE participants ADD COLUMN checked_in_at INTEGER;
+-- ALTER TABLE participants ADD COLUMN checked_in_by TEXT;
+-- ALTER TABLE participants ADD COLUMN event_title TEXT;
+-- ALTER TABLE participants ADD COLUMN event_description TEXT;
+-- ALTER TABLE participants ADD COLUMN event_location TEXT;
+-- ALTER TABLE participants ADD COLUMN event_start_datetime TEXT;
+-- ALTER TABLE participants ADD COLUMN event_end_datetime TEXT;
+
+-- New tables (safe to run even if they already exist due to IF NOT EXISTS)
+-- CREATE TABLE IF NOT EXISTS attendance_history ( ... );  -- copy full definition from above
+-- CREATE TABLE IF NOT EXISTS notifications ( ... );
+-- CREATE TABLE IF NOT EXISTS blacklisted_words ( ... );
+
+-- reports table — original schema used different column names
+-- ALTER TABLE reports ADD COLUMN id TEXT;          -- if id was INTEGER before
+-- ALTER TABLE reports ADD COLUMN reporter_id TEXT;
+-- ALTER TABLE reports ADD COLUMN reported_user_id TEXT;
+-- ALTER TABLE reports ADD COLUMN description TEXT;
+-- ALTER TABLE reports ADD COLUMN action_taken TEXT;
+-- ALTER TABLE reports ADD COLUMN notes TEXT;
+-- ALTER TABLE reports ADD COLUMN reviewed_by TEXT;
+-- ALTER TABLE reports ADD COLUMN reviewed_at INTEGER;

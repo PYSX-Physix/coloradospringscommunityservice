@@ -1,4 +1,3 @@
-import React from 'react';
 import Posts from './Posts';
 import Search from './Search';
 import YourPosts from './YourPosts';
@@ -53,6 +52,8 @@ import { AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
 import { useState } from 'react';
 import NotificationPanel from './components/NotificationPanel';
+import { useIsMobile } from './hooks/useIsMobile';
+import Settings from './Settings';
 
 const ANNOUCEMENTS = '0';
 const POSTSMENU = '1';
@@ -67,6 +68,7 @@ const PROFILE = '9';
 const HELPHOME = '10';
 const ADMINPANEL = '11';
 const CONTRIBUTE = '12';
+const SETTINGS = '13'
 
 
 function Home() {
@@ -78,25 +80,11 @@ function Home() {
   };
 
   const [isOpen, setIsOpen] = useState(getInitialDrawerState);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
   const isAdmin = !!(session?.user as any)?.isAdmin;
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 500;
-      setIsMobile(mobile);
-      // Optionally close drawer when resizing to mobile
-      if (mobile && isOpen) {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -118,12 +106,12 @@ function Home() {
   else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
   else if (location.pathname === '/') selectedValue = POSTSMENU;
   else if (location.pathname === '/contribute') selectedValue = CONTRIBUTE;
+  else if (location.pathname === '/settings') selectedValue = SETTINGS;
   else selectedValue = '50';
 
   return (
-    <div className="App">
-      <div className="root">
-        <NavDrawer
+    <div className='root'>
+      <NavDrawer
           className="nav"
           type="inline"
           open={isOpen}
@@ -165,39 +153,39 @@ function Home() {
           <NavDrawerBody>
             <NavDivider />
             <NavSectionHeader>General</NavSectionHeader>
-            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />}>
+            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />} onClick={() => isMobile && setIsOpen(false)}>
               Posts
             </NavItem>
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />}>
+            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />} onClick={() => isMobile && setIsOpen(false)}>
               Search
             </NavItem>
-            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />}>
+            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />} onClick={() => isMobile && setIsOpen(false)}>
               My Posts
             </NavItem>
             <NavDivider />
             <NavSectionHeader>Info</NavSectionHeader>
-            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />}>
+            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />} onClick={() => isMobile && setIsOpen(false)}>
               About Us
             </NavItem>
             <NavCategory value={POLICIESMENU}>
-              <NavCategoryItem icon={<DocumentFolder20Color />}>
+              <NavCategoryItem icon={<DocumentFolder20Color />} onClick={() => isMobile && setIsOpen(false)}>
                 Policies
               </NavCategoryItem>
               <NavSubItemGroup>
-                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY}>
+                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY} onClick={() => isMobile && setIsOpen(false)}>
                   Privacy Policy
                 </NavSubItem>
-                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE}>
+                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE} onClick={() => isMobile && setIsOpen(false)}>
                   Terms of Service
                 </NavSubItem>
               </NavSubItemGroup>
             </NavCategory>
-            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />}>Help</NavItem>
+            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />} onClick={() => isMobile && setIsOpen(false)}>Help</NavItem>
             {isAdmin && (
               <>
                 <NavDivider />
                 <NavSectionHeader>Administration</NavSectionHeader>
-                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />}>
+                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />} onClick={() => isMobile && setIsOpen(false)}>
                   Admin Panel
                 </NavItem>
               </>
@@ -209,13 +197,13 @@ function Home() {
           </NavDrawerFooter>
         </NavDrawer>
         <div className="content">
-          {!isOpen && (
-            <div className="hamburger-container">
-              <Tooltip content={"Open navigation"} relationship='label'>
-                <Hamburger onClick={() => setIsOpen(!isOpen)} />
-              </Tooltip>
-            </div>
-          )}
+          <div className="hamburger-container" style={{ 
+            display: (!isOpen || isMobile) ? 'block' : 'none' 
+          }}>
+            <Tooltip content={isOpen ? "Close navigation" : "Open navigation"} relationship='label'>
+              <Hamburger onClick={() => setIsOpen(!isOpen)} />
+            </Tooltip>
+          </div>
           <div className="content-scroll">
             <Routes>
               <Route path="/" element={<Posts />} />
@@ -229,10 +217,21 @@ function Home() {
               <Route path='/help' element={<HelpHome />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path='/contribute' element={<Contribute />} />
+              <Route path='/settings' element={<Settings />} />
             </Routes>
           </div>
         </div>
-      </div>
+        {isMobile && isOpen && (
+          <div
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              zIndex: 1,
+            }}
+          />
+        )}
     </div>
   );
 }

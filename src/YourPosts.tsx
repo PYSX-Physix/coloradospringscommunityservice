@@ -1,21 +1,19 @@
 import React from "react";
-import { Button, Input, Text, Field, Dialog, DialogSurface, DialogTitle, DialogContent, DialogActions, DialogBody, Divider, Textarea,
+import { Button, Text, Divider,
   Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
   TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
   MenuDivider,
-  SpinButton, Spinner,
+  Spinner,
   MenuItemLink,
   TabList, Tab} from "@fluentui/react-components";
-import { DatePicker } from "@fluentui/react-datepicker-compat";
-import { TimePicker } from "@fluentui/react-timepicker-compat";
 import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular } from "@fluentui/react-icons";
 
 import { useSession } from "./lib/auth-client";
 import { downloadAttendanceSheet } from './utils/attendanceSheet';
 import { useNavigate } from "react-router-dom";
 
-import CalendarExport from "./components/CalendarExport";
-import { AddressAutocomplete } from "./components/AddressAutoComplete";
+import { useIsMobile } from "./hooks/useIsMobile";
+import YourPostsDialogs from "./YourPostsDialogs";
 
 interface PostData {
   id: number;
@@ -34,6 +32,12 @@ interface PostData {
 
 type TabValue = 'created' | 'saved' | 'joined';
 
+function ShortText(text: string, isMobile: boolean): string {
+  const maxChars = isMobile ? 3 : 20;
+  if (text.length <= maxChars) return text;
+  return text.substring(0, maxChars) + "...";
+}
+
 function YourPosts() {
   type DeleteModalState = 'closed' | 'modal' | 'confirmation'
   const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
@@ -44,18 +48,12 @@ function YourPosts() {
 
   type EditModalState = 'closed' | 'modal' | 'confirmation'
   const [editModalState, setEditModalState] = React.useState<EditModalState>("closed")
-  const [editingPostId, setEditingPostId] = React.useState<number | null>(null);
 
-  // Event Post details
-  const [title, setTitle] = React.useState("");
-  const [desc, setDesc] = React.useState("");
-  const [location, setLocation] = React.useState("");
-  const [startDate, setStartDate] = React.useState<Date | null>(null);
-  const [startTime, setStartTime] = React.useState<Date | null>(null);
-  const [endDate, setEndDate] = React.useState<Date | null>(null);
-  const [endTime, setEndTime] = React.useState<Date | null>(null);
-  const [participants, setParticipants] = React.useState<number>(1);
-  const [imageUrl, setImageUrl] = React.useState<string>("");
+  const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
+
+  const [showCalendarExport, setShowCalendarExport] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
+  const [currentEditingPost, setCurrentEditingPost] = React.useState<PostData | null>(null);
 
   // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
@@ -63,13 +61,8 @@ function YourPosts() {
   const [joinedPosts, setJoinedPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<TabValue>('created');
+  const isMobile = useIsMobile();
 
-  const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
-
-  const [showCalendarExport, setShowCalendarExport] = React.useState(false);
-  const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
-
-  // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY CONDITIONAL RETURNS
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
 
@@ -107,19 +100,6 @@ function YourPosts() {
     } finally {
       setDownloadingAttendance(null);
     }
-  };
-
-  const resetForm = () => {
-    setTitle("");
-    setDesc("");
-    setImageUrl("");
-    setLocation("");
-    setStartDate(null);
-    setStartTime(null);
-    setEndDate(null);
-    setEndTime(null);
-    setParticipants(1);
-    setEditingPostId(null);
   };
 
   // Fetch Posts function
@@ -188,14 +168,13 @@ function YourPosts() {
   }
 
   // Get user info
-  const userId = session.user.id;
-  const userName = session.user.name || session.user.email;
+  // userId and userName are used in dialogs
 
   // Format datetime for display
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString('en-US', {
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
@@ -214,169 +193,6 @@ function YourPosts() {
     });
   };
 
-  const combineDateAndTime = (date: Date | null, time: Date | null): string => {
-    if (!date || !time) return '';
-    
-    const combined = new Date(date);
-    combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
-    return combined.toISOString();
-  };
-
-  const handlePostSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const startDateTime = combineDateAndTime(startDate, startTime);
-    const endDateTime = combineDateAndTime(endDate, endTime);
-
-    if (!startDateTime || !endDateTime) {
-      alert('Please select both date and time for start and end');
-      return;
-    }
-    
-    const newPost = { 
-      title, 
-      desc, 
-      imageUrl,
-      location, 
-      startDateTime,
-      endDateTime,
-      participants: participants.toString(),
-      userId,
-      userName
-    };
-
-    console.log('Sending:', newPost);
-
-    try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
-      });
-
-      const responseText = await res.text();
-      console.log('Response:', responseText);
-
-      if (res.ok) {
-        // Reset form
-        setTitle("");
-        setDesc("");
-        setImageUrl("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
-        
-        // Close dialog and refresh posts
-        setCreateModalState("confirmation")
-        fetchPosts();
-      } else {
-        const error = JSON.parse(responseText);
-        alert('Error: ' + JSON.stringify(error));
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      alert('Failed to create post');
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deletePostId) return;
-
-    try {
-      const res = await fetch(`/api/posts/${deletePostId}`, {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        setDeleteModalState('confirmation');
-        fetchPosts(); // Refresh the list
-      } else {
-        alert('Failed to delete post');
-      }
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete post');
-    }
-  };
-
-  const handleEdit = (post: PostData) => {
-    setEditingPostId(post.id);
-    setTitle(post.title);
-    setDesc(post.description);
-    setLocation(post.location);
-    setImageUrl(post.image_url || "");
-    
-    // Parse dates and times
-    const startDateTime = new Date(post.start_datetime);
-    const endDateTime = new Date(post.end_datetime);
-    
-    setStartDate(startDateTime);
-    setStartTime(startDateTime);
-    setEndDate(endDateTime);
-    setEndTime(endDateTime);
-    setParticipants(post.max_participants);
-    
-    setEditModalState('modal');
-  };
-
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!editingPostId) return;
-
-    const startDateTime = combineDateAndTime(startDate, startTime);
-    const endDateTime = combineDateAndTime(endDate, endTime);
-
-    if (!startDateTime || !endDateTime) {
-      alert('Please select both date and time for start and end');
-      return;
-    }
-    
-    const updateData = { 
-      title, 
-      description: desc,
-      imageUrl,
-      location, 
-      startDateTime,
-      endDateTime,
-      maxParticipants: participants.toString(),
-    };
-
-    try {
-      const res = await fetch(`/api/posts/${editingPostId}/update`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
-        body: JSON.stringify(updateData),
-      });
-
-      if (res.ok) {
-        // Reset form
-        setTitle("");
-        setDesc("");
-        setLocation("");
-        setStartDate(null);
-        setStartTime(null);
-        setEndDate(null);
-        setEndTime(null);
-        setParticipants(1);
-        
-        // Close dialog and refresh posts
-        setEditModalState("confirmation")
-        fetchPosts();
-      } else {
-        const error = await res.json();
-        alert('Error: ' + (error.error || 'Failed to update post'));
-      }
-    } catch (error) {
-      console.error('Update error:', error);
-      alert('Failed to update post');
-    }
-  };
-
   const columns = [
     {columnKey: "title", label: "Title"},
     {columnKey: "location", label: "Location"},
@@ -388,8 +204,6 @@ function YourPosts() {
 
   return (
     <div style={{display: "flex", flexDirection: "column"}}>
-      <Title1 style={{marginBottom: '16px'}}>My Events</Title1>
-      
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '8px' }}>
         <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
@@ -422,63 +236,65 @@ function YourPosts() {
           ) : posts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>No posts yet. Create your first event!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {column.label}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {posts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
-                    <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
-                    <TableCell role="gridcell">
-                      <TableCellLayout>
-                        <Menu>
-                          <MenuTrigger>
-                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                          </MenuTrigger>
-                          <MenuPopover>
-                            <MenuList>
-                              <MenuItem 
-                                icon={<DocumentArrowDown20Regular />}
-                                onClick={() => handleDownloadAttendance(post.id)}
-                                disabled={downloadingAttendance === post.id}
-                              >
-                                {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
-                              </MenuItem>
-                              <MenuDivider />
-                              <MenuItem icon={<EditRegular />} onClick={ () => handleEdit(post)}>Edit</MenuItem>
-                              <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                              <MenuDivider/>
-                              <MenuItem 
-                                icon={<DeleteRegular/>} 
-                                onClick={() => {
-                                  setDeletePostId(post.id);
-                                  setDeleteModalState("modal");
-                                }}
-                              >
-                                Delete
-                              </MenuItem>
-                            </MenuList>
-                          </MenuPopover>
-                        </Menu>
-                      </TableCellLayout>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px', minWidth: '600px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {posts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem 
+                                  icon={<DocumentArrowDown20Regular />}
+                                  onClick={() => handleDownloadAttendance(post.id)}
+                                  disabled={downloadingAttendance === post.id}
+                                >
+                                  {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem icon={<EditRegular />} onClick={ () => { setCurrentEditingPost(post); setEditModalState("modal"); }}>Edit</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                                <MenuDivider/>
+                                <MenuItem 
+                                  icon={<DeleteRegular/>} 
+                                  onClick={() => {
+                                    setDeletePostId(post.id);
+                                    setDeleteModalState("modal");
+                                  }}
+                                >
+                                  Delete
+                                </MenuItem>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </>
       )}
@@ -490,35 +306,37 @@ function YourPosts() {
           {savedPosts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>No saved events yet. Browse events and save your favorites!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {column.label}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {savedPosts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
-                    <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                    <TableCell>
-                      <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
-                        View
-                      </Button>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+                <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {savedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell>
+                        <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </>
       )}
@@ -530,301 +348,71 @@ function YourPosts() {
           {joinedPosts.length === 0 ? (
             <Text style={{marginTop: '32px'}}>You haven't joined any events yet. Browse events and sign up!</Text>
           ) : (
-            <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
-              <TableHeader>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableHeaderCell key={column.columnKey}>
-                      {column.label}
-                    </TableHeaderCell>
-                  ))}
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {joinedPosts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell>{post.title}</TableCell>
-                    <TableCell>{post.location}</TableCell>
-                    <TableCell>{formatDate(post.created_at)}</TableCell>
-                    <TableCell>{formatDateTime(post.start_datetime)}</TableCell>
-                    <TableCell>{formatDateTime(post.end_datetime)}</TableCell>
-                    <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                    <TableCell role="gridcell">
-                      <TableCellLayout>
-                        <Menu>
-                          <MenuTrigger>
-                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                          </MenuTrigger>
-                          <MenuPopover>
-                            <MenuList>
-                              <MenuItem icon={<CalendarAddRegular />} onClick={() => setShowCalendarExport(true)}>Add to Calendar</MenuItem>
-                              <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                            </MenuList>
-                          </MenuPopover>
-                        </Menu>
-                      </TableCellLayout>
-                    </TableCell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {joinedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem icon={<CalendarAddRegular />} onClick={() => { setSelectedEvent(post); setShowCalendarExport(true); }}>Add to Calendar</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
           )}
         </>
       )}
 
-      {/* Create Event Dialog */}
-      <Dialog open={createModalState === 'modal'} onOpenChange={() => setCreateModalState("closed")}>
-        <DialogSurface>
-          <form onSubmit={handlePostSubmit}>
-            <DialogBody>
-              <DialogTitle>Create Community Service Event</DialogTitle>
-              <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
-                <Field label={"Event Name:"} required>
-                  <Input 
-                    placeholder="ex: Swim Competition Volunteer" 
-                    value={title} 
-                    onChange={(_, data) => setTitle(data.value)} 
-                    required
-                  />
-                </Field>
-                <Field label={"Description:"} required>
-                  <Textarea 
-                    placeholder="Be descriptive about the event here." 
-                    value={desc} 
-                    onChange={(_, data) => setDesc(data.value)} 
-                    required 
-                  />
-                </Field>
-                <Field label={"Image URL"}>
-                  <Input 
-                    placeholder="Optional image URL for the event" 
-                    value={imageUrl} 
-                    onChange={(_, data) => setImageUrl(data.value)}
-                  />
-                </Field>
-                <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{display: "flex", flexDirection: 'row'}}>
-                  <Field label={"Start Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={startDate} 
-                      onSelectDate={(date) => setStartDate(date || null)} 
-                      required
-                    />
-                  </Field>
-                  <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
-                      selectedTime={startTime}
-                      onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
-                      required
-                    />
-                  </Field>
-                </div>
-                <div style={{display: "flex", flexDirection: 'row'}}>
-                  <Field label={"End Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={endDate} 
-                      onSelectDate={(date) => setEndDate(date || null)} 
-                      required
-                    />
-                  </Field>
-                  <Field style={{marginLeft: '16px'}} label={"End Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
-                      selectedTime={endTime}
-                      onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
-                      required
-                    />
-                  </Field>
-                </div>
-                <Field label={"Number of Participants"} required>
-                  <SpinButton 
-                    value={participants} 
-                    onChange={(_, data) => setParticipants(data.value || 1)} 
-                    min={1} 
-                    max={40} 
-                    required 
-                  />
-                </Field>
-              </DialogContent>
-              <DialogActions>
-                <Button appearance="primary" type="submit">Create</Button>
-                <Button appearance="secondary" onClick={() => setCreateModalState("closed")}>Cancel</Button>
-              </DialogActions>
-            </DialogBody>
-          </form>
-        </DialogSurface>
-      </Dialog>
-
-      {/* Event Created Confirmation Dialog */}
-      <Dialog open={createModalState === 'confirmation'} onOpenChange={() => setCreateModalState("closed")}>
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Event Created!</DialogTitle>
-            <DialogContent>Your event has been created! If you want to view it, just click "View Post" under <MoreHorizontal20Regular/> menu to see it.</DialogContent>
-            <DialogActions>
-              <Button appearance="primary" onClick={() => setCreateModalState('closed')}>Ok</Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
-
-      <Dialog open={editModalState === 'modal'} onOpenChange={() => {
-        setEditModalState("closed");
-        resetForm();
-      }}>
-        <DialogSurface>
-          <form onSubmit={handleEditSubmit}>
-            <DialogBody>
-              <DialogTitle>Edit Community Service Event</DialogTitle>
-              <DialogContent style={{display: 'flex', flexDirection: 'column'}}>
-                <Divider style={{marginBottom: '15px', marginTop: '15px'}}/>
-                <Field label={"Event Name:"} required>
-                  <Input 
-                    placeholder="ex: Swim Competition Volunteer" 
-                    value={title} 
-                    onChange={(_, data) => setTitle(data.value)} 
-                    required
-                  />
-                </Field>
-                <Field label={"Description:"} required>
-                  <Textarea 
-                    placeholder="Be descriptive about the event here." 
-                    value={desc} 
-                    onChange={(_, data) => setDesc(data.value)} 
-                    required 
-                  />
-                </Field>
-                <Field label={"Image URL"}>
-                  <Input 
-                    placeholder="Optional image URL for the event" 
-                    value={imageUrl} 
-                    onChange={(_, data) => setImageUrl(data.value)}
-                  />
-                </Field>
-                <AddressAutocomplete value={location} onChange={setLocation} required label="Location"/>
-                <div style={{display: "flex", flexDirection: 'row'}}>
-                  <Field label={"Start Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={startDate} 
-                      onSelectDate={(date) => setStartDate(date || null)} 
-                      required
-                    />
-                  </Field>
-                  <Field style={{marginLeft: '16px'}} label={"Start Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
-                      selectedTime={startTime}
-                      onTimeChange={(_, data) => setStartTime(data.selectedTime || null)}
-                      required
-                    />
-                  </Field>
-                </div>
-                <div style={{display: "flex", flexDirection: 'row'}}>
-                  <Field label={"End Day"} required>
-                    <DatePicker 
-                      placeholder="Select a Date..." 
-                      value={endDate} 
-                      onSelectDate={(date) => setEndDate(date || null)} 
-                      required
-                    />
-                  </Field>
-                  <Field style={{marginLeft: '16px'}} label={"End Time"} required>
-                    <TimePicker 
-                      placeholder="Select a Time..." 
-                      selectedTime={endTime}
-                      onTimeChange={(_, data) => setEndTime(data.selectedTime || null)}
-                      required
-                    />
-                  </Field>
-                </div>
-                <Field label={"Number of Participants"} required>
-                  <SpinButton 
-                    value={participants} 
-                    onChange={(_, data) => setParticipants(data.value || 1)} 
-                    min={1} 
-                    max={40} 
-                    required 
-                  />
-                </Field>
-              </DialogContent>
-              <DialogActions>
-                <Button appearance="primary" type="submit">Update</Button>
-                <Button appearance="secondary" onClick={() => {
-                  setEditModalState("closed");
-                  resetForm();
-                }}>Cancel</Button>
-              </DialogActions>
-            </DialogBody>
-          </form>
-        </DialogSurface>
-      </Dialog>
-
-      {/* Event Updated Confirmation Dialog */}
-      <Dialog open={editModalState === 'confirmation'} onOpenChange={() => setEditModalState("closed")}>
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Event Updated!</DialogTitle>
-            <DialogContent>Your event has been updated successfully!</DialogContent>
-            <DialogActions>
-              <Button appearance="primary" onClick={() => setEditModalState('closed')}>Ok</Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteModalState === "modal"} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Delete Event Post?</DialogTitle>
-            <DialogContent>
-              <Divider style={{ marginBottom: '15px', marginTop: '15px' }} />
-              <Text>Are you sure you want to delete this post? This action cannot be undone.</Text>
-            </DialogContent>
-            <DialogActions style={{ marginTop: '15px'}}>
-              <Button appearance='primary' onClick={handleDelete}>Delete</Button>
-              <Button appearance='secondary' onClick={() => setDeleteModalState("closed")}>Cancel</Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
-
-      {/* Delete Success Dialog */}
-      <Dialog open={deleteModalState === 'confirmation'} onOpenChange={(_, data) => !data.open && setDeleteModalState("closed")}>
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Event Deleted</DialogTitle>
-            <DialogContent>Your event post has been deleted. If this was done by mistake you have to make a new event.</DialogContent>
-            <DialogActions>
-              <Button appearance="primary" onClick={() => setDeleteModalState('closed')}>Ok</Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
-
-      {selectedEvent && (
-        <CalendarExport
-          open={showCalendarExport}
-          onClose={() => {
-            setShowCalendarExport(false);
-            setSelectedEvent(null);
-          }}
-          event={{
-            title: selectedEvent.title,
-            description: selectedEvent.description,
-            location: selectedEvent.location,
-            startDateTime: selectedEvent.start_datetime,
-            endDateTime: selectedEvent.end_datetime,
-            organizerName: selectedEvent.user_name,
-          }}
-        />
-      )}
+      <YourPostsDialogs
+        createModalState={createModalState}
+        setCreateModalState={setCreateModalState}
+        editModalState={editModalState}
+        setEditModalState={setEditModalState}
+        deleteModalState={deleteModalState}
+        setDeleteModalState={setDeleteModalState}
+        deletePostId={deletePostId}
+        currentEditingPost={currentEditingPost}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        showCalendarExport={showCalendarExport}
+        setShowCalendarExport={setShowCalendarExport}
+        session={session}
+        onPostCreated={() => fetchPosts()}
+        onPostUpdated={() => fetchPosts()}
+        onPostDeleted={() => fetchPosts()}
+        isMobile={isMobile}
+      />
     </div>
   );
 }

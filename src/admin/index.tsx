@@ -15,6 +15,7 @@ import {
 } from "@fluentui/react-icons";
 import { useSession } from "../lib/auth-client";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 interface Report {
   id: string;
@@ -62,6 +63,7 @@ export default function AdminPanel() {
   const [actionTaken, setActionTaken] = React.useState('');
   const [reviewNotes, setReviewNotes] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     if (!isPending && !session) {
@@ -196,7 +198,7 @@ export default function AdminPanel() {
 
       {/* Stats Dashboard */}
       {stats && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           <Card>
             <CardHeader header={<Title2>{stats.pendingReports}</Title2>} />
             <Text>Pending Reports</Text>
@@ -252,99 +254,101 @@ export default function AdminPanel() {
               No {activeTab} reports
             </Text>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHeaderCell>Report ID</TableHeaderCell>
-                  <TableHeaderCell>Category</TableHeaderCell>
-                  <TableHeaderCell>Reporter</TableHeaderCell>
-                  <TableHeaderCell>Reported User</TableHeaderCell>
-                  <TableHeaderCell>Event</TableHeaderCell>
-                  <TableHeaderCell>Date</TableHeaderCell>
-                  <TableHeaderCell>Actions</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {reports.map((report) => (
-                  <TableRow key={report.id}>
-                    <TableCell>
-                      <Text size={200} style={{ fontFamily: 'monospace' }}>
-                        {report.id.substring(0, 8)}...
-                      </Text>
-                    </TableCell>
-                    <TableCell>
-                      <Badge appearance="outline">
-                        {getCategoryLabel(report.category)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <Text weight="semibold">{report.reporter_name || 'Unknown'}</Text>
-                        <Text size={200}>
-                          {report.reporter_email || ''}
+            <div style={{overflowX: 'auto', width: '100%'}}>
+              <Table style={{minWidth: '700px'}}>
+                <TableHeader>
+                  <TableRow>
+                    <TableHeaderCell>Report ID</TableHeaderCell>
+                    <TableHeaderCell>Category</TableHeaderCell>
+                    <TableHeaderCell>Reporter</TableHeaderCell>
+                    <TableHeaderCell>Reported User</TableHeaderCell>
+                    <TableHeaderCell>Event</TableHeaderCell>
+                    <TableHeaderCell>Date</TableHeaderCell>
+                    <TableHeaderCell>Actions</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {reports.map((report) => (
+                    <TableRow key={report.id}>
+                      <TableCell>
+                        <Text size={200} style={{ fontFamily: 'monospace' }}>
+                          {report.id.substring(0, 8)}...
                         </Text>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {report.reported_user_id ? (
+                      </TableCell>
+                      <TableCell>
+                        <Badge appearance="outline">
+                          {getCategoryLabel(report.category)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <div>
-                          <Text weight="semibold">{report.reported_user_name || 'Unknown'}</Text>
+                          <Text weight="semibold">{report.reporter_name || 'Unknown'}</Text>
                           <Text size={200}>
-                            {report.reported_user_email || ''}
+                            {report.reporter_email || ''}
                           </Text>
                         </div>
-                      ) : (
-                        <Badge appearance="tint">Post Only</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {report.post_title ? (
-                        <Button
-                          appearance="subtle"
-                          size="small"
-                          as="a"
-                          href={`/post?id=${report.post_id}`}
-                          target="_blank"
-                          icon={<ChevronRight20Regular />}
-                        >
-                          {report.post_title.substring(0, 30)}...
-                        </Button>
-                      ) : (
-                        <Text size={200}>-</Text>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Text size={200}>{formatDate(report.created_at)}</Text>
-                    </TableCell>
-                    <TableCell>
-                      <Menu>
-                        <MenuTrigger>
-                          <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                        </MenuTrigger>
-                        <MenuPopover>
-                          <MenuList>
-                            <MenuItem
-                              icon={<DocumentRegular />}
-                              onClick={() => handleReviewReport(report)}
-                            >
-                              Review Report
-                            </MenuItem>
-                            {report.reported_user_id && (
+                      </TableCell>
+                      <TableCell>
+                        {report.reported_user_id ? (
+                          <div>
+                            <Text weight="semibold">{report.reported_user_name || 'Unknown'}</Text>
+                            <Text size={200}>
+                              {report.reported_user_email || ''}
+                            </Text>
+                          </div>
+                        ) : (
+                          <Badge appearance="tint">Post Only</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {report.post_title ? (
+                          <Button
+                            appearance="subtle"
+                            size="small"
+                            as="a"
+                            href={`/post?id=${report.post_id}`}
+                            target="_blank"
+                            icon={<ChevronRight20Regular />}
+                          >
+                            {report.post_title.substring(0, 30)}...
+                          </Button>
+                        ) : (
+                          <Text size={200}>-</Text>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Text size={200}>{formatDate(report.created_at)}</Text>
+                      </TableCell>
+                      <TableCell>
+                        <Menu>
+                          <MenuTrigger>
+                            <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                          </MenuTrigger>
+                          <MenuPopover>
+                            <MenuList>
                               <MenuItem
-                                icon={<PersonRegular />}
-                                onClick={() => window.open(`/profile?user=${report.reported_user_id}`, '_blank')}
+                                icon={<DocumentRegular />}
+                                onClick={() => handleReviewReport(report)}
                               >
-                                View Reported User
+                                Review Report
                               </MenuItem>
-                            )}
-                          </MenuList>
-                        </MenuPopover>
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                              {report.reported_user_id && (
+                                <MenuItem
+                                  icon={<PersonRegular />}
+                                  onClick={() => window.open(`/profile?user=${report.reported_user_id}`, '_blank')}
+                                >
+                                  View Reported User
+                                </MenuItem>
+                              )}
+                            </MenuList>
+                          </MenuPopover>
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </div>
       </Card>

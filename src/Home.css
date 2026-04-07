@@ -43,3 +43,15 @@
   padding: 8px 16px;
   border-bottom: 1px solid #3d3d3d;
 }
+
+@media (max-width: 768px) {
+  .nav {
+    position: fixed;
+    z-index: 2;
+    height: 100%;
+  }
+
+  .content-scroll {
+    padding: 8px;
+  }
+}

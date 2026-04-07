@@ -6,11 +6,12 @@ import {
   Title3
 } from '@fluentui/react-components';
 import { Calendar20Color, LocationRipple20Color, PeopleCommunity20Color, Person20Color, Search20Regular } from '@fluentui/react-icons';
+import defaultArt from "./assets/default-art.jpeg"
+
 
 const cardStyles = makeStyles({
   card: {
-    width: '400px',
-    maxWidth: '100%',
+    maxWidth: '400px',
     height: 'fit-content'
   }
 });
@@ -116,7 +117,7 @@ function Search() {
             {posts.map((post) => (
               <Card key={post.id} className={styles.card}>
                 <CardPreview>
-                  <img src={post.image_url} alt="Event Keyart" />
+                  <img src={post.image_url || defaultArt} alt="Event Keyart" />
                 </CardPreview>
                 <CardHeader
                   header={

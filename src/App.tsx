@@ -13,7 +13,6 @@ function App() {
             <Route path="/*" element={<Home />} />
           </Routes>
         </div>
-      </div>
     </div>
   );
 }

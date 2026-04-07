@@ -12,7 +12,7 @@ export async function onRequestPost(context: {
     if (!email || !password) {
       return new Response(JSON.stringify({ error: "Email and password required" }), {
         status: 400,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Credentials": "true"
@@ -28,7 +28,7 @@ export async function onRequestPost(context: {
     if (existing) {
       return new Response(JSON.stringify({ error: "User already exists" }), {
         status: 400,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Credentials": "true"
@@ -36,22 +36,20 @@ export async function onRequestPost(context: {
       });
     }
 
-    // Hash password (simple, you should use bcrypt in production)
     const passwordHash = await hashPassword(password);
     const userId = crypto.randomUUID();
     const now = Date.now();
 
-    // Create user
     await context.env.DB.prepare(
       "INSERT INTO user (id, email, password_hash, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
     ).bind(userId, email, passwordHash, name || null, now, now).run();
 
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true,
       user: { id: userId, email, name }
     }), {
       status: 201,
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true"
@@ -61,7 +59,7 @@ export async function onRequestPost(context: {
     console.error("Signup error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true"
@@ -70,13 +68,45 @@ export async function onRequestPost(context: {
   }
 }
 
+/**
+ * Hash a password using PBKDF2 via the Web Crypto API.
+ * PBKDF2 is intentionally slow (100,000 iterations) making brute-force
+ * attacks expensive. SHA-256 is NOT suitable for password hashing because
+ * it is fast — that's a vulnerability, not a feature.
+ *
+ * Output format: "pbkdf2:<base64 salt>:<base64 hash>"
+ */
 async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
+
+  // Generate a random 16-byte salt unique to this password
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+
+  // Import the raw password as a key
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+
+  // Derive 256 bits using 100,000 iterations of SHA-256
+  const hashBuffer = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: 100_000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    256
+  );
+
+  const saltB64 = btoa(String.fromCharCode(...salt));
+  const hashB64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+
+  return `pbkdf2:${saltB64}:${hashB64}`;
 }
 
 export async function onRequestOptions() {
