@@ -1,13 +1,11 @@
-import { Text, Title1 } from "@fluentui/react-components";
-
 function About()
 {
     return(
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-            <Title1>About Us</Title1>
-            <Text>This site was created on November 9, 2025 because a kids dad and grandmother were complaining about not being able to find a community service
+        <div className="flex flex-col gap-2">
+            <h1 className="text-lg text-black">About Us</h1>
+            <h3>This site was created on November 9, 2025 because a kids dad and grandmother were complaining about not being able to find a community service
                 opportunity because of how decentralized it was. To fix this issue the kid create a website (this site) to fix this issue.
-            </Text>
+            </h3>
         </div>
     )
 }

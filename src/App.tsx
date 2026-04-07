@@ -5,7 +5,7 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App bg-white dark:bg-gray-800">
       <div className="root">
         <div className="content" style={{width: '100%'}}>
           <Routes>
