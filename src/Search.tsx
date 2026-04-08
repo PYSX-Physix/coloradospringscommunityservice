@@ -3,7 +3,8 @@ import {
   Divider, SearchBox, Title1, Text, Card, CardPreview,
   CardHeader, CardFooter, Button, Spinner,
   makeStyles,
-  Title3
+  Title3,
+  Tag
 } from '@fluentui/react-components';
 import { Calendar20Color, LocationRipple20Color, PeopleCommunity20Color, Person20Color, Search20Regular } from '@fluentui/react-icons';
 import defaultArt from "./assets/default-art.jpeg"
@@ -145,6 +146,7 @@ function Search() {
                     <Text size={200}>
                       <PeopleCommunity20Color/> {post.current_participants}/{post.max_participants} participants
                     </Text>
+                    { post.current_participants === post.max_participants && (<Tag appearance='brand' shape='circular'>Event Full</Tag>)}
                     <Button 
                       appearance="primary" 
                       as='a' 
