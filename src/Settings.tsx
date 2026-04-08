@@ -122,6 +122,7 @@ export default function Settings() {
     return null;
   }
 
+  // const inputClass = "bg-[#1e1e1e] border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors w-full";
   return (
     <div style={{ maxWidth: "600px" }}>
       <Title1>Settings</Title1>

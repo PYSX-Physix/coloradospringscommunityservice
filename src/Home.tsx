@@ -110,7 +110,7 @@ function Home() {
   else selectedValue = '50';
 
   return (
-    <div className='root'>
+    <div className='flex h-screen overflow-hidden'>
       <NavDrawer
           className="nav"
           type="inline"
@@ -204,7 +204,7 @@ function Home() {
               <Hamburger onClick={() => setIsOpen(!isOpen)} />
             </Tooltip>
           </div>
-          <div className="content-scroll">
+          <div className="flex-1 overflow-y-auto p-4">
             <Routes>
               <Route path="/" element={<Posts />} />
               <Route path="/search" element={<Search />} />

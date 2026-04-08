@@ -5,14 +5,12 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App bg-white dark:bg-gray-800">
-      <div className="root">
-        <div className="content" style={{width: '100%'}}>
-          <Routes>
-            <Route path='/auth' element={<SignIn/>}/>
-            <Route path="/*" element={<Home />} />
-          </Routes>
-        </div>
+    <div className="min-h-screen bg-white text-white dark:bg-neutral-900 dark:text-gray-300">
+      <div className="flex min-h-screen">
+        <Routes>
+          <Route path='/auth' element={<SignIn/>}/>
+          <Route path="/*" element={<Home />} />
+        </Routes>
       </div>
     </div>
   );
