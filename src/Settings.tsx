@@ -1,10 +1,4 @@
 import React from "react";
-import {
-  Title1, Title2, Divider, Card, CardHeader,
-  Field, Input, Button, Text, Spinner,
-  MessageBar, MessageBarBody, MessageBarTitle
-} from "@fluentui/react-components";
-import { Eye20Regular, EyeOff20Regular } from '@fluentui/react-icons';
 import { useSession } from "./lib/auth-client";
 import { useNavigate } from "react-router-dom";
 
@@ -114,141 +108,128 @@ export default function Settings() {
     }
   };
 
-  if (isPending) {
-    return <Spinner label="Loading settings..." />;
-  }
-
   if (!session) {
     return null;
   }
 
-  // const inputClass = "bg-[#1e1e1e] border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors w-full";
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-400 animate-pulse">Loading settings...</p>
+      </div>
+    );
+  }
+
+  const inputClass = "bg-[#1e1e1e] border border-gray-600 rounded px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors w-full";
   return (
-    <div style={{ maxWidth: "600px" }}>
-      <Title1>Settings</Title1>
-      <Divider style={{ marginTop: "16px", marginBottom: "32px" }} />
+    <div className="max-w-xl flex flex-col gap-6">
+      <h1 className="text-2xl font-semibold text-white">Settings</h1>
+      <hr className="border-gray-600"/>
 
-      {/* Profile section */}
-      <Card style={{ marginBottom: "24px" }}>
-        <CardHeader header={<Title2>Profile</Title2>} />
-        <form onSubmit={handleProfileSave}>
-          <div style={{ padding: "0 16px 16px" }}>
-            <Text style={{ display: "block", marginBottom: "16px", color: "#888" }}>
-              Your display name is shown to other users on event pages. Your email is private and never shown publicly.
-            </Text>
+      <div className="bg-[#2d2d2d] border border-gray-700 rounded-lg p-6 flex flex-col gap-4">
+        <h2 className="text-lg font-semibold text-white">Profile</h2>
+        <p className="text-sm text-gray-400">Your display name is shown to other users on event pages. Your email and other personal information is private and never shown publicly.</p>
 
-            <Field label="Display Name" style={{ marginBottom: "16px" }}>
-              <Input
-                value={name}
-                onChange={(_, data) => setName(data.value)}
-                placeholder="How you appear to other users"
-              />
-            </Field>
-
-            <Field label="Email" required style={{ marginBottom: "24px" }}>
-              <Input
-                type="email"
-                value={email}
-                onChange={(_, data) => setEmail(data.value)}
-                required
-              />
-            </Field>
-
-            {profileSave === "success" && (
-              <MessageBar intent="success" style={{ marginBottom: "16px" }}>
-                <MessageBarBody>
-                  <MessageBarTitle>Saved</MessageBarTitle>
-                  Your profile has been updated.
-                </MessageBarBody>
-              </MessageBar>
-            )}
-
-            {profileSave === "error" && (
-              <MessageBar intent="error" style={{ marginBottom: "16px" }}>
-                <MessageBarBody>
-                  <MessageBarTitle>Error</MessageBarTitle>
-                  {profileError}
-                </MessageBarBody>
-              </MessageBar>
-            )}
-
-            <Button
-              appearance="primary"
-              type="submit"
-              disabled={profileSave === "saving"}
-            >
-              {profileSave === "saving" ? "Saving..." : "Save Profile"}
-            </Button>
+        <form onSubmit={handleProfileSave} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-300">Display Name</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={inputClass} placeholder="How you appear to others"/>
           </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-300">Email <span className="text-red-400">*</span></label>
+            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} required/>
+          </div>
+
+          {profileSave === "success" && (
+            <div className="text-sm text-green-400 bg-green-900/20 border border-green-800 rounded px-3 py-2">
+              ✓ Your profile has been updated.
+            </div>
+          )}
+          {profileSave === "error" && (
+            <div className="text-sm text-red-400 bg-red-900/20 border border-red-800 rounded px-3 py-2">
+              {profileError}
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={profileSave === "saving"}
+            className="self-start bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          >
+            {profileSave === "saving" ? "Saving..." : "Save Profile"}
+          </button>
         </form>
-      </Card>
 
-      {/* Password section */}
-      <Card>
-        <CardHeader header={<Title2>Change Password</Title2>} />
-        <form onSubmit={handlePasswordSave}>
-          <div style={{ padding: "0 16px 16px" }}>
-            <Text style={{ display: "block", marginBottom: "16px", color: "#888" }}>
-              Leave these blank if you don't want to change your password.
-            </Text>
+        <form onSubmit={handlePasswordSave} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-300">
+              Current Password <span className="text-red-400">*</span>
+            </label>
+            <input
+              className={inputClass}
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+            />
+          </div>
 
-            <Field label="Current Password" required style={{ marginBottom: "16px" }}>
-              <Input
-                type="password"
-                value={currentPassword}
-                onChange={(_, data) => setCurrentPassword(data.value)}
-                required
-              />
-            </Field>
-
-            <Field label="New Password" required style={{ marginBottom: "16px" }}>
-              <Input
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-300">
+              New Password <span className="text-red-400">*</span>
+            </label>
+            <div className="relative">
+              <input
+                className={inputClass + " pr-10"}
                 type={showPassword ? "text" : "password"}
                 value={newPassword}
-                onChange={(_, data) => setNewPassword(data.value)}
-                required
-                minLength={6}
-                contentAfter={ <Button onClick={() => setShowPassword(!showPassword)} icon={showPassword ? <Eye20Regular/> : <EyeOff20Regular/>} appearance="transparent"/> }/>
-            </Field>
-
-            <Field label="Confirm New Password" required style={{ marginBottom: "24px" }}>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(_, data) => setConfirmPassword(data.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={6}
               />
-            </Field>
-
-            {passwordSave === "success" && (
-              <MessageBar intent="success" style={{ marginBottom: "16px" }}>
-                <MessageBarBody>
-                  <MessageBarTitle>Password updated</MessageBarTitle>
-                  Your password has been changed successfully.
-                </MessageBarBody>
-              </MessageBar>
-            )}
-
-            {passwordSave === "error" && (
-              <MessageBar intent="error" style={{ marginBottom: "16px" }}>
-                <MessageBarBody>
-                  <MessageBarTitle>Error</MessageBarTitle>
-                  {passwordError}
-                </MessageBarBody>
-              </MessageBar>
-            )}
-
-            <Button
-              appearance="primary"
-              type="submit"
-              disabled={passwordSave === "saving"}
-            >
-              {passwordSave === "saving" ? "Saving..." : "Change Password"}
-            </Button>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+              </button>
+            </div>
           </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-300">
+              Confirm New Password <span className="text-red-400">*</span>
+            </label>
+            <input
+              className={inputClass}
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+
+          {passwordSave === "success" && (
+            <div className="text-sm text-green-400 bg-green-900/20 border border-green-800 rounded px-3 py-2">
+              ✓ Your password has been changed successfully.
+            </div>
+          )}
+          {passwordSave === "error" && (
+            <div className="text-sm text-red-400 bg-red-900/20 border border-red-800 rounded px-3 py-2">
+              {passwordError}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={passwordSave === "saving"}
+            className="self-start bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          >
+            {passwordSave === "saving" ? "Saving..." : "Change Password"}
+          </button>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }
