@@ -95,7 +95,7 @@ function Home() {
   let selectedValue = POSTSMENU;
   if (location.pathname === '/search') selectedValue = SEARCHMENU;
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
-  else if (location.pathname === '/saved/my-posts') selectedValue = YOURPOSTSMENU;
+  else if (location.pathname === '/my-posts') selectedValue = YOURPOSTSMENU;
   else if (location.pathname === '/about') selectedValue = ABOUTMENU;
   else if (location.pathname === '/policies') selectedValue = POLICIESMENU;
   else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
@@ -159,7 +159,7 @@ function Home() {
             <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />} onClick={() => isMobile && setIsOpen(false)}>
               Search
             </NavItem>
-            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />} onClick={() => isMobile && setIsOpen(false)}>
+            <NavItem as='a' href="/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />} onClick={() => isMobile && setIsOpen(false)}>
               My Posts
             </NavItem>
             <NavDivider />
@@ -208,7 +208,7 @@ function Home() {
             <Routes>
               <Route path="/" element={<Posts />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/saved/my-posts" element={<YourPosts />} />
+              <Route path="/my-posts" element={<YourPosts />} />
               <Route path="/about" element={<About />} />
               <Route path='/post' element={<Post />} />
               <Route path='/policies/privacy-policy' element={<Privacy />} />
