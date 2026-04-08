@@ -3,7 +3,7 @@ import {
   Title3, Text, Button, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem,
   Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions,
   Field, RadioGroup, Radio, Divider, Textarea, Card, CardPreview, CardHeader, CardFooter,
-  Image
+  Image, Tag
 } from "@fluentui/react-components";
 import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkCircle48Color, MoreHorizontal20Regular, Share20Regular } from "@fluentui/react-icons";
 import { makeStyles } from "@fluentui/react-components";
@@ -114,6 +114,9 @@ const PostCard = React.memo(function PostCard({ post, onSaveToggle }: PostCardPr
           description={<Text>{post.description}</Text>}
         />
         <CardFooter>
+          {
+            post.current_participants === post.max_participants && <Tag shape='circular' appearance='brand'>Event Full</Tag>
+          }
           <Button 
             appearance="primary" 
             as='a' 
