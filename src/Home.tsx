@@ -110,7 +110,7 @@ function Home() {
   else selectedValue = '50';
 
   return (
-    <div className='flex h-screen overflow-hidden'>
+    <div className='flex h-screen w-screen overflow-hidden'>
       <NavDrawer
           className="nav"
           type="inline"
@@ -205,7 +205,7 @@ function Home() {
             </Tooltip>
           </div>
           <div className="flex-1 overflow-y-auto p-4">
-            <div className='w-full max-w-full mx-auto'>
+            <div className='w-full min-w-full mx-auto'>
               <Routes>
                 <Route path="/" element={<Posts />} />
                 <Route path="/search" element={<Search />} />

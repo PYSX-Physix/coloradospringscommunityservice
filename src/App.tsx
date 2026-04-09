@@ -5,8 +5,8 @@ import './App.css';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white text-white dark:bg-neutral-900 dark:text-gray-300">
-      <div className="flex min-h-screen">
+    <div className="min-h-screen w-screen bg-white text-white dark:bg-neutral-900 dark:text-gray-300">
+      <div className="flex min-h-screen w-screen">
         <Routes>
           <Route path='/auth' element={<SignIn/>}/>
           <Route path="/*" element={<Home />} />

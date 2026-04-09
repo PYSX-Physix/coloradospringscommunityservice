@@ -70,7 +70,7 @@ function Search() {
       <h1 className="text-2xl font-semibold text-white">Search Events</h1>
       <hr className='border-gray-600' />
 
-      <div className='relative max-w-xl'>
+      <div className='relative w-full'>
         <div className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'>
           <Search20Regular />
         </div>
@@ -96,7 +96,7 @@ function Search() {
 
           <div className='flex flex-wrap gap-4'>
             {posts.map((post) => (
-              <div key={post.id} className='w-full max-w-sm bg-[#2d2d2d] border border-gray-700 rounded-lg overflow-hidden flex flex-col'>
+              <div key={post.id} className='w-full bg-[#2d2d2d] border border-gray-700 rounded-lg overflow-hidden flex flex-col'>
                 <img src={post.image_url || defaultArt} alt={post.title} onError={(e) => { e.currentTarget.src = defaultArt }}
                   className='w-full h-40 object-cover' />
                 <div className='flex flex-col gap-3 p-4 flex-1'>
