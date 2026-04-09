@@ -8,6 +8,7 @@ import {
   DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular
 } from "@fluentui/react-icons";
 import YourPostsDialogs from "./YourPostsDialogs";
+import { createPortal } from "react-dom";
 
 interface PostData {
   id: number;
@@ -178,21 +179,41 @@ function YourPosts() {
     type: "created" | "saved" | "joined";
   }) => {
     const isOpen = openMenuId === postId;
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
+    const [dropdownPosition, setDropdownPosition] = React.useState<{ top: number; left: number } | null>(null);
+
+    React.useEffect(() => {
+      if (isOpen && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX - 208, // 208 is w-52 (13rem = 208px), to align right
+        });
+      } else {
+        setDropdownPosition(null);
+      }
+    }, [isOpen]);
 
     return (
-      <div className="relative">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpenMenuId(isOpen ? null : postId);
-          }}
-          className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-        >
-          <MoreHorizontal20Regular />
-        </button>
+      <>
+        <div className="relative">
+          <button
+            ref={buttonRef}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenMenuId(isOpen ? null : postId);
+            }}
+            className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+          >
+            <MoreHorizontal20Regular />
+          </button>
+        </div>
 
-        {isOpen && (
-          <div className="absolute right-0 z-50 mt-1 w-52 bg-[#2d2d2d] border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+        {isOpen && dropdownPosition && createPortal(
+          <div
+            className="fixed z-50 w-52 bg-[#2d2d2d] border border-gray-700 rounded-lg shadow-xl overflow-hidden"
+            style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+          >
             {type === "created" && (
               <>
                 <button
@@ -272,9 +293,10 @@ function YourPosts() {
                 </a>
               </>
             )}
-          </div>
+          </div>,
+          document.body
         )}
-      </div>
+      </>
     );
   };
 
