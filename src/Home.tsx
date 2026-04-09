@@ -205,20 +205,22 @@ function Home() {
             </Tooltip>
           </div>
           <div className="flex-1 overflow-y-auto p-4">
-            <Routes>
-              <Route path="/" element={<Posts />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/my-posts" element={<YourPosts />} />
-              <Route path="/about" element={<About />} />
-              <Route path='/post' element={<Post />} />
-              <Route path='/policies/privacy-policy' element={<Privacy />} />
-              <Route path='/policies/terms-of-service' element={<Terms />} />
-              <Route path='/profile' element={<Profile />} />
-              <Route path='/help' element={<HelpHome />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path='/contribute' element={<Contribute />} />
-              <Route path='/settings' element={<Settings />} />
-            </Routes>
+            <div className='w-full max-w-full mx-auto'>
+              <Routes>
+                <Route path="/" element={<Posts />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/my-posts" element={<YourPosts />} />
+                <Route path="/about" element={<About />} />
+                <Route path='/post' element={<Post />} />
+                <Route path='/policies/privacy-policy' element={<Privacy />} />
+                <Route path='/policies/terms-of-service' element={<Terms />} />
+                <Route path='/profile' element={<Profile />} />
+                <Route path='/help' element={<HelpHome />} />
+                <Route path="/admin" element={<AdminPanel />} />
+                <Route path='/contribute' element={<Contribute />} />
+                <Route path='/settings' element={<Settings />} />
+              </Routes>
+            </div>
           </div>
         </div>
         {isMobile && isOpen && (

@@ -88,7 +88,7 @@ export default function Profile() {
   const tdClass = "px-4 py-3 text-sm text-gray-300 border-b border-gray-700/50";
 
   return (
-    <div className="max-w-5xl flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-white">Profile</h1>
       <hr className="border-gray-600"/>
 

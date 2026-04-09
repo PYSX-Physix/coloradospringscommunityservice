@@ -1,7 +1,7 @@
 export default function Contribute()
 {
     return (
-        <div className="flex flex-col gap-4 max-w-2xl">
+        <div className="flex flex-col gap-4">
             <h1 className="text-2xl font-semibold text-white">Contributing</h1>
             <hr className="border-gray-600" />
             <p className="text-gray-300">
