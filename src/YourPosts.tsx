@@ -279,17 +279,19 @@ function YourPosts() {
   };
 
   const TableShell = ({ children }: { children: React.ReactNode }) => (
-    <div className="overflow-x-scroll overflow-y-visible rounded-lg border border-gray-700 mt-4">
-      <table className="min-w-full">
-        <thead className="bg-[#242424]">
-          <tr>
-            {["Title", "Location", "Created On", "Starts", "Ends", "Participants", "Actions"].map((col) => (
-              <th key={col} className={thClass}>{truncate(col, isMobile)}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-[#2d2d2d]">{children}</tbody>
-      </table>
+    <div className="rounded-lg border border-gray-700 mt-4 overflow-visible">
+      <div className="min-w-full overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-[#242424]">
+            <tr>
+              {["Title", "Location", "Created On", "Starts", "Ends", "Participants", "Actions"].map((col) => (
+                <th key={col} className={thClass}>{truncate(col, isMobile)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-[#2d2d2d]">{children}</tbody>
+        </table>
+      </div>
     </div>
   );
 
