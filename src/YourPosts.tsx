@@ -279,8 +279,8 @@ function YourPosts() {
   };
 
   const TableShell = ({ children }: { children: React.ReactNode }) => (
-    <div className="rounded-lg border border-gray-700 mt-4 overflow-visible">
-      <div className="min-w-full overflow-x-auto">
+    <div className="rounded-lg border border-gray-700 mt-4 overflow-x-auto">
+      <div className="min-w-full overflow-y-visible">
         <table className="min-w-full">
           <thead className="bg-[#242424]">
             <tr>
