@@ -3,10 +3,7 @@ import { useSession } from "./lib/auth-client";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { downloadAttendanceSheet } from "./utils/attendanceSheet";
-import {
-  EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular,
-  DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular
-} from "@fluentui/react-icons";
+import { ArrowDownIcon, CalendarDaysIcon, EllipsisHorizontalIcon, EyeIcon, PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid'
 import YourPostsDialogs from "./YourPostsDialogs";
 import { createPortal } from "react-dom";
 
@@ -205,7 +202,7 @@ function YourPosts() {
             }}
             className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
           >
-            <MoreHorizontal20Regular />
+            <EllipsisHorizontalIcon/>
           </button>
         </div>
 
@@ -224,7 +221,7 @@ function YourPosts() {
                   disabled={downloadingAttendance === postId}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition-colors"
                 >
-                  <DocumentArrowDown20Regular />
+                  <ArrowDownIcon/>
                   {downloadingAttendance === postId ? "Downloading..." : "Download Attendance"}
                 </button>
                 <hr className="border-gray-700" />
@@ -236,14 +233,14 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <EditRegular />
+                  <PencilIcon/>
                   Edit
                 </button>
                 <a
                   href={`/post?id=${postId}`}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <EyeRegular />
+                  <EyeIcon/>
                   View Post
                 </a>
                 <hr className="border-gray-700" />
@@ -255,7 +252,7 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/30 transition-colors"
                 >
-                  <DeleteRegular />
+                  <TrashIcon/>
                   Delete
                 </button>
               </>
@@ -266,7 +263,7 @@ function YourPosts() {
                 href={`/post?id=${postId}`}
                 className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
               >
-                <EyeRegular />
+                <EyeIcon/>
                 View Post
               </a>
             )}
@@ -281,14 +278,14 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <CalendarAddRegular />
+                  <CalendarDaysIcon/>
                   Add to Calendar
                 </button>
                 <a
                   href={`/post?id=${postId}`}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <EyeRegular />
+                  <EyeIcon />
                   View Post
                 </a>
               </>
@@ -360,7 +357,7 @@ function YourPosts() {
               className="text-blue-400 hover:text-blue-300 transition-colors"
               title="Create new event"
             >
-              <AddCircle32Color />
+              <PlusCircleIcon/>
             </button>
           </div>
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Calendar20Color, LocationRipple20Color, PeopleCommunity20Color, Person20Color, Search20Regular } from '@fluentui/react-icons';
 import defaultArt from "./assets/default-art.jpeg"
+import { CalendarDaysIcon, MagnifyingGlassIcon, MapPinIcon, UserCircleIcon, UserGroupIcon } from '@heroicons/react/24/solid';
 
 interface PostData {
   id: number;
@@ -72,7 +72,7 @@ function Search() {
 
       <div className='relative w-full'>
         <div className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'>
-          <Search20Regular />
+          <MagnifyingGlassIcon/>
         </div>
         <input type='text' value={query}
           onChange={(e) => setQuery(e.target.value)} placeholder='Search by title, description, location, or organizer...'
@@ -105,19 +105,19 @@ function Search() {
                 </div>
                 <div className="flex flex-col gap-1 mt-auto">
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <Calendar20Color />
+                    <CalendarDaysIcon/>
                     {formatDateTime(post.start_datetime)}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <LocationRipple20Color />
+                    <MapPinIcon/>
                     {post.location}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <Person20Color />
+                    <UserCircleIcon/>
                     {post.user_name}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <PeopleCommunity20Color />
+                    <UserGroupIcon/>
                     {post.current_participants}/{post.max_participants} participants
                   </span>
                 </div>

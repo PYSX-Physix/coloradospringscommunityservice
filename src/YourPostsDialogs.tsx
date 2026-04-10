@@ -1,9 +1,9 @@
 import React from "react";
-import { MoreHorizontal20Regular } from "@fluentui/react-icons";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { TimePicker } from "@fluentui/react-timepicker-compat";
 import CalendarExport from "./components/CalendarExport";
 import { AddressAutocomplete } from "./components/AddressAutoComplete";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 
 interface PostData {
   id: number;
@@ -389,7 +389,7 @@ function YourPostsDialogs({
         }
       >
         <p className="text-gray-300 text-sm">
-          Your event has been created! Click the <MoreHorizontal20Regular className="inline" /> menu next to it to view the post.
+          Your event has been created! Click the <EllipsisHorizontalIcon className="inline"/> menu next to it to view the post.
         </p>
       </Modal>
 
