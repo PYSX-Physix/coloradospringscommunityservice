@@ -240,7 +240,7 @@ function YourPosts() {
                   href={`/post?id=${postId}`}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <EyeIcon/>
+                  <EyeIcon className="size-3"/>
                   View Post
                 </a>
                 <hr className="border-gray-700" />

@@ -72,7 +72,7 @@ function Search() {
 
       <div className='relative w-full'>
         <div className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'>
-          <MagnifyingGlassIcon/>
+          <MagnifyingGlassIcon className='size-6'/>
         </div>
         <input type='text' value={query}
           onChange={(e) => setQuery(e.target.value)} placeholder='Search by title, description, location, or organizer...'
@@ -105,19 +105,19 @@ function Search() {
                 </div>
                 <div className="flex flex-col gap-1 mt-auto">
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <CalendarDaysIcon/>
+                    <CalendarDaysIcon className="size-3"/>
                     {formatDateTime(post.start_datetime)}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <MapPinIcon/>
+                    <MapPinIcon className="size-3"/>
                     {post.location}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <UserCircleIcon/>
+                    <UserCircleIcon className="size-3"/>
                     {post.user_name}
                   </span>
                   <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <UserGroupIcon/>
+                    <UserGroupIcon className="size-3"/>
                     {post.current_participants}/{post.max_participants} participants
                   </span>
                 </div>
