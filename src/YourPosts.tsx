@@ -202,7 +202,7 @@ function YourPosts() {
             }}
             className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
           >
-            <EllipsisHorizontalIcon/>
+            <EllipsisHorizontalIcon className="size-5 text-white"/>
           </button>
         </div>
 
@@ -221,7 +221,7 @@ function YourPosts() {
                   disabled={downloadingAttendance === postId}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition-colors"
                 >
-                  <ArrowDownIcon/>
+                  <ArrowDownIcon className="size-3"/>
                   {downloadingAttendance === postId ? "Downloading..." : "Download Attendance"}
                 </button>
                 <hr className="border-gray-700" />
@@ -233,7 +233,7 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <PencilIcon/>
+                  <PencilIcon className="size-3"/>
                   Edit
                 </button>
                 <a
@@ -252,7 +252,7 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/30 transition-colors"
                 >
-                  <TrashIcon/>
+                  <TrashIcon className="size-3"/>
                   Delete
                 </button>
               </>
@@ -263,7 +263,7 @@ function YourPosts() {
                 href={`/post?id=${postId}`}
                 className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
               >
-                <EyeIcon/>
+                <EyeIcon className="size-3"/>
                 View Post
               </a>
             )}
@@ -278,14 +278,14 @@ function YourPosts() {
                   }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <CalendarDaysIcon/>
+                  <CalendarDaysIcon className="size-3"/>
                   Add to Calendar
                 </button>
                 <a
                   href={`/post?id=${postId}`}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
                 >
-                  <EyeIcon />
+                  <EyeIcon className="size-3"/>
                   View Post
                 </a>
               </>
@@ -357,7 +357,7 @@ function YourPosts() {
               className="text-blue-400 hover:text-blue-300 transition-colors"
               title="Create new event"
             >
-              <PlusCircleIcon/>
+              <PlusCircleIcon className="text-white size-10"/>
             </button>
           </div>
 
