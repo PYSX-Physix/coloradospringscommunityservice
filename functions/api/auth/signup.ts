@@ -13,7 +13,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   const limitResponse = await rateLimit(request, env, {
     limit: 5,
     window: 60,
-    keyPrefix: "signup"
+    keyPrefix: "signup",
   })
 
   if (limitResponse) return limitResponse;
