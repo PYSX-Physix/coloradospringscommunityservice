@@ -1,4 +1,5 @@
 import React from 'react';
+import { clearCsrfCookie, setCsrfCookie } from './csrf-helpers';
 
 export async function signUp(email: string, password: string, name: string) {
   const res = await fetch("/api/auth/signup", {
@@ -29,7 +30,12 @@ export async function signIn(email: string, password: string) {
     throw new Error(error.error);
   }
   
-  return res.json();
+  const data = await res.json();
+  if (data?.csrfToken) {
+    setCsrfCookie(data.csrfToken);
+  }
+
+  return data;
 }
 
 export async function signOut() {
@@ -37,6 +43,8 @@ export async function signOut() {
     method: "POST",
     credentials: "include",
   });
+
+  clearCsrfCookie();
 }
 
 export async function getSession() {
@@ -52,6 +60,9 @@ export function useSession() {
 
   React.useEffect(() => {
     getSession().then(data => {
+      if (data?.session?.csrfToken) {
+        setCsrfCookie(data.session.csrfToken);
+      }
       setSession(data.session);
       setLoading(false);
     });
