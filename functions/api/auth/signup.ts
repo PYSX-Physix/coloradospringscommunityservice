@@ -3,7 +3,7 @@ import { rateLimit } from "../../lib/rateLimit";
 
 interface Env {
   DB: D1Database;
-  RATE_LIMIT_KV?: KVNamespace;
+  Rate_Limits?: KVNamespace;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {

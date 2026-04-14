@@ -165,7 +165,7 @@ export async function onRequestOptions() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Cookie',
+      'Access-Control-Allow-Headers': 'Content-Type, Cookie, X-CSRF-Token',
       'Access-Control-Allow-Credentials': 'true',
     },
   });

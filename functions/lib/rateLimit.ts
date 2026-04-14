@@ -1,5 +1,5 @@
 interface Env {
-  RATE_LIMIT_KV?: KVNamespace;
+  Rate_Limits?: KVNamespace;
 }
 
 type RateLimitOptions = {
@@ -29,8 +29,8 @@ export async function rateLimit(
   const now = Date.now();
   const windowMs = options.window * 1000;
 
-  if (env.RATE_LIMIT_KV) {
-    const raw = await env.RATE_LIMIT_KV.get(key);
+  if (env.Rate_Limits) {
+    const raw = await env.Rate_Limits.get(key);
     const existing = raw ? (JSON.parse(raw) as RateLimitRecord) : null;
     const record = !existing || existing.resetAt <= now
       ? { count: 0, resetAt: now + windowMs }
@@ -38,7 +38,7 @@ export async function rateLimit(
 
     record.count += 1;
 
-    await env.RATE_LIMIT_KV.put(key, JSON.stringify(record), {
+    await env.Rate_Limits.put(key, JSON.stringify(record), {
       expirationTtl: options.window,
     });
 

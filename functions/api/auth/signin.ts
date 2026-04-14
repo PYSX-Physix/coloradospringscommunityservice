@@ -1,11 +1,11 @@
 import { buildSessionCookie, createSession, hashIP } from "../../lib/auth";
 import { corsJson } from "../../lib/cors";
-import { rateLimit } from "../../lib/rateLimit"
-import { attachCSRFToSession } from "../../lib/csrf"
+import { rateLimit } from "../../lib/rateLimit";
+import { attachCSRFToSession } from "../../lib/csrf";
 
 interface Env {
   DB: D1Database;
-  RATE_LIMIT_KV?: KVNamespace;
+  Rate_Limits?: KVNamespace;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
@@ -16,7 +16,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
   const limitResponse = await rateLimit(request, env, {
     limit: 5,
     window: 60,
-    keyPrefix: "login"
+    keyPrefix: "login",
   });
 
   if (limitResponse) return limitResponse;

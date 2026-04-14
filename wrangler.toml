@@ -13,6 +13,10 @@ binding = "DB"
 database_name = "cospringscs-db-preview"
 database_id = "3acb55c2-d4b9-43f1-a701-9986cc2a62c4"
 
-[[kv_namespaces]]
+[[env.preview.kv_namespaces]]
+binding = "Rate_Limits"
+id = "861cbe192aa34d91b5389fb4b6e95539"
+
+[[env.production.kv_namespaces]]
 binding = "Rate_Limits"
 id = "861cbe192aa34d91b5389fb4b6e95539"
