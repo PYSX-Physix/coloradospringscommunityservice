@@ -63,12 +63,13 @@ function getClientIp(request: Request): string | null {
   return request.headers.get("CF-Connecting-IP") ?? request.headers.get("X-Forwarded-For");
 }
 
-export async function createSession(env: Env, request: Request, userId: string): Promise<{ sessionId: string; csrfToken: string; expiresAt: number }> {
+export async function createSession(env: Env, request: Request, userId: string, options?: {hashedIp?: string}): Promise<{ sessionId: string; csrfToken: string; expiresAt: number }> {
   const sessionId = generateSecureToken(48);
   const csrfToken = generateSecureToken(32);
   const createdAt = Date.now();
   const expiresAt = createdAt + SEVEN_DAYS_MS;
-  const ip = getClientIp(request);
+  const rawIP = getClientIp(request) ?? "unknown";
+  const ip = options?.hashedIp ?? await hashIP(rawIP);
   const userAgent = request.headers.get("User-Agent");
 
   await env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(userId).run();
@@ -118,13 +119,22 @@ export async function getSession(env: Env, request: Request): Promise<SessionRec
     return null;
   }
 
+  const rawIP = getClientIp(request) ?? "unknown";
+  const hashedIP = await hashIP(rawIP);
+  const sessionIP = result.ip ? String(result.ip) : null;
+  if (sessionIP && sessionIP !== hashedIP && sessionIP !== rawIP) {
+    // TODO: remove rawIP fallback after all sessions are refreshed.
+    await deleteSession(env, sessionId);
+    return null;
+  }
+
   return {
     id: String(result.id),
     userId: String(result.user_id),
     csrfToken: String(result.csrf_token),
     createdAt: Number(result.created_at),
     expiresAt,
-    ip: result.ip ? String(result.ip) : null,
+    ip: sessionIP,
     userAgent: result.user_agent ? String(result.user_agent) : null,
     user: {
       id: String(result.user_id),
@@ -143,22 +153,9 @@ export function needsCsrfValidation(request: Request): boolean {
   return ["POST", "PUT", "PATCH", "DELETE"].includes(request.method.toUpperCase());
 }
 
-export function validateCsrf(session: SessionRecord, request: Request): boolean {
-  const provided = getCsrfTokenFromHeader(request);
-  if (!provided) {
-    return false;
-  }
-
-  const a = new TextEncoder().encode(session.csrfToken);
-  const b = new TextEncoder().encode(provided);
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) {
-    diff |= a[i] ^ b[i];
-  }
-
-  return diff === 0;
+export async function hashIP(ip: string) {
+  const data = new TextEncoder().encode(ip);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }

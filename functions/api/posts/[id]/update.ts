@@ -1,3 +1,5 @@
+import { validateCSRF } from "../../../lib/csrf";
+
 interface Env {
   DB: D1Database;
 }
@@ -26,8 +28,8 @@ export async function onRequestPatch(context: {
     }
 
     const session = await context.env.DB.prepare(
-      `SELECT user_id FROM session WHERE id = ? AND expires_at > ?`
-    ).bind(sessionId, Date.now()).first();
+      `SELECT user_id, csrf_token FROM sessions WHERE id = ? AND expires_at > ?`
+    ).bind(sessionId, Date.now()).first<{user_id: string; csrf_token: string}>();
 
     if (!session) {
       return new Response(JSON.stringify({ error: 'Session expired' }), {
@@ -38,6 +40,9 @@ export async function onRequestPatch(context: {
         },
       });
     }
+
+    const csrfError = await validateCSRF(context.request, session);
+    if (csrfError) return csrfError;
 
     // Get the post to verify ownership
     const post = await context.env.DB.prepare(

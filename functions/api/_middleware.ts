@@ -1,5 +1,6 @@
 import { corsJson, handleCorsPreflight, isCorsOriginAllowed, buildCorsHeaders } from "../lib/cors";
-import { getSession, needsCsrfValidation, validateCsrf } from "../lib/auth";
+import { getSession, needsCsrfValidation } from "../lib/auth";
+import { validateCSRF } from "../lib/csrf";
 
 interface Env {
   DB: D1Database;
@@ -33,9 +34,8 @@ export async function onRequest(context: EventContext<Env, string, unknown>) {
   }
 
   if (!isAuthBootstrapRoute && session && needsCsrfValidation(request)) {
-    if (!validateCsrf(session, request)) {
-      return corsJson(request, { error: "Invalid CSRF token" }, 403);
-    }
+    const csrfError = await validateCSRF(request, session);
+    if (csrfError) return corsJson(request, {error: "Invalid CSRF token"}, 403);
   }
 
   const response = await context.next();
