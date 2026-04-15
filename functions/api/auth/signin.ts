@@ -1,27 +1,25 @@
-import { buildSessionCookie, createSession } from "../../lib/auth";
+import { buildSessionCookie, createSession, hashIP } from "../../lib/auth";
 import { corsJson } from "../../lib/cors";
-import { getRequestIp, rateLimit } from "../../lib/rateLimit";
+import { rateLimit } from "../../lib/rateLimit";
+import { attachCSRFToSession } from "../../lib/csrf";
 
 interface Env {
   DB: D1Database;
-  RATE_LIMIT_KV?: KVNamespace;
+  Rate_Limits?: KVNamespace;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
 
-  const ip = getRequestIp(request);
-  const loginRateLimit = await rateLimit(env, {
-    key: `rate_limit:signin:${ip}`,
+  const rawIP = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ip = await hashIP(rawIP);
+  const limitResponse = await rateLimit(request, env, {
     limit: 5,
-    windowSeconds: 60,
+    window: 60,
+    keyPrefix: "login",
   });
 
-  if (!loginRateLimit.allowed) {
-    return corsJson(request, { error: "Too many login attempts" }, 429, {
-      "Retry-After": String(loginRateLimit.retryAfterSeconds),
-    });
-  }
+  if (limitResponse) return limitResponse;
 
   try {
     const { email, password } = (await request.json()) as { email?: string; password?: string };
@@ -43,7 +41,8 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
       return corsJson(request, { error: "Invalid credentials" }, 401);
     }
 
-    const { sessionId, csrfToken } = await createSession(env, request, String(user.id));
+    const { sessionId } = await createSession(env, request, String(user.id), { hashedIp: ip });
+    const csrfToken = await attachCSRFToSession(env.DB, sessionId);
 
     return corsJson(request, {
       success: true,

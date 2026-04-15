@@ -69,7 +69,7 @@ export async function onRequestDelete(context: {
     }
 
     const session = await context.env.DB.prepare(
-      `SELECT user_id FROM session WHERE id = ? AND expires_at > ?`
+      `SELECT user_id FROM sessions WHERE id = ? AND expires_at > ?`
     ).bind(sessionId, Date.now()).first();
 
     if (!session) {

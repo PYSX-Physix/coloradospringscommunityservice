@@ -1,26 +1,22 @@
 import { corsJson } from "../../lib/cors";
-import { getRequestIp, rateLimit } from "../../lib/rateLimit";
+import { rateLimit } from "../../lib/rateLimit";
 
 interface Env {
   DB: D1Database;
-  RATE_LIMIT_KV?: KVNamespace;
+  Rate_Limits?: KVNamespace;
 }
 
 export async function onRequestPost(context: { request: Request; env: Env }) {
   const { request, env } = context;
 
-  const ip = getRequestIp(request);
-  const signupRateLimit = await rateLimit(env, {
-    key: `rate_limit:signup:${ip}`,
+  
+  const limitResponse = await rateLimit(request, env, {
     limit: 5,
-    windowSeconds: 60,
-  });
+    window: 60,
+    keyPrefix: "signup",
+  })
 
-  if (!signupRateLimit.allowed) {
-    return corsJson(request, { error: "Too many signup attempts" }, 429, {
-      "Retry-After": String(signupRateLimit.retryAfterSeconds),
-    });
-  }
+  if (limitResponse) return limitResponse;
 
   try {
     const { email, password, name } = (await request.json()) as { email?: string; password?: string; name?: string };

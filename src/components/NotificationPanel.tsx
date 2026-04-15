@@ -5,6 +5,7 @@ import {
 } from "@fluentui/react-components";
 import { Alert20Regular, CheckmarkCircle20Regular } from "@fluentui/react-icons";
 import { useNavigate } from "react-router-dom";
+import { useSession } from "../lib/auth-client";
 
 interface Notification {
   id: string;
@@ -22,6 +23,7 @@ export default function NotificationPanel() {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const {data: session} = useSession();
 
   const fetchNotifications = async () => {
     try {
@@ -43,6 +45,7 @@ export default function NotificationPanel() {
   };
 
   React.useEffect(() => {
+    if(!session) return;
     fetchNotifications();
     // Poll for new notifications every 30 seconds
     const interval = setInterval(fetchNotifications, 30000);

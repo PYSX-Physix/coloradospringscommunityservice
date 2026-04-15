@@ -54,7 +54,7 @@ function Posts() {
       if (savedRes?.ok) {
         try {
           const savedData = await savedRes.json();
-          savedPostIds = savedData.savedPostIds || [];
+          savedPostIds = (savedData.savedPostIds || []).map((p: {id: number}) => p.id);
         } catch {
           console.warn('Failed to parse saved posts');
         }
