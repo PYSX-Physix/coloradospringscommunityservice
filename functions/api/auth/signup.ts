@@ -14,7 +14,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     limit: 5,
     window: 60,
     keyPrefix: "signup",
-  })
+  });
 
   if (limitResponse) return limitResponse;
 
