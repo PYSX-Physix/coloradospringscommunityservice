@@ -1,81 +1,42 @@
+import { corsJson } from "../../lib/cors";
+
 interface Env {
   DB: D1Database;
-  ADMIN_API_KEY: string;
 }
 
-// Add custom words to blacklist
-export async function onRequestPost(context: {
-  request: Request;
-  env: Env;
-}) {
+export async function onRequestPost(context: { request: Request; env: Env }) {
   try {
-    const apiKey = context.request.headers.get('X-Admin-API-Key');
-    if (apiKey !== context.env.ADMIN_API_KEY) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const { words } = await context.request.json();
+    const { words } = await context.request.json<{ words?: string[] }>();
 
     if (!words || !Array.isArray(words)) {
-      return new Response(JSON.stringify({ 
-        error: 'Invalid request. Provide an array of words.' 
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return corsJson(context.request, { error: "Invalid request. Provide an array of words." }, 400);
     }
 
-    // Store in database for persistence
+    const now = Date.now();
     for (const word of words) {
       await context.env.DB.prepare(
-        `INSERT OR IGNORE INTO blacklisted_words (word, added_at) VALUES (?, ?)`
-      ).bind(word.toLowerCase(), Date.now()).run();
+        "INSERT OR IGNORE INTO blacklisted_words (word, added_at) VALUES (?, ?)"
+      ).bind(word.toLowerCase(), now).run();
     }
 
-    return new Response(JSON.stringify({ 
+    return corsJson(context.request, {
       success: true,
-      message: `Added ${words.length} words to blacklist` 
-    }), {
-      headers: { 'Content-Type': 'application/json' },
+      message: `Added ${words.length} words to blacklist`,
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  } catch (error) {
+    console.error("Blacklist update error", error);
+    return corsJson(context.request, { error: "Internal server error" }, 500);
   }
 }
 
-// Get blacklisted words
-export async function onRequestGet(context: {
-  request: Request;
-  env: Env;
-}) {
+export async function onRequestGet(context: { request: Request; env: Env }) {
   try {
-    const apiKey = context.request.headers.get('X-Admin-API-Key');
-    if (apiKey !== context.env.ADMIN_API_KEY) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const { results } = await context.env.DB.prepare(
-      `SELECT word FROM blacklisted_words ORDER BY word ASC`
-    ).all();
-
-    return new Response(JSON.stringify({ 
-      words: results.map((r: any) => r.word)
-    }), {
-      headers: { 'Content-Type': 'application/json' },
+    const { results } = await context.env.DB.prepare("SELECT word FROM blacklisted_words ORDER BY word ASC").all();
+    return corsJson(context.request, {
+      words: results.map((row: { word: string }) => row.word),
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  } catch (error) {
+    console.error("Blacklist query error", error);
+    return corsJson(context.request, { error: "Internal server error" }, 500);
   }
 }

@@ -1,21 +1,19 @@
-export async function onRequestPost() {
-  return new Response(JSON.stringify({ success: true }), {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": "true",
-      "Set-Cookie": "session=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/",
-    },
-  });
+import { buildClearedSessionCookie, deleteSession, parseCookies } from "../../lib/auth";
+import { corsJson } from "../../lib/cors";
+
+interface Env {
+  DB: D1Database;
 }
 
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Credentials": "true",
-    },
+export async function onRequestPost(context: { request: Request; env: Env }) {
+  const { request, env } = context;
+
+  const sessionId = parseCookies(request).get("session");
+  if (sessionId) {
+    await deleteSession(env, sessionId);
+  }
+
+  return corsJson(request, { success: true }, 200, {
+    "Set-Cookie": buildClearedSessionCookie(),
   });
 }

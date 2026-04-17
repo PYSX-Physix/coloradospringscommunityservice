@@ -1,54 +1,18 @@
+import { corsJson } from "../../lib/cors";
+
 interface Env {
   DB: D1Database;
 }
 
-// Helper function to check if user is admin
-async function isAdmin(env: Env, sessionId: string): Promise<{ isAdmin: boolean; userId?: string }> {
-  const session = await env.DB.prepare(
-    `SELECT s.user_id, u.isAdmin
-     FROM session s
-     JOIN user u ON s.user_id = u.id
-     WHERE s.id = ? AND s.expires_at > ?`
-  ).bind(sessionId, Date.now()).first();
-
-  if (!session || !session.isAdmin) {
-    return { isAdmin: false };
-  }
-
-  return { isAdmin: true, userId: session.user_id as string };
-}
-
-// GET all reports (admin only)
-export async function onRequestGet(context: {
-  request: Request;
-  env: Env;
-}) {
+export async function onRequestGet(context: { request: Request; env: Env }) {
   try {
-    const cookie = context.request.headers.get("Cookie");
-    const sessionId = cookie?.match(/session=([^;]+)/)?.[1];
-
-    if (!sessionId) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const adminCheck = await isAdmin(context.env, sessionId);
-    if (!adminCheck.isAdmin) {
-      return new Response(JSON.stringify({ error: 'Admin access required' }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
     const url = new URL(context.request.url);
-    const status = url.searchParams.get('status') || 'pending';
-    const limit = parseInt(url.searchParams.get('limit') || '50');
-    const offset = parseInt(url.searchParams.get('offset') || '0');
+    const status = url.searchParams.get("status") || "pending";
+    const limit = Number.parseInt(url.searchParams.get("limit") || "50", 10);
+    const offset = Number.parseInt(url.searchParams.get("offset") || "0", 10);
 
     const { results: reports } = await context.env.DB.prepare(
-      `SELECT 
+      `SELECT
         r.*,
         reporter.name as reporter_name,
         reporter.email as reporter_email,
@@ -65,38 +29,18 @@ export async function onRequestGet(context: {
     ).bind(status, limit, offset).all();
 
     const totalCount = await context.env.DB.prepare(
-      `SELECT COUNT(*) as count FROM reports WHERE status = ?`
-    ).bind(status).first();
+      "SELECT COUNT(*) as count FROM reports WHERE status = ?"
+    ).bind(status).first<{ count: number }>();
 
-    return new Response(JSON.stringify({ 
-      reports, 
-      total: totalCount?.count || 0,
+    return corsJson(context.request, {
+      reports,
+      total: totalCount?.count ?? 0,
       status,
       limit,
-      offset
-    }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': 'true',
-      },
+      offset,
     });
-  } catch (error: any) {
-    console.error('Error fetching reports:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  } catch (error) {
+    console.error("Error fetching reports", error);
+    return corsJson(context.request, { error: "Internal server error" }, 500);
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Cookie',
-      'Access-Control-Allow-Credentials': 'true',
-    },
-  });
 }

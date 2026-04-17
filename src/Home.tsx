@@ -64,11 +64,9 @@ const ABOUTMENU = '5';
 const POLICIESMENU = '6';
 const PRIVACYPOLICY = '7';
 const TERMSOFSERVICE = '8';
-const PROFILE = '9';
 const HELPHOME = '10';
 const ADMINPANEL = '11';
 const CONTRIBUTE = '12';
-const SETTINGS = '13'
 
 
 function Home() {
@@ -92,7 +90,8 @@ function Home() {
   };
 
   // Determine which nav item should be active
-  let selectedValue = POSTSMENU;
+  /* This is being replaced to see if the new way works properly
+     if the new way doesn't work then the old way be renabled.
   if (location.pathname === '/search') selectedValue = SEARCHMENU;
   else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
   else if (location.pathname === '/my-posts') selectedValue = YOURPOSTSMENU;
@@ -108,6 +107,20 @@ function Home() {
   else if (location.pathname === '/contribute') selectedValue = CONTRIBUTE;
   else if (location.pathname === '/settings') selectedValue = SETTINGS;
   else selectedValue = '50';
+  */
+
+  const selectedValue = location.pathname === '/search' ? SEARCHMENU:
+  location.pathname === '/saved-posts' ? SAVEDPOSTSMENU:
+  location.pathname === '/my-posts' ? YOURPOSTSMENU:
+  location.pathname === '/about' ? ABOUTMENU:
+  location.pathname === '/policies' ? POLICIESMENU:
+  location.pathname === '/announcements' ? ANNOUCEMENTS:
+  location.pathname === '/policies/privacy-policy' ? PRIVACYPOLICY:
+  location.pathname === '/policies/terms-of-service' ? TERMSOFSERVICE:
+  location.pathname === '/help' ? HELPHOME:
+  location.pathname === '/admin' ? ADMINPANEL: 
+  location.pathname === '/contribute' ? CONTRIBUTE : POSTSMENU;
+
 
   return (
     <div className='flex h-screen w-screen overflow-hidden'>

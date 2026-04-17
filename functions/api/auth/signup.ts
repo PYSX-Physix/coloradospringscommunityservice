@@ -1,97 +1,61 @@
+import { corsJson } from "../../lib/cors";
+import { rateLimit } from "../../lib/rateLimit";
+
 interface Env {
   DB: D1Database;
+  Rate_Limits?: KVNamespace;
 }
 
-export async function onRequestPost(context: {
-  request: Request;
-  env: Env;
-}) {
+export async function onRequestPost(context: { request: Request; env: Env }) {
+  const { request, env } = context;
+
+  
+  const limitResponse = await rateLimit(request, env, {
+    limit: 5,
+    window: 60,
+    keyPrefix: "signup",
+  });
+
+  if (limitResponse) return limitResponse;
+
   try {
-    const { email, password, name } = await context.request.json();
+    const { email, password, name } = (await request.json()) as { email?: string; password?: string; name?: string };
 
     if (!email || !password) {
-      return new Response(JSON.stringify({ error: "Email and password required" }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true"
-        },
-      });
+      return corsJson(request, { error: "Email and password required" }, 400);
     }
 
-    // Check if user exists
-    const existing = await context.env.DB.prepare(
-      "SELECT id FROM user WHERE email = ?"
-    ).bind(email).first();
+    const normalizedEmail = email.trim().toLowerCase();
 
+    const existing = await env.DB.prepare("SELECT id FROM user WHERE email = ?").bind(normalizedEmail).first();
     if (existing) {
-      return new Response(JSON.stringify({ error: "User already exists" }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true"
-        },
-      });
+      return corsJson(request, { error: "User already exists" }, 400);
     }
 
     const passwordHash = await hashPassword(password);
     const userId = crypto.randomUUID();
     const now = Date.now();
 
-    await context.env.DB.prepare(
+    await env.DB.prepare(
       "INSERT INTO user (id, email, password_hash, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
-    ).bind(userId, email, passwordHash, name || null, now, now).run();
+    ).bind(userId, normalizedEmail, passwordHash, name?.trim() || null, now, now).run();
 
-    return new Response(JSON.stringify({
+    return corsJson(request, {
       success: true,
-      user: { id: userId, email, name }
-    }), {
-      status: 201,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": "true"
-      },
-    });
-  } catch (error: any) {
-    console.error("Signup error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": "true"
-      },
-    });
+      user: { id: userId, email: normalizedEmail, name: name?.trim() || null },
+    }, 201);
+  } catch (error) {
+    console.error("Signup error", error);
+    return corsJson(request, { error: "Internal server error" }, 500);
   }
 }
 
-/**
- * Hash a password using PBKDF2 via the Web Crypto API.
- * PBKDF2 is intentionally slow (100,000 iterations) making brute-force
- * attacks expensive. SHA-256 is NOT suitable for password hashing because
- * it is fast — that's a vulnerability, not a feature.
- *
- * Output format: "pbkdf2:<base64 salt>:<base64 hash>"
- */
 async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
-
-  // Generate a random 16-byte salt unique to this password
   const salt = crypto.getRandomValues(new Uint8Array(16));
 
-  // Import the raw password as a key
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"]
-  );
+  const keyMaterial = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
 
-  // Derive 256 bits using 100,000 iterations of SHA-256
   const hashBuffer = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
@@ -100,22 +64,11 @@ async function hashPassword(password: string): Promise<string> {
       hash: "SHA-256",
     },
     keyMaterial,
-    256
+    256,
   );
 
   const saltB64 = btoa(String.fromCharCode(...salt));
   const hashB64 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 
   return `pbkdf2:${saltB64}:${hashB64}`;
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Credentials": "true",
-    },
-  });
 }

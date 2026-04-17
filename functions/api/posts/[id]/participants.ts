@@ -58,7 +58,7 @@ export async function onRequestPost(context: {
     // Get user from session
     const session = await context.env.DB.prepare(
       `SELECT s.user_id, u.name, u.email
-       FROM session s
+       FROM sessions s
        JOIN user u ON s.user_id = u.id
        WHERE s.id = ? AND s.expires_at > ?`
     ).bind(sessionId, Date.now()).first();
@@ -158,7 +158,7 @@ export async function onRequestDelete(context: {
 
     // Get user from session
     const session = await context.env.DB.prepare(
-      `SELECT user_id FROM session WHERE id = ? AND expires_at > ?`
+      `SELECT user_id FROM sessions WHERE id = ? AND expires_at > ?`
     ).bind(sessionId, Date.now()).first();
 
     if (!session) {
