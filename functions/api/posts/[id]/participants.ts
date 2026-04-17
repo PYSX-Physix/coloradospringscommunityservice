@@ -118,18 +118,21 @@ export async function onRequestPost(context: {
       },
       status: 200
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error joining event:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      details: error.stack
-    }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      status: 500
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        status: 500
+      });
+    }
   }
 }
 
@@ -193,17 +196,20 @@ export async function onRequestDelete(context: {
       },
       status: 200
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error leaving event:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message 
-    }), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      status: 500
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ 
+        error: error.message 
+      }), {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        status: 500
+      });
+    }
   }
 }
 

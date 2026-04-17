@@ -59,7 +59,7 @@ export async function onRequestGet(context: {
         'Access-Control-Allow-Credentials': 'true',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking saved status:', error);
     return new Response(JSON.stringify({ isSaved: false }), {
       headers: { 

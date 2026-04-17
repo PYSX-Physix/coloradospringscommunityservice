@@ -1,7 +1,3 @@
-interface Env {
-  DB: D1Database;
-}
-
 // Helper function to create a notification
 export async function createNotification(
   db: D1Database,

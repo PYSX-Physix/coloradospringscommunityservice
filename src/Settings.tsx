@@ -30,7 +30,7 @@ export default function Settings() {
   const [passwordError, setPasswordError] = React.useState("");
 
   // Password view states
-  const [showPassword, setShowPassword] = React.useState<Boolean>(false);
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!isPending && !session) {
