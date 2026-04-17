@@ -123,8 +123,7 @@ export async function onRequestPost(context: {
     if (error instanceof Error)
     {
       return new Response(JSON.stringify({ 
-        error: error.message,
-        details: error.stack
+        error: error.message
       }), {
         headers: { 
           'Content-Type': 'application/json',
