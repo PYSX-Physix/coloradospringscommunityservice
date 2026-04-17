@@ -50,7 +50,7 @@ export default function NotificationPanel() {
     // Poll for new notifications every 30 seconds
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [session]);
 
   const markAsRead = async (notificationId: string) => {
     try {

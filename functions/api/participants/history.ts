@@ -71,12 +71,15 @@ export async function onRequestGet(context: {
         'Access-Control-Allow-Credentials': 'true',
       },
     });
-  } catch (error: any) {
-    console.error('Error fetching event history:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+  } catch (error) {
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      });
+    }
+    else console.error('Error fetching event history:', error);
   }
 }
 
