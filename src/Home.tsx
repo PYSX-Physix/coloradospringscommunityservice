@@ -90,25 +90,6 @@ function Home() {
   };
 
   // Determine which nav item should be active
-  /* This is being replaced to see if the new way works properly
-     if the new way doesn't work then the old way be renabled.
-  if (location.pathname === '/search') selectedValue = SEARCHMENU;
-  else if (location.pathname === '/saved/posts') selectedValue = SAVEDPOSTSMENU;
-  else if (location.pathname === '/my-posts') selectedValue = YOURPOSTSMENU;
-  else if (location.pathname === '/about') selectedValue = ABOUTMENU;
-  else if (location.pathname === '/policies') selectedValue = POLICIESMENU;
-  else if (location.pathname === '/announcements') selectedValue = ANNOUCEMENTS;
-  else if (location.pathname === '/policies/privacy-policy') selectedValue = PRIVACYPOLICY;
-  else if (location.pathname === '/policies/terms-of-service') selectedValue = TERMSOFSERVICE;
-  else if (location.pathname === '/profile') selectedValue = PROFILE;
-  else if (location.pathname === '/help') selectedValue = HELPHOME;
-  else if (location.pathname === '/admin') selectedValue = ADMINPANEL;
-  else if (location.pathname === '/') selectedValue = POSTSMENU;
-  else if (location.pathname === '/contribute') selectedValue = CONTRIBUTE;
-  else if (location.pathname === '/settings') selectedValue = SETTINGS;
-  else selectedValue = '50';
-  */
-
   const selectedValue = location.pathname === '/search' ? SEARCHMENU:
   location.pathname === '/saved-posts' ? SAVEDPOSTSMENU:
   location.pathname === '/my-posts' ? YOURPOSTSMENU:
