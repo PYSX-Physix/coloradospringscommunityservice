@@ -1,20 +1,30 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
+name: Feature Request
+about: Suggest an idea or improvement
+title: "[FEAT] "
+labels: enhancement
 assignees: ''
-
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Problem Statement
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+<!-- Describe the problem or limitation this feature would solve.
+     e.g. "As a user, I can't easily find events near me because..." -->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Proposed Solution
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+<!-- A clear description of what you want to happen. -->
+
+## Alternatives Considered
+
+<!-- Describe any alternative solutions or features you've considered. -->
+
+## Scope & Impact
+
+<!-- Who would benefit from this feature? How many users does it affect? -->
+
+- [ ] This is something I would be willing to implement myself (with guidance)
+
+## Additional Notes
+
+<!-- Add any mockups, links, or other context here. -->
