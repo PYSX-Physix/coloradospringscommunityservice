@@ -11,9 +11,9 @@ import CalendarExport from './components/CalendarExport';
 import { ReportUser } from './components/ReportUser';
 import ShareEvent from './components/ShareEvent';
 import { NoticeDialog } from './components/Dialog';
-import DefaultImage from './assets/default-art.jpeg'
+import { MenuPortal, MenuItemButton } from './components/Menu';
 
-const DEFAULT_IMG = DefaultImage;
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=400&fit=crop';
 
 interface PostData {
   id: number; title: string; description: string; location: string;
@@ -43,6 +43,7 @@ export default function Post() {
   const [showShare, setShowShare] = React.useState(false);
   const [notice, setNotice] = React.useState({ open: false, title: '', description: '' });
   const [menuOpen, setMenuOpen] = React.useState<string | null>(null);
+  const organizerMenuRef = React.useRef<HTMLButtonElement>(null);
   const { data: session } = useSession();
   const isMobile = useIsMobile();
 
@@ -121,21 +122,20 @@ export default function Post() {
               </div>
               <span className="text-gray-300 text-sm">Organized by <strong className="text-white">{post.user_name}</strong></span>
               {!isOrganizer && (
-                <div className="relative">
-                  <button onClick={() => setMenuOpen(menuOpen === 'organizer' ? null : 'organizer')} className="btn-ghost p-1">
+                <>
+                  <button ref={organizerMenuRef} onClick={() => setMenuOpen(menuOpen === 'organizer' ? null : 'organizer')} className="btn-ghost p-1">
                     <EllipsisHorizontalIcon className="w-5 h-5" />
                   </button>
-                  {menuOpen === 'organizer' && (
-                    <div className="absolute left-0 mt-1 w-44 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10">
-                      <button
-                        onClick={() => { setMenuOpen(null); setReportedUserId(post.user_id); setReportedUserName(post.user_name); setShowReport(true); }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700"
-                      >
-                        <ShieldExclamationIcon className="w-4 h-4" /> Report Organizer
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  <MenuPortal open={menuOpen === 'organizer'} onClose={() => setMenuOpen(null)} triggerRef={organizerMenuRef} align="left" width={176}>
+                    <MenuItemButton
+                      icon={ShieldExclamationIcon}
+                      danger
+                      onClick={() => { setMenuOpen(null); setReportedUserId(post.user_id); setReportedUserName(post.user_name); setShowReport(true); }}
+                    >
+                      Report Organizer
+                    </MenuItemButton>
+                  </MenuPortal>
+                </>
               )}
             </div>
           </div>
@@ -234,21 +234,9 @@ export default function Post() {
                       <span className="badge bg-orange-900/60 text-orange-300 border border-orange-700/50">Organizer</span>
                     )}
                     {p.user_id !== session?.user.id && (
-                      <div className="relative">
-                        <button onClick={() => setMenuOpen(menuOpen === p.user_id ? null : p.user_id)} className="btn-ghost p-1">
-                          <EllipsisHorizontalIcon className="w-4 h-4" />
-                        </button>
-                        {menuOpen === p.user_id && (
-                          <div className="absolute right-0 mt-1 w-40 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10">
-                            <button
-                              onClick={() => { setMenuOpen(null); setReportedUserId(p.user_id); setReportedUserName(p.user_name); setShowReport(true); }}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700"
-                            >
-                              <ShieldExclamationIcon className="w-4 h-4" /> Report User
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      <ParticipantMenu
+                        onReport={() => { setReportedUserId(p.user_id); setReportedUserName(p.user_name); setShowReport(true); }}
+                      />
                     )}
                   </div>
                 </div>
@@ -293,5 +281,23 @@ export default function Post() {
 
       <NoticeDialog open={notice.open} title={notice.title} description={notice.description} onClose={() => setNotice(p => ({ ...p, open: false }))} />
     </div>
+  );
+}
+
+function ParticipantMenu({ onReport }: { onReport: () => void }) {
+  const [open, setOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  return (
+    <>
+      <button ref={triggerRef} onClick={() => setOpen(!open)} className="btn-ghost p-1">
+        <EllipsisHorizontalIcon className="w-4 h-4" />
+      </button>
+      <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} width={160}>
+        <MenuItemButton icon={ShieldExclamationIcon} danger onClick={() => { setOpen(false); onReport(); }}>
+          Report User
+        </MenuItemButton>
+      </MenuPortal>
+    </>
   );
 }

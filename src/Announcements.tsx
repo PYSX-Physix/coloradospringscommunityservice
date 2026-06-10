@@ -2,6 +2,7 @@ import React from 'react';
 import { MegaphoneIcon, XMarkIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { getLatestAnnouncement } from '../functions/api/announcements-data';
+import { MenuPortal } from './components/Menu';
 
 export function AnnouncementBanner() {
   const latestAnnouncement = getLatestAnnouncement();
@@ -59,15 +60,7 @@ export function AnnouncementPopover() {
       return localStorage.getItem('last-seen-announcement') !== latestAnnouncement.id;
     } catch { return true; }
   });
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
 
   const handleOpen = () => {
     setOpen(!open);
@@ -76,48 +69,46 @@ export function AnnouncementPopover() {
   };
 
   return (
-    <div className="relative" ref={ref}>
-      <button onClick={handleOpen} className="btn-ghost p-2 relative" aria-label="Announcements">
+    <>
+      <button ref={triggerRef} onClick={handleOpen} className="btn-ghost p-2 relative" aria-label="Announcements">
         <MegaphoneIcon className="w-5 h-5" />
         {hasUnread && (
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
-            <span className="font-semibold text-white text-sm">What's New</span>
-            <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">
-              {latestAnnouncement.version}
-            </span>
-          </div>
-          <div className="p-4">
-            <p className="text-sm font-medium text-white">{latestAnnouncement.title}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{latestAnnouncement.date}</p>
-            <div className="divider" />
-            <p className="text-sm text-gray-300">{latestAnnouncement.message}</p>
-            {latestAnnouncement.items && latestAnnouncement.items.length > 0 && (
-              <ul className="mt-2 space-y-1">
-                {latestAnnouncement.items.map((item, i) => (
-                  <li key={i} className="text-xs text-gray-400 flex items-start gap-1">
-                    <span className="text-blue-400 mt-0.5">•</span> {item}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {latestAnnouncement.hasDetailPage && (
-              <Link
-                to={`/announcements/${latestAnnouncement.id}`}
-                onClick={() => setOpen(false)}
-                className="mt-3 btn-primary text-sm w-full text-center block"
-              >
-                Read Full Article
-              </Link>
-            )}
-          </div>
+      <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} align="left" width={320}>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+          <span className="font-semibold text-white text-sm">What's New</span>
+          <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">
+            {latestAnnouncement.version}
+          </span>
         </div>
-      )}
-    </div>
+        <div className="p-4 max-h-96 overflow-y-auto">
+          <p className="text-sm font-medium text-white">{latestAnnouncement.title}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{latestAnnouncement.date}</p>
+          <div className="divider" />
+          <p className="text-sm text-gray-300">{latestAnnouncement.message}</p>
+          {latestAnnouncement.items && latestAnnouncement.items.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {latestAnnouncement.items.map((item, i) => (
+                <li key={i} className="text-xs text-gray-400 flex items-start gap-1">
+                  <span className="text-blue-400 mt-0.5">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          )}
+          {latestAnnouncement.hasDetailPage && (
+            <Link
+              to={`/announcements/${latestAnnouncement.id}`}
+              onClick={() => setOpen(false)}
+              className="mt-3 btn-primary text-sm w-full text-center block"
+            >
+              Read Full Article
+            </Link>
+          )}
+        </div>
+      </MenuPortal>
+    </>
   );
 }

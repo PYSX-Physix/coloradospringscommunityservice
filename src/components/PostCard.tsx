@@ -12,9 +12,9 @@ import { REPORT_CATEGORIES } from '../utils/types';
 import ShareEvent from './ShareEvent';
 import { NoticeDialog } from './Dialog';
 import { Dialog } from './Dialog';
-import DefaultImage from '../assets/default-art.jpeg'
+import { MenuPortal, MenuItemButton } from './Menu';
 
-const DEFAULT_IMG = DefaultImage;
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop';
 
 interface PostCardProps {
   post: PostUI;
@@ -24,20 +24,12 @@ interface PostCardProps {
 export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProps) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [showShare, setShowShare] = React.useState(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
+  const menuTriggerRef = React.useRef<HTMLButtonElement>(null);
 
   const { isSaved, loading: saving, toggleSave } = useSavedPosts(post.isSaved, onSaveError);
   const { state: reportState, category: reportCategory, details: reportDetails, isSubmitting,
     setReportState, setCategory, setDetails, submitReport } = useReportPost(onReportError);
   const { notice, isOpen: noticeOpen, showError, closeError } = useErrorNotice();
-
-  React.useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
 
   async function handleSave() {
     setMenuOpen(false);
@@ -79,39 +71,29 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
           <a href={`/post?id=${post.id}`} className="btn-primary text-sm flex-1 text-center">
             View Event
           </a>
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="btn-ghost p-2"
-              aria-label="More options"
+          <button
+            ref={menuTriggerRef}
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="btn-ghost p-2"
+            aria-label="More options"
+          >
+            <EllipsisHorizontalIcon className="w-5 h-5" />
+          </button>
+          <MenuPortal open={menuOpen} onClose={() => setMenuOpen(false)} triggerRef={menuTriggerRef} width={176}>
+            <MenuItemButton
+              icon={isSaved ? BookmarkSolid : BookmarkOutline}
+              onClick={handleSave}
+              disabled={saving}
             >
-              <EllipsisHorizontalIcon className="w-5 h-5" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 bottom-full mb-1 w-44 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10 overflow-hidden">
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  {isSaved ? <BookmarkSolid className="w-4 h-4 text-blue-400" /> : <BookmarkOutline className="w-4 h-4" />}
-                  {saving ? 'Updating...' : isSaved ? 'Unsave Post' : 'Save Post'}
-                </button>
-                <button
-                  onClick={() => { setMenuOpen(false); setShowShare(true); }}
-                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  <ShareIcon className="w-4 h-4" /> Share Post
-                </button>
-                <button
-                  onClick={() => { setMenuOpen(false); setReportState('form'); }}
-                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700 transition-colors"
-                >
-                  <ExclamationTriangleIcon className="w-4 h-4" /> Report Post
-                </button>
-              </div>
-            )}
-          </div>
+              {saving ? 'Updating...' : isSaved ? 'Unsave Post' : 'Save Post'}
+            </MenuItemButton>
+            <MenuItemButton icon={ShareIcon} onClick={() => { setMenuOpen(false); setShowShare(true); }}>
+              Share Post
+            </MenuItemButton>
+            <MenuItemButton icon={ExclamationTriangleIcon} danger onClick={() => { setMenuOpen(false); setReportState('form'); }}>
+              Report Post
+            </MenuItemButton>
+          </MenuPortal>
         </div>
       </div>
 

@@ -101,7 +101,7 @@ export function ReportUser({ open, onClose, reportedUserId, reportedUserName, po
         <div>
           <label className="label">Description</label>
           <textarea
-            className="input min-h-[100px] resize-y"
+            className="input min-h-25 resize-y"
             placeholder="Please provide details about why you're reporting this user..."
             value={description}
             onChange={e => setDescription(e.target.value)}

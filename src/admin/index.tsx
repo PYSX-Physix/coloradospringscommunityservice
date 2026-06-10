@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { ShieldCheckIcon, EllipsisHorizontalIcon, DocumentMagnifyingGlassIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Dialog } from '../components/Dialog';
+import { MenuPortal, MenuItemButton, MenuItemLink } from '../components/Menu';
 
 interface Report {
   id: string; reporter_id: string; reporter_name: string; reporter_email: string;
@@ -25,31 +26,25 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 function ActionMenu({ report, onReview }: { report: Report; onReview: (r: Report) => void }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   return (
-    <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="btn-ghost p-1.5"><EllipsisHorizontalIcon className="w-5 h-5" /></button>
-      {open && (
-        <div className="absolute right-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10 overflow-hidden" onClick={() => setOpen(false)}>
-          <button onClick={() => onReview(report)} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-            <DocumentMagnifyingGlassIcon className="w-4 h-4" /> Review Report
-          </button>
+    <>
+      <button ref={triggerRef} onClick={() => setOpen(!open)} className="btn-ghost p-1.5">
+        <EllipsisHorizontalIcon className="w-5 h-5" />
+      </button>
+      <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} width={192}>
+        <div onClick={() => setOpen(false)}>
+          <MenuItemButton icon={DocumentMagnifyingGlassIcon} onClick={() => onReview(report)}>
+            Review Report
+          </MenuItemButton>
           {report.post_id && (
-            <a href={`/post?id=${report.post_id}`} target="_blank" rel="noopener noreferrer"
-              className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+            <MenuItemLink href={`/post?id=${report.post_id}`} target="_blank" rel="noopener noreferrer">
               View Event
-            </a>
+            </MenuItemLink>
           )}
         </div>
-      )}
-    </div>
+      </MenuPortal>
+    </>
   );
 }
 

@@ -7,7 +7,9 @@ import {
   TrashIcon, ArrowDownTrayIcon, CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import { downloadAttendanceSheet } from './utils/attendanceSheet';
+import CalendarExport from './components/CalendarExport';
 import YourPostsDialogs from './YourPostsDialogs';
+import { MenuPortal, MenuItemButton, MenuItemLink, MenuDivider } from './components/Menu';
 
 interface PostData {
   id: number; title: string; description: string; location: string;
@@ -25,25 +27,16 @@ function truncate(text: string, isMobile: boolean) {
 
 function ActionMenu({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   return (
-    <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="btn-ghost p-1.5">
+    <>
+      <button ref={triggerRef} onClick={() => setOpen(!open)} className="btn-ghost p-1.5">
         <EllipsisHorizontalIcon className="w-5 h-5" />
       </button>
-      {open && (
-        <div className="absolute right-0 mt-1 w-52 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10 overflow-hidden" onClick={() => setOpen(false)}>
-          {children}
-        </div>
-      )}
-    </div>
+      <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} width={208}>
+        <div onClick={() => setOpen(false)}>{children}</div>
+      </MenuPortal>
+    </>
   );
 }
 
@@ -139,43 +132,29 @@ function YourPosts() {
                 <ActionMenu>
                   {activeTab === 'created' && (
                     <>
-                      <button onClick={() => handleDownload(post.id)} disabled={downloading === post.id}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                        <ArrowDownTrayIcon className="w-4 h-4" />
+                      <MenuItemButton icon={ArrowDownTrayIcon} onClick={() => handleDownload(post.id)} disabled={downloading === post.id}>
                         {downloading === post.id ? 'Downloading...' : 'Download Attendance'}
-                      </button>
-                      <div className="border-t border-gray-700" />
-                      <button onClick={() => { setEditingPost(post); setEditState('modal'); }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                        <PencilIcon className="w-4 h-4" /> Edit
-                      </button>
-                      <a href={`/post?id=${post.id}`}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                        <EyeIcon className="w-4 h-4" /> View Post
-                      </a>
-                      <div className="border-t border-gray-700" />
-                      <button onClick={() => { setDeletePostId(post.id); setDeleteState('modal'); }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700">
-                        <TrashIcon className="w-4 h-4" /> Delete
-                      </button>
+                      </MenuItemButton>
+                      <MenuDivider />
+                      <MenuItemButton icon={PencilIcon} onClick={() => { setEditingPost(post); setEditState('modal'); }}>
+                        Edit
+                      </MenuItemButton>
+                      <MenuItemLink icon={EyeIcon} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                      <MenuDivider />
+                      <MenuItemButton icon={TrashIcon} danger onClick={() => { setDeletePostId(post.id); setDeleteState('modal'); }}>
+                        Delete
+                      </MenuItemButton>
                     </>
                   )}
                   {activeTab === 'saved' && (
-                    <a href={`/post?id=${post.id}`}
-                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                      <EyeIcon className="w-4 h-4" /> View Post
-                    </a>
+                    <MenuItemLink icon={EyeIcon} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
                   )}
                   {activeTab === 'joined' && (
                     <>
-                      <button onClick={() => { setSelectedEvent(post); setShowCalendar(true); }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                        <CalendarDaysIcon className="w-4 h-4" /> Add to Calendar
-                      </button>
-                      <a href={`/post?id=${post.id}`}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
-                        <EyeIcon className="w-4 h-4" /> View Post
-                      </a>
+                      <MenuItemButton icon={CalendarDaysIcon} onClick={() => { setSelectedEvent(post); setShowCalendar(true); }}>
+                        Add to Calendar
+                      </MenuItemButton>
+                      <MenuItemLink icon={EyeIcon} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
                     </>
                   )}
                 </ActionMenu>

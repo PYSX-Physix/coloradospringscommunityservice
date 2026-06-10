@@ -2,6 +2,7 @@ import React from 'react';
 import { BellIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '../lib/auth-client';
+import { MenuPortal } from './Menu';
 
 interface Notification {
   id: string;
@@ -18,7 +19,7 @@ export default function NotificationPanel() {
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const panelRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const { data: session } = useSession();
 
@@ -42,14 +43,6 @@ export default function NotificationPanel() {
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
   }, [session]);
-
-  React.useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
 
   const markAsRead = async (notificationId: string) => {
     try {
@@ -88,8 +81,9 @@ export default function NotificationPanel() {
   };
 
   return (
-    <div className="relative" ref={panelRef}>
+    <>
       <button
+        ref={triggerRef}
         onClick={() => setOpen(!open)}
         className="btn-ghost p-2 relative"
         aria-label="Notifications"
@@ -102,9 +96,9 @@ export default function NotificationPanel() {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+      <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} align="left" width={320}>
+        <div className="max-h-96 overflow-y-auto">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700 sticky top-0 bg-gray-800">
             <span className="font-semibold text-white text-sm">Notifications</span>
             {unreadCount > 0 && (
               <button onClick={markAllAsRead} className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300">
@@ -123,7 +117,7 @@ export default function NotificationPanel() {
                 <div
                   key={n.id}
                   onClick={() => handleClick(n)}
-                  className={`px-4 py-3 border-b border-gray-700/50 last:border-0 cursor-pointer hover:bg-gray-750 transition-colors ${!n.read ? 'bg-blue-950/30' : ''}`}
+                  className={`px-4 py-3 border-b border-gray-700/50 last:border-0 cursor-pointer hover:bg-gray-700 transition-colors ${!n.read ? 'bg-blue-950/30' : ''}`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
@@ -138,7 +132,7 @@ export default function NotificationPanel() {
             </div>
           )}
         </div>
-      )}
-    </div>
+      </MenuPortal>
+    </>
   );
 }
