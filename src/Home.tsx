@@ -104,7 +104,7 @@ function Home() {
         {/* Header */}
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest">CS Community</span>
+            <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest"></span>
             {isMobile && (
               <button onClick={() => setIsOpen(false)} className="btn-ghost p-1">
                 <XMarkIcon className="w-5 h-5" />
