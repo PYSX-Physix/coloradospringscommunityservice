@@ -194,15 +194,18 @@ export async function onRequestPost(context: {
       },
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error submitting report:', error);
-    return new Response(JSON.stringify({ error: 'Failed to submit report' }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: 'Failed to submit report' }), {
+        status: 500,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
   }
 }
 
@@ -263,15 +266,18 @@ export async function onRequestGet(context: {
         'Access-Control-Allow-Credentials': 'true',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching reports:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch reports' }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: 'Failed to fetch reports' }), {
+        status: 500,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
   }
 }
 

@@ -5,8 +5,5 @@ This project is mean't to help people find community service opportunities in th
 ## How it works
 You can view community service events on the "Posts" page and view them and their description. You can see the start/end dates and times, location, and person who orginized it.
 
-## Notes and Bugs
-* **Bug**: When deleting an event, the event is erased from every profile that attended the event.
-
 ## Contributing
 If anyone wants to contribute they're gladly able to contact the orginizer of this website to help and increase the quality of this product. There are some requirements that need to be met in order to contribute however.

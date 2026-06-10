@@ -1,11 +1,19 @@
 import React from "react";
+import { Button, Text, Divider,
+  Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
+  TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
+  MenuDivider,
+  Spinner,
+  MenuItemLink,
+  TabList, Tab} from "@fluentui/react-components";
+import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular } from "@fluentui/react-icons";
+
 import { useSession } from "./lib/auth-client";
+import { downloadAttendanceSheet } from './utils/attendanceSheet';
 import { useNavigate } from "react-router-dom";
+
 import { useIsMobile } from "./hooks/useIsMobile";
-import { downloadAttendanceSheet } from "./utils/attendanceSheet";
-import { ArrowDownIcon, CalendarDaysIcon, EllipsisHorizontalIcon, EyeIcon, PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/24/solid'
 import YourPostsDialogs from "./YourPostsDialogs";
-import { createPortal } from "react-dom";
 
 interface PostData {
   id: number;
@@ -22,51 +30,59 @@ interface PostData {
   image_url?: string;
 }
 
-type TabValue = "created" | "saved" | "joined";
+type TabValue = 'created' | 'saved' | 'joined';
 
-function truncate(text: string, isMobile: boolean): string {
+function ShortText(text: string, isMobile: boolean): string {
   const maxChars = isMobile ? 3 : 20;
   if (text.length <= maxChars) return text;
   return text.substring(0, maxChars) + "...";
 }
 
-// Reusable table class constants
-const thClass = "text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 border-b border-gray-700";
-const tdClass = "px-4 py-3 text-sm text-gray-300 border-b border-gray-700/50";
-
 function YourPosts() {
-  const [deleteModalState, setDeleteModalState] = React.useState<"closed" | "modal" | "confirmation">("closed");
+  type DeleteModalState = 'closed' | 'modal' | 'confirmation'
+  const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
   const [deletePostId, setDeletePostId] = React.useState<number | null>(null);
-  const [createModalState, setCreateModalState] = React.useState<"closed" | "modal" | "confirmation">("closed");
-  const [editModalState, setEditModalState] = React.useState<"closed" | "modal" | "confirmation">("closed");
-  const [currentEditingPost, setCurrentEditingPost] = React.useState<PostData | null>(null);
+
+  type CreateModalState = 'closed' | 'modal' | 'confirmation'
+  const [createModalState, setCreateModalState] = React.useState<CreateModalState>("closed")
+
+  type EditModalState = 'closed' | 'modal' | 'confirmation'
+  const [editModalState, setEditModalState] = React.useState<EditModalState>("closed")
+
   const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
+
   const [showCalendarExport, setShowCalendarExport] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
+  const [currentEditingPost, setCurrentEditingPost] = React.useState<PostData | null>(null);
 
+  // Posts data from API
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [savedPosts, setSavedPosts] = React.useState<PostData[]>([]);
   const [joinedPosts, setJoinedPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [activeTab, setActiveTab] = React.useState<TabValue>("created");
-  const [openMenuId, setOpenMenuId] = React.useState<number | null>(null);
+  const [activeTab, setActiveTab] = React.useState<TabValue>('created');
+  const isMobile = useIsMobile();
 
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+
 
   const handleDownloadAttendance = async (postId: number) => {
     try {
       setDownloadingAttendance(postId);
+      
       const res = await fetch(`/api/posts/${postId}/attendance`, {
-        credentials: "include",
+        credentials: 'include',
       });
+
       if (!res.ok) {
         const error = await res.json();
-        alert(error.error || "Failed to download attendance sheet");
+        alert(error.error || 'Failed to download attendance sheet');
         return;
       }
+
       const data = await res.json();
+      
       downloadAttendanceSheet(
         {
           title: data.event.title,
@@ -79,22 +95,29 @@ function YourPosts() {
         data.participants
       );
     } catch (error) {
-      console.error("Download error:", error);
-      alert("Failed to download attendance sheet");
+      console.error('Download error:', error);
+      alert('Failed to download attendance sheet');
     } finally {
       setDownloadingAttendance(null);
     }
   };
 
+  // Fetch Posts function
   const fetchPosts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/posts/my-posts", { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch posts");
+      const res = await fetch('/api/posts/my-posts', {
+        credentials: 'include',
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      
       const data = await res.json();
       setPosts(data.posts || []);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error('Error fetching posts:', error);
       setPosts([]);
     } finally {
       setLoading(false);
@@ -103,314 +126,272 @@ function YourPosts() {
 
   const fetchSavedPosts = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/saved-posts", { credentials: "include" });
+      const res = await fetch('/api/saved-posts', { credentials: 'include' });
       const data = await res.json();
       setSavedPosts(data.posts || []);
     } catch (error) {
-      console.error("Error fetching saved posts:", error);
+      console.error('Error fetching saved posts:', error);
     }
   }, []);
 
   const fetchJoinedPosts = React.useCallback(async () => {
     try {
-      const res = await fetch("/api/participants/my-events", { credentials: "include" });
+      const res = await fetch('/api/participants/my-events', { credentials: 'include' });
       const data = await res.json();
       setJoinedPosts(data.posts || []);
     } catch (error) {
-      console.error("Error fetching joined posts:", error);
+      console.error('Error fetching joined posts:', error);
     }
   }, []);
 
+  // Fetch posts on component mount
   React.useEffect(() => {
     fetchPosts();
     fetchSavedPosts();
     fetchJoinedPosts();
   }, [fetchPosts, fetchSavedPosts, fetchJoinedPosts]);
 
+  // Redirect if not logged in
   React.useEffect(() => {
-    if (!isPending && !session) navigate("/auth");
+    if (!isPending && !session) {
+      navigate("/auth");
+    }
   }, [session, isPending, navigate]);
 
-  // Close menu when clicking outside
-  React.useEffect(() => {
-    const handler = () => setOpenMenuId(null);
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, []);
-
+  // NOW do conditional returns AFTER all hooks
   if (isPending) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-400 animate-pulse">Loading...</p>
-      </div>
-    );
+    return <Spinner label="Loading..." />;
   }
 
-  if (!session) return null;
+  if (!session) {
+    return null;
+  }
 
-  const formatDateTime = (isoString: string) =>
-    new Date(isoString).toLocaleString("en-US", {
-      month: "short", day: "numeric", year: "numeric",
-      hour: "numeric", minute: "2-digit", hour12: true,
+  // Get user info
+  // userId and userName are used in dialogs
+
+  // Format datetime for display
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
     });
-
-  const formatDate = (isoString: string) =>
-    new Date(isoString).toLocaleDateString("en-US", {
-      month: "2-digit", day: "2-digit", year: "numeric",
-    });
-
-  const tabs: { value: TabValue; label: string }[] = [
-    { value: "created", label: "Created Events" },
-    { value: "saved", label: "Saved Events" },
-    { value: "joined", label: "Joined Events" },
-  ];
-
-  // Shared dropdown menu for table rows
-  const RowMenu = ({
-    postId,
-    post,
-    type,
-  }: {
-    postId: number;
-    post: PostData;
-    type: "created" | "saved" | "joined";
-  }) => {
-    const isOpen = openMenuId === postId;
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
-    const [dropdownPosition, setDropdownPosition] = React.useState<{ top: number; left: number } | null>(null);
-
-    React.useEffect(() => {
-      if (isOpen && buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setDropdownPosition({
-          top: rect.bottom + window.scrollY,
-          left: rect.left + window.scrollX - 208, // 208 is w-52 (13rem = 208px), to align right
-        });
-      } else {
-        setDropdownPosition(null);
-      }
-    }, [isOpen]);
-
-    return (
-      <>
-        <div className="relative">
-          <button
-            ref={buttonRef}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenMenuId(isOpen ? null : postId);
-            }}
-            className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-          >
-            <EllipsisHorizontalIcon className="size-5 text-white"/>
-          </button>
-        </div>
-
-        {isOpen && dropdownPosition && createPortal(
-          <div
-            className="fixed z-50 w-52 bg-[#2d2d2d] border border-gray-700 rounded-lg shadow-xl overflow-hidden"
-            style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
-          >
-            {type === "created" && (
-              <>
-                <button
-                  onClick={() => {
-                    handleDownloadAttendance(postId);
-                    setOpenMenuId(null);
-                  }}
-                  disabled={downloadingAttendance === postId}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 disabled:opacity-50 transition-colors"
-                >
-                  <ArrowDownIcon className="size-3"/>
-                  {downloadingAttendance === postId ? "Downloading..." : "Download Attendance"}
-                </button>
-                <hr className="border-gray-700" />
-                <button
-                  onClick={() => {
-                    setCurrentEditingPost(post);
-                    setEditModalState("modal");
-                    setOpenMenuId(null);
-                  }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  <PencilIcon className="size-3"/>
-                  Edit
-                </button>
-                <a
-                  href={`/post?id=${postId}`}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  <EyeIcon className="size-3"/>
-                  View Post
-                </a>
-                <hr className="border-gray-700" />
-                <button
-                  onClick={() => {
-                    setDeletePostId(postId);
-                    setDeleteModalState("modal");
-                    setOpenMenuId(null);
-                  }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-900/30 transition-colors"
-                >
-                  <TrashIcon className="size-3"/>
-                  Delete
-                </button>
-              </>
-            )}
-
-            {type === "saved" && (
-              <a
-                href={`/post?id=${postId}`}
-                className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-              >
-                <EyeIcon className="size-3"/>
-                View Post
-              </a>
-            )}
-
-            {type === "joined" && (
-              <>
-                <button
-                  onClick={() => {
-                    setSelectedEvent(post);
-                    setShowCalendarExport(true);
-                    setOpenMenuId(null);
-                  }}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  <CalendarDaysIcon className="size-3"/>
-                  Add to Calendar
-                </button>
-                <a
-                  href={`/post?id=${postId}`}
-                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors"
-                >
-                  <EyeIcon className="size-3"/>
-                  View Post
-                </a>
-              </>
-            )}
-          </div>,
-          document.body
-        )}
-      </>
-    );
   };
 
-  const TableShell = ({ children }: { children: React.ReactNode }) => (
-    <div className="rounded-lg border border-gray-700 mt-4 overflow-x-auto">
-      <div className="min-w-full overflow-y-visible">
-        <table className="min-w-full">
-          <thead className="bg-[#242424]">
-            <tr>
-              {["Title", "Location", "Created On", "Starts", "Ends", "Participants", "Actions"].map((col) => (
-                <th key={col} className={thClass}>{truncate(col, isMobile)}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-[#2d2d2d]">{children}</tbody>
-        </table>
-      </div>
-    </div>
-  );
+  // Format date for "Created On" column
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
+    });
+  };
 
-  const TableRow = ({ post, type }: { post: PostData; type: "created" | "saved" | "joined" }) => (
-    <tr className="hover:bg-[#333] transition-colors">
-      <td className={tdClass}>{truncate(post.title, isMobile)}</td>
-      <td className={tdClass}>{truncate(post.location, isMobile)}</td>
-      <td className={tdClass}>{truncate(formatDate(post.created_at), isMobile)}</td>
-      <td className={tdClass}>{truncate(formatDateTime(post.start_datetime), isMobile)}</td>
-      <td className={tdClass}>{truncate(formatDateTime(post.end_datetime), isMobile)}</td>
-      <td className={tdClass}>{post.current_participants}/{post.max_participants}</td>
-      <td className={tdClass}>
-        <RowMenu postId={post.id} post={post} type={type} />
-      </td>
-    </tr>
-  );
+  const columns = [
+    {columnKey: "title", label: "Title"},
+    {columnKey: "location", label: "Location"},
+    {columnKey: "created", label: "Created On"},
+    {columnKey: "start", label: "Starts"},
+    {columnKey: "ends", label: "Ends"},
+    {columnKey: "participants", label: "Participants"}
+  ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div style={{display: "flex", flexDirection: "column"}}>
       {/* Tabs */}
-      <div className="flex border-b border-gray-700">
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setActiveTab(tab.value)}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              activeTab === tab.value
-                ? "border-blue-500 text-blue-400"
-                : "border-transparent text-gray-400 hover:text-white"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
+          <Tab value="created">Created Events</Tab>
+          <Tab value="saved">Saved Events</Tab>
+          <Tab value="joined">Joined Events</Tab>
+        </TabList>
       </div>
 
-      {/* Created Events */}
-      {activeTab === "created" && (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-white">Manage Events</h1>
-            <button
+      <Divider style={{ marginBottom: '16px'}}/>
+      
+      {/* Created Events Tab */}
+      {activeTab === 'created' && (
+        <>
+          <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+            <Title1>Manage Events</Title1>
+            <Button 
+              size="large" 
+              icon={<AddCircle32Color/>} 
+              appearance="subtle" 
               onClick={() => setCreateModalState("modal")}
-              className="text-blue-400 hover:text-blue-300 transition-colors"
-              title="Create new event"
-            >
-              <PlusCircleIcon className="text-white size-10"/>
-            </button>
+              style={{alignSelf: "start", marginLeft: '16px', marginTop: 'auto', marginBottom: 'auto'}}
+            />
           </div>
 
           {loading ? (
-            <p className="text-gray-400 animate-pulse text-sm">Loading posts...</p>
+            <div style={{display: 'flex', justifyContent: 'center', marginTop: '32px'}}>
+              <Spinner label="Loading posts..." />
+            </div>
           ) : posts.length === 0 ? (
-            <p className="text-gray-400 text-sm mt-4">
-              No posts yet. Create your first event!
-            </p>
+            <Text style={{marginTop: '32px'}}>No posts yet. Create your first event!</Text>
           ) : (
-            <TableShell>
-              {posts.map((post) => (
-                <TableRow key={post.id} post={post} type="created" />
-              ))}
-            </TableShell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px', minWidth: '600px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {posts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem 
+                                  icon={<DocumentArrowDown20Regular />}
+                                  onClick={() => handleDownloadAttendance(post.id)}
+                                  disabled={downloadingAttendance === post.id}
+                                >
+                                  {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem icon={<EditRegular />} onClick={ () => { setCurrentEditingPost(post); setEditModalState("modal"); }}>Edit</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                                <MenuDivider/>
+                                <MenuItem 
+                                  icon={<DeleteRegular/>} 
+                                  onClick={() => {
+                                    setDeletePostId(post.id);
+                                    setDeleteModalState("modal");
+                                  }}
+                                >
+                                  Delete
+                                </MenuItem>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
-        </div>
+        </>
       )}
 
-      {/* Saved Events */}
-      {activeTab === "saved" && (
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold text-white">Saved Events</h1>
+      {/* Saved Events Tab */}
+      {activeTab === 'saved' && (
+        <>
+          <Title1>Saved Events</Title1>
           {savedPosts.length === 0 ? (
-            <p className="text-gray-400 text-sm mt-4">
-              No saved events yet. Browse events and save your favorites!
-            </p>
+            <Text style={{marginTop: '32px'}}>No saved events yet. Browse events and save your favorites!</Text>
           ) : (
-            <TableShell>
-              {savedPosts.map((post) => (
-                <TableRow key={post.id} post={post} type="saved" />
-              ))}
-            </TableShell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+                <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {savedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell>
+                        <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
-        </div>
+        </>
       )}
 
-      {/* Joined Events */}
-      {activeTab === "joined" && (
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold text-white">Events You've Joined</h1>
+      {/* Joined Events Tab */}
+      {activeTab === 'joined' && (
+        <>
+          <Title1>Events You've Joined</Title1>
           {joinedPosts.length === 0 ? (
-            <p className="text-gray-400 text-sm mt-4">
-              You haven't joined any events yet. Browse events and sign up!
-            </p>
+            <Text style={{marginTop: '32px'}}>You haven't joined any events yet. Browse events and sign up!</Text>
           ) : (
-            <TableShell>
-              {joinedPosts.map((post) => (
-                <TableRow key={post.id} post={post} type="joined" />
-              ))}
-            </TableShell>
+            <div style={{ overflowX: 'auto', width: '100%'}}>
+              <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
+                <TableHeader>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableHeaderCell key={column.columnKey}>
+                        {ShortText(column.label, isMobile)}
+                      </TableHeaderCell>
+                    ))}
+                    <TableHeaderCell>Actions</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {joinedPosts.map((post) => (
+                    <TableRow key={post.id}>
+                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
+                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
+                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
+                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
+                      <TableCell role="gridcell">
+                        <TableCellLayout>
+                          <Menu>
+                            <MenuTrigger>
+                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
+                            </MenuTrigger>
+                            <MenuPopover>
+                              <MenuList>
+                                <MenuItem icon={<CalendarAddRegular />} onClick={() => { setSelectedEvent(post); setShowCalendarExport(true); }}>Add to Calendar</MenuItem>
+                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
+                              </MenuList>
+                            </MenuPopover>
+                          </Menu>
+                        </TableCellLayout>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
           )}
-        </div>
+        </>
       )}
 
       <YourPostsDialogs
@@ -427,9 +408,9 @@ function YourPosts() {
         showCalendarExport={showCalendarExport}
         setShowCalendarExport={setShowCalendarExport}
         session={session}
-        onPostCreated={fetchPosts}
-        onPostUpdated={fetchPosts}
-        onPostDeleted={fetchPosts}
+        onPostCreated={() => fetchPosts()}
+        onPostUpdated={() => fetchPosts()}
+        onPostDeleted={() => fetchPosts()}
         isMobile={isMobile}
       />
     </div>

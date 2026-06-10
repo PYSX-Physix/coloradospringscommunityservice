@@ -53,12 +53,15 @@ export async function onRequestGet(context: {
         'Access-Control-Allow-Origin': '*'
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Search error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
   }
 }
 

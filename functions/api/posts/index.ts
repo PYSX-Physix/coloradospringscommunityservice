@@ -86,12 +86,15 @@ export async function onRequestGet(context: { env: Env }) {
       },
       status: 200
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in GET /api/posts:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 500
+      });
+    }
   }
 }
 
@@ -189,12 +192,15 @@ export async function onRequestPost(context: {
       },
       status: 201
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error in POST /api/posts:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 500
+      });
+    }
   }
 }
 

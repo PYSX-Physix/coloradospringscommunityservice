@@ -1,6 +1,3 @@
-/**
- * Original post data from API
- */
 export interface PostData {
   id: number;
   title: string;
@@ -15,16 +12,10 @@ export interface PostData {
   image_url?: string;
 }
 
-/**
- * Extended post data with UI-specific information
- */
 export interface PostUI extends PostData {
   isSaved: boolean;
 }
 
-/**
- * Report categories for validation
- */
 export const REPORT_CATEGORIES = [
   { value: 'spam_misleading', label: 'Spam or Misleading' },
   { value: 'inappropriate_content', label: 'Offensive or Harmful Content' },

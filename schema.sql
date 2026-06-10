@@ -10,7 +10,8 @@ DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS saved_posts;
 DROP TABLE IF EXISTS participants;
 DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS session;
+DROP VIEW IF EXISTS session;
+DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS blacklisted_words;
 DROP TABLE IF EXISTS user;
 
@@ -26,13 +27,21 @@ CREATE TABLE user (
 );
 
 -- Sessions
-CREATE TABLE session (
+CREATE TABLE sessions (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
+  csrf_token TEXT NOT NULL,
   expires_at INTEGER NOT NULL,
   created_at INTEGER NOT NULL,
+  ip TEXT,
+  user_agent TEXT,
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
+
+-- Compatibility view for legacy reads while migrating endpoints
+CREATE VIEW session AS
+SELECT id, user_id, expires_at, created_at
+FROM sessions;
 
 -- Posts (events)
 CREATE TABLE posts (
@@ -145,8 +154,8 @@ CREATE TABLE blacklisted_words (
 -- Indexes
 -- ============================================================
 
-CREATE INDEX idx_session_user_id        ON session(user_id);
-CREATE INDEX idx_session_expires        ON session(expires_at);
+CREATE INDEX idx_sessions_user_id       ON sessions(user_id);
+CREATE INDEX idx_sessions_expires       ON sessions(expires_at);
 CREATE INDEX idx_posts_visible          ON posts(visible);
 CREATE INDEX idx_posts_start_datetime   ON posts(start_datetime);
 CREATE INDEX idx_posts_user_id          ON posts(user_id);
@@ -167,6 +176,12 @@ CREATE INDEX idx_notifications_read     ON notifications(user_id, read);
 
 -- user table
 -- ALTER TABLE user ADD COLUMN isAdmin INTEGER DEFAULT 0;
+
+-- sessions table
+-- CREATE TABLE IF NOT EXISTS sessions ( ... );  -- copy full definition from above
+-- ALTER TABLE sessions ADD COLUMN csrf_token TEXT;
+-- ALTER TABLE sessions ADD COLUMN ip TEXT;
+-- ALTER TABLE sessions ADD COLUMN user_agent TEXT;
 
 -- participants table
 -- ALTER TABLE participants ADD COLUMN attended INTEGER DEFAULT 0;

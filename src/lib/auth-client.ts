@@ -8,12 +8,12 @@ export async function signUp(email: string, password: string, name: string) {
     credentials: "include",
     body: JSON.stringify({ email, password, name }),
   });
-  
+
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.error);
   }
-  
+
   return res.json();
 }
 
@@ -24,12 +24,12 @@ export async function signIn(email: string, password: string) {
     credentials: "include",
     body: JSON.stringify({ email, password }),
   });
-  
+
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.error);
   }
-  
+
   const data = await res.json();
   if (data?.csrfToken) {
     setCsrfCookie(data.csrfToken);
@@ -43,14 +43,11 @@ export async function signOut() {
     method: "POST",
     credentials: "include",
   });
-
   clearCsrfCookie();
 }
 
 export async function getSession() {
-  const res = await fetch("/api/auth/session", {
-    credentials: "include",
-  });
+  const res = await fetch("/api/auth/session", { credentials: "include" });
   return res.json();
 }
 

@@ -1,10 +1,7 @@
-import React from "react";
-import {
-  Button, Badge, Popover, PopoverTrigger, PopoverSurface,
-  Text, Divider
-} from "@fluentui/react-components";
-import { Alert20Regular, CheckmarkCircle20Regular } from "@fluentui/react-icons";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { BellIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
+import { useSession } from '../lib/auth-client';
 
 interface Notification {
   id: string;
@@ -21,187 +18,127 @@ export default function NotificationPanel() {
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const panelRef = React.useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { data: session } = useSession();
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/notifications', {
-        credentials: 'include',
-      });
-
+      const res = await fetch('/api/notifications', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications || []);
         setUnreadCount(data.unreadCount || 0);
       }
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    } finally {
+    } catch { /* silent */ } finally {
       setLoading(false);
     }
   };
 
   React.useEffect(() => {
+    if (!session) return;
     fetchNotifications();
-    // Poll for new notifications every 30 seconds
     const interval = setInterval(fetchNotifications, 30000);
     return () => clearInterval(interval);
+  }, [session]);
+
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const markAsRead = async (notificationId: string) => {
     try {
       await fetch('/api/notifications/mark-read', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ notificationId }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', body: JSON.stringify({ notificationId }),
       });
       fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
+    } catch { /* silent */ }
   };
 
   const markAllAsRead = async () => {
     try {
       await fetch('/api/notifications/mark-read', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ markAll: true }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', body: JSON.stringify({ markAll: true }),
       });
       fetchNotifications();
-    } catch (error) {
-      console.error('Error marking all as read:', error);
-    }
+    } catch { /* silent */ }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
-    markAsRead(notification.id);
-    if (notification.link) {
-      navigate(notification.link);
-      setOpen(false);
-    }
+  const handleClick = (n: Notification) => {
+    markAsRead(n.id);
+    if (n.link) { navigate(n.link); setOpen(false); }
   };
 
-  const formatTime = (timestamp: number) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+  const formatTime = (ts: number) => {
+    const diff = Date.now() - ts;
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(m / 60);
+    const d = Math.floor(h / 24);
+    if (m < 1) return 'Just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    return `${d}d ago`;
   };
 
   return (
-    <Popover open={open} onOpenChange={(_, data) => setOpen(data.open)}>
-      <PopoverTrigger disableButtonEnhancement>
-        <Button
-          appearance="subtle"
-          icon={<Alert20Regular />}
-          style={{ position: 'relative', minWidth: '32px' }}
-        >
-          {unreadCount > 0 && (
-            <Badge
-              appearance="filled"
-              color="important"
-              size="small"
-              style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                minWidth: '18px',
-                height: '18px',
-              }}
-            >
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </Badge>
-          )}
-        </Button>
-      </PopoverTrigger>
+    <div className="relative" ref={panelRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="btn-ghost p-2 relative"
+        aria-label="Notifications"
+      >
+        <BellIcon className="w-5 h-5" />
+        {unreadCount > 0 && (
+          <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
+        )}
+      </button>
 
-      <PopoverSurface style={{ width: '400px', maxHeight: '500px', overflow: 'auto' }}>
-        <div style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <Text weight="bold" size={400}>Notifications</Text>
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-96 overflow-y-auto">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+            <span className="font-semibold text-white text-sm">Notifications</span>
             {unreadCount > 0 && (
-              <Button
-                appearance="subtle"
-                size="small"
-                onClick={markAllAsRead}
-                icon={<CheckmarkCircle20Regular />}
-              >
-                Mark all read
-              </Button>
+              <button onClick={markAllAsRead} className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300">
+                <CheckCircleIcon className="w-4 h-4" /> Mark all read
+              </button>
             )}
           </div>
 
-          <Divider />
-
           {loading && notifications.length === 0 ? (
-            <Text style={{ display: 'block', padding: '16px', textAlign: 'center' }}>
-              Loading notifications...
-            </Text>
+            <p className="text-center text-gray-400 text-sm py-6">Loading...</p>
           ) : notifications.length === 0 ? (
-            <Text style={{ display: 'block', padding: '16px', textAlign: 'center' }}>
-              No notifications yet
-            </Text>
+            <p className="text-center text-gray-400 text-sm py-6">No notifications yet</p>
           ) : (
-            <div style={{ marginTop: '8px' }}>
-              {notifications.map((notification) => (
+            <div className="py-1">
+              {notifications.map(n => (
                 <div
-                  key={notification.id}
-                  onClick={() => handleNotificationClick(notification)}
-                  style={{
-                    padding: '12px',
-                    marginBottom: '8px',
-                    borderRadius: '4px',
-                    cursor: notification.link ? 'pointer' : 'default',
-                    backgroundColor: notification.read ? 'transparent' : 'transparent',
-                    border: '1px solid #ddd',
-                    transition: 'background-color 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (notification.link) {
-                      e.currentTarget.style.backgroundColor = '#292929ff';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = notification.read ? 'transparent' : '#1f1f1fff';
-                  }}
+                  key={n.id}
+                  onClick={() => handleClick(n)}
+                  className={`px-4 py-3 border-b border-gray-700/50 last:border-0 cursor-pointer hover:bg-gray-750 transition-colors ${!n.read ? 'bg-blue-950/30' : ''}`}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                    <div style={{ flex: 1 }}>
-                      <Text weight="semibold" style={{ display: 'block', marginBottom: '4px' }}>
-                        {notification.title}
-                      </Text>
-                      <Text size={200} style={{ display: 'block', marginBottom: '4px' }}>
-                        {notification.message}
-                      </Text>
-                      <Text size={100}>
-                        {formatTime(notification.created_at)}
-                      </Text>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">{n.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{n.message}</p>
+                      <p className="text-xs text-gray-500 mt-1">{formatTime(n.created_at)}</p>
                     </div>
-                    {!notification.read && (
-                      <Badge
-                        appearance="filled"
-                        color="important"
-                        size="tiny"
-                        style={{ marginLeft: '8px' }}
-                      />
-                    )}
+                    {!n.read && <div className="w-2 h-2 bg-blue-400 rounded-full mt-1.5 shrink-0" />}
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-      </PopoverSurface>
-    </Popover>
+      )}
+    </div>
   );
 }

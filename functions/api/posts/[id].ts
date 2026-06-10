@@ -41,11 +41,15 @@ export async function onRequestGet(context: {
       },
       status: 200
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 500
-    });
+  } catch (error) {
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 500
+      });
+    }
+    else console.error("Unknown Error: ", error);
   }
 }
 
@@ -80,7 +84,7 @@ export async function onRequestDelete(context: {
     }
 
     const post = await context.env.DB.prepare(
-      `SELECT user_id, title, location, start_datetime, user_name
+      `SELECT user_id, title, location, start_datetime, end_datetime, user_name
        FROM posts WHERE id = ?`
     ).bind(id).first();
 
@@ -144,12 +148,16 @@ export async function onRequestDelete(context: {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       status: 200
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting post:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      status: 500
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        status: 500
+      });
+    }
+    else console.error("Unknown Error: ", error);
   }
 }
 

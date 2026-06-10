@@ -126,15 +126,21 @@ export async function onRequestPost(context: {
         'Access-Control-Allow-Credentials': 'true',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking in participant:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    if (error instanceof Error)
+    {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+    else {
+      console.error("Unknown error: ", error);
+    }
   }
 }
 

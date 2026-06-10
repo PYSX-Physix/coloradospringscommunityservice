@@ -1,250 +1,123 @@
 import React from 'react';
-import {
-  Button,
-  Badge,
-  Text,
-  MessageBar,
-  MessageBarBody,
-  MessageBarTitle,
-  Popover,
-  PopoverTrigger,
-  PopoverSurface,
-  Divider,
-  Link
-} from "@fluentui/react-components";
-import {
-  MegaphoneLoud20Regular,
-  Dismiss20Regular,
-  ChevronRight20Regular
-} from "@fluentui/react-icons";
-import { getLatestAnnouncement, announcements } from '../functions/api/announcements-data';
+import { MegaphoneIcon, XMarkIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+import { getLatestAnnouncement } from '../functions/api/announcements-data';
 
-// Component 1: Top Banner (shows once per announcement)
 export function AnnouncementBanner() {
   const latestAnnouncement = getLatestAnnouncement();
-  
+
   const [dismissed, setDismissed] = React.useState(() => {
-    const dismissedAnnouncements = localStorage.getItem('dismissed-announcements');
-    if (dismissedAnnouncements) {
-      const parsed = JSON.parse(dismissedAnnouncements);
-      return parsed.includes(latestAnnouncement.id);
-    }
+    try {
+      const stored = localStorage.getItem('dismissed-announcements');
+      if (stored) return JSON.parse(stored).includes(latestAnnouncement.id);
+    } catch { /* silent */ }
     return false;
   });
 
   const handleDismiss = () => {
-    const dismissedAnnouncements = localStorage.getItem('dismissed-announcements');
-    const parsed = dismissedAnnouncements ? JSON.parse(dismissedAnnouncements) : [];
-    parsed.push(latestAnnouncement.id);
-    localStorage.setItem('dismissed-announcements', JSON.stringify(parsed));
+    try {
+      const stored = localStorage.getItem('dismissed-announcements');
+      const parsed = stored ? JSON.parse(stored) : [];
+      parsed.push(latestAnnouncement.id);
+      localStorage.setItem('dismissed-announcements', JSON.stringify(parsed));
+    } catch { /* silent */ }
     setDismissed(true);
   };
 
   if (dismissed || !latestAnnouncement.dismissible) return null;
 
   return (
-    <MessageBar
-      intent={latestAnnouncement.type}
-      style={{ margin: '16px 0' }}
-    >
-      <MessageBarBody>
-        <MessageBarTitle>{latestAnnouncement.title}</MessageBarTitle>
-        <Text>{latestAnnouncement.message}</Text>
+    <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border mb-4 ${
+      latestAnnouncement.type === 'warning'
+        ? 'bg-yellow-900/30 border-yellow-700/50 text-yellow-200'
+        : 'bg-blue-900/30 border-blue-700/50 text-blue-200'
+    }`}>
+      <MegaphoneIcon className="w-5 h-5 shrink-0 mt-0.5" />
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-sm">{latestAnnouncement.title}</p>
+        <p className="text-sm opacity-80 mt-0.5">{latestAnnouncement.message}</p>
         {latestAnnouncement.hasDetailPage && (
-          <Link href={`/announcements/${latestAnnouncement.id}`} style={{ marginLeft: '8px' }}>
-            Learn more <ChevronRight20Regular />
+          <Link to={`/announcements/${latestAnnouncement.id}`} className="text-xs underline mt-1 inline-flex items-center gap-1">
+            Learn more <ChevronRightIcon className="w-3 h-3" />
           </Link>
         )}
-      </MessageBarBody>
-      {latestAnnouncement.dismissible && (
-        <Button
-          appearance="transparent"
-          icon={<Dismiss20Regular />}
-          onClick={handleDismiss}
-          aria-label="Dismiss"
-        />
-      )}
-    </MessageBar>
-  );
-}
-
-// Component 2: Announcement Icon with Popover (always accessible)
-export function AnnouncementPopover() {
-  const latestAnnouncement = getLatestAnnouncement();
-  
-  const [hasUnread, setHasUnread] = React.useState(() => {
-    const lastSeen = localStorage.getItem('last-seen-announcement');
-    return lastSeen !== latestAnnouncement.id;
-  });
-
-  const handleOpen = () => {
-    setHasUnread(false);
-    localStorage.setItem('last-seen-announcement', latestAnnouncement.id);
-  };
-
-  return (
-    <Popover onOpenChange={(_, data) => data.open && handleOpen()}>
-      <PopoverTrigger disableButtonEnhancement>
-        <Button
-          appearance="subtle"
-          icon={<MegaphoneLoud20Regular />}
-          style={{ position: 'relative', minWidth: '32px' }}
-        >
-          {hasUnread && (
-            <Badge
-              appearance="filled"
-              color="important"
-              size="small"
-              style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                minWidth: '8px',
-                height: '8px',
-                padding: 0
-              }}
-            />
-          )}
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverSurface style={{ width: '400px', maxWidth: '90vw' }}>
-        <div style={{ padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <Text weight="bold" size={400}>What's New</Text>
-            <Badge appearance="tint" color="informative" size="small">
-              {latestAnnouncement.version}
-            </Badge>
-          </div>
-          
-          <Text size={300} style={{ display: 'block', marginBottom: '4px' }}>
-            {latestAnnouncement.title}
-          </Text>
-          
-          <Text size={200} style={{ display: 'block', marginBottom: '16px', color: '#666' }}>
-            {latestAnnouncement.date}
-          </Text>
-
-          <Divider style={{ marginBottom: '16px' }} />
-
-          <Text style={{ display: 'block', marginBottom: '12px' }}>
-            {latestAnnouncement.message}
-          </Text>
-
-          {latestAnnouncement.items && latestAnnouncement.items.length > 0 && (
-            <ul style={{ margin: '12px 0', paddingLeft: '20px' }}>
-              {latestAnnouncement.items.map((item, index) => (
-                <li key={index} style={{ marginBottom: '4px' }}>
-                  <Text size={300}>{item}</Text>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {latestAnnouncement.hasDetailPage && (
-            <Button
-              appearance="primary"
-              as="a"
-              href={`/announcements/${latestAnnouncement.id}`}
-              style={{ marginTop: '16px', width: '100%' }}
-            >
-              Read Full Article
-            </Button>
-          )}
-        </div>
-      </PopoverSurface>
-    </Popover>
-  );
-}
-
-// Component 3: Compact Announcement Section (for homepage/dashboard)
-export function AnnouncementSection() {
-  const latestAnnouncement = getLatestAnnouncement();
-  
-  return (
-    <div style={{ 
-      padding: '16px', 
-      border: '1px solid #333',
-      borderRadius: '8px',
-      background: 'linear-gradient(135deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 120, 212, 0.05) 100%)',
-      marginBottom: '24px'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-        <MegaphoneLoud20Regular style={{ marginTop: '2px', color: '#0078d4' }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <Text weight="semibold">{latestAnnouncement.title}</Text>
-            <Badge appearance="tint" color="informative" size="small">
-              New
-            </Badge>
-          </div>
-          <Text size={300} style={{ display: 'block', marginBottom: '8px' }}>
-            {latestAnnouncement.message}
-          </Text>
-          <Text size={200} style={{ color: '#666' }}>
-            {latestAnnouncement.date}
-          </Text>
-        </div>
-        {latestAnnouncement.hasDetailPage && (
-          <Button
-            appearance="subtle"
-            size="small"
-            as="a"
-            href={`/announcements/${latestAnnouncement.id}`}
-            icon={<ChevronRight20Regular />}
-          >
-            Details
-          </Button>
-        )}
       </div>
+      {latestAnnouncement.dismissible && (
+        <button onClick={handleDismiss} className="p-1 opacity-60 hover:opacity-100">
+          <XMarkIcon className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
 
-// Component 4: Mini Version History Popover
-export function VersionHistory() {
-  const recentVersions = announcements.slice(0, 4).map(a => ({
-    version: a.version,
-    title: a.title,
-    date: new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  }));
+export function AnnouncementPopover() {
+  const latestAnnouncement = getLatestAnnouncement();
+  const [open, setOpen] = React.useState(false);
+  const [hasUnread, setHasUnread] = React.useState(() => {
+    try {
+      return localStorage.getItem('last-seen-announcement') !== latestAnnouncement.id;
+    } catch { return true; }
+  });
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleOpen = () => {
+    setOpen(!open);
+    setHasUnread(false);
+    try { localStorage.setItem('last-seen-announcement', latestAnnouncement.id); } catch { /* silent */ }
+  };
 
   return (
-    <Popover>
-      <PopoverTrigger disableButtonEnhancement>
-        <Button appearance="subtle" size="small">
-          Version {getLatestAnnouncement().version}
-        </Button>
-      </PopoverTrigger>
+    <div className="relative" ref={ref}>
+      <button onClick={handleOpen} className="btn-ghost p-2 relative" aria-label="Announcements">
+        <MegaphoneIcon className="w-5 h-5" />
+        {hasUnread && (
+          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+        )}
+      </button>
 
-      <PopoverSurface style={{ width: '300px' }}>
-        <div style={{ padding: '16px' }}>
-          <Text weight="bold" style={{ display: 'block', marginBottom: '12px' }}>
-            Recent Updates
-          </Text>
-          
-          {recentVersions.map((v, index) => (
-            <div key={index} style={{ 
-              padding: '8px', 
-              borderLeft: index === 0 ? '3px solid #0078d4' : '3px solid transparent',
-              marginBottom: '8px'
-            }}>
-              <Text size={300} weight={index === 0 ? 'semibold' : 'regular'} style={{ display: 'block' }}>
-                {v.title}
-              </Text>
-              <Text size={200} style={{ color: '#666' }}>
-                {v.version} • {v.date}
-              </Text>
-            </div>
-          ))}
-
-          <Divider style={{ margin: '12px 0' }} />
-          
-          <Link href="/announcements" style={{ fontSize: '14px' }}>
-            View all updates
-          </Link>
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+            <span className="font-semibold text-white text-sm">What's New</span>
+            <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">
+              {latestAnnouncement.version}
+            </span>
+          </div>
+          <div className="p-4">
+            <p className="text-sm font-medium text-white">{latestAnnouncement.title}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{latestAnnouncement.date}</p>
+            <div className="divider" />
+            <p className="text-sm text-gray-300">{latestAnnouncement.message}</p>
+            {latestAnnouncement.items && latestAnnouncement.items.length > 0 && (
+              <ul className="mt-2 space-y-1">
+                {latestAnnouncement.items.map((item, i) => (
+                  <li key={i} className="text-xs text-gray-400 flex items-start gap-1">
+                    <span className="text-blue-400 mt-0.5">•</span> {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {latestAnnouncement.hasDetailPage && (
+              <Link
+                to={`/announcements/${latestAnnouncement.id}`}
+                onClick={() => setOpen(false)}
+                className="mt-3 btn-primary text-sm w-full text-center block"
+              >
+                Read Full Article
+              </Link>
+            )}
+          </div>
         </div>
-      </PopoverSurface>
-    </Popover>
+      )}
+    </div>
   );
 }

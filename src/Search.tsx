@@ -1,20 +1,13 @@
 import React from 'react';
-import defaultArt from "./assets/default-art.jpeg"
-import { CalendarDaysIcon, MagnifyingGlassIcon, MapPinIcon, UserCircleIcon, UserGroupIcon } from '@heroicons/react/24/solid';
+import { MagnifyingGlassIcon, CalendarIcon, MapPinIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 
 interface PostData {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  start_datetime: string;
-  end_datetime: string;
-  max_participants: number;
-  current_participants: number;
-  user_name: string;
-  created_at: string;
-  image_url?: string;
+  id: number; title: string; description: string; location: string;
+  start_datetime: string; end_datetime: string; max_participants: number;
+  current_participants: number; user_name: string; created_at: string; image_url?: string;
 }
+
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop';
 
 function Search() {
   const [query, setQuery] = React.useState('');
@@ -22,113 +15,83 @@ function Search() {
   const [loading, setLoading] = React.useState(false);
   const [searched, setSearched] = React.useState(false);
 
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setPosts([]);
-      setSearched(false);
-      return;
-    }
-
+  const handleSearch = async (q: string) => {
+    if (!q.trim()) { setPosts([]); setSearched(false); return; }
     try {
       setLoading(true);
       setSearched(true);
-
-      const res = await fetch(`/api/posts/search?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(`/api/posts/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-
       setPosts(data.posts || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      setPosts([]);
-    } finally {
-      setLoading(false);
-    }
+    } catch { setPosts([]); } finally { setLoading(false); }
   };
 
-  // Debounce search
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query) {
-        handleSearch(query);
-      }
-    }, 500); // Wait 500ms after user stops typing
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => { if (query) handleSearch(query); }, 500);
+    return () => clearTimeout(t);
   }, [query]);
 
-  const formatDateTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
+  const fmt = (s: string) => new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
-    <div className='flex flex-col'>
-      <h1 className="text-2xl font-semibold text-white">Search Events</h1>
-      <hr className='border-gray-600' />
+    <div className="flex flex-col gap-4 max-w-4xl">
+      <h1 className="text-3xl font-bold text-white">Search Events</h1>
+      <div className="divider" />
 
-      <div className='relative w-full'>
-        <div className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none'>
-          <MagnifyingGlassIcon className='size-6'/>
-        </div>
-        <input type='text' value={query}
-          onChange={(e) => setQuery(e.target.value)} placeholder='Search by title, description, location, or organizer...'
-          className='w-full bg-[#1e1e1e] border border-gray-600 rounded px-3 py-2 pl-9 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors' />
+      <div className="relative max-w-xl">
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+        <input
+          type="text"
+          className="input pl-10"
+          placeholder="Search by title, description, location, or organizer..."
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
       </div>
 
       {loading && (
-        <p className='text-gray-400 animate-pulse text-sm'>Searching...</p>
+        <div className="flex items-center gap-3 text-gray-400 mt-4">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Searching...
+        </div>
       )}
 
       {!loading && searched && posts.length === 0 && (
-        <div className='flex flex-col gap-1 mt-4'>
-          <p className='text-gray-300'>No events found matching "{query}"</p>
-          <p className='text-sm text-gray-500'>Try different keywords or check for spelling mistakes</p>
+        <div className="text-center mt-8">
+          <p className="text-gray-300">No events found matching "{query}"</p>
+          <p className="text-gray-500 text-sm mt-1">Try different keywords or check spelling</p>
         </div>
       )}
 
       {!loading && posts.length > 0 && (
-        <div className='flex flex-col gap-4'>
-          <p className='text-sm text-gray-400'>Found {posts.length} event{posts.length !== 1 ? 's' : ''} matching "{query}"</p>
-
-          <div className='flex flex-wrap gap-4'>
-            {posts.map((post) => (
-              <div key={post.id} className='w-full bg-[#2d2d2d] border border-gray-700 rounded-lg overflow-hidden flex flex-col'>
-                <img src={post.image_url || defaultArt} alt={post.title} onError={(e) => { e.currentTarget.src = defaultArt }}
-                  className='w-full h-40 object-cover' />
-                <div className='flex flex-col gap-3 p-4 flex-1'>
-                  <h3 className='text-base font-semibold text-white'>{post.title}</h3>
-                  <p className='text-sm text-gray-400 leading-relaxed'>{post.description.length > 100 ? post.description.substring(0, 100) + '...' : post.description}</p>
+        <>
+          <p className="text-sm text-gray-400">Found {posts.length} event{posts.length !== 1 ? 's' : ''} matching "{query}"</p>
+          <div className="flex flex-wrap gap-4">
+            {posts.map(post => (
+              <div key={post.id} className="card w-80 flex flex-col overflow-hidden hover:border-gray-600 transition-colors">
+                <div className="h-40 overflow-hidden bg-gray-700">
+                  <img src={post.image_url || DEFAULT_IMG} alt={post.title} className="w-full h-full object-cover" onError={e => { e.currentTarget.src = DEFAULT_IMG; }} />
                 </div>
-                <div className="flex flex-col gap-1 mt-auto">
-                  <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <CalendarDaysIcon className="size-3"/>
-                    {formatDateTime(post.start_datetime)}
-                  </span>
-                  <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <MapPinIcon className="size-3"/>
-                    {post.location}
-                  </span>
-                  <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <UserCircleIcon className="size-3"/>
-                    {post.user_name}
-                  </span>
-                  <span className="flex items-center gap-2 text-xs text-gray-400">
-                    <UserGroupIcon className="size-3"/>
-                    {post.current_participants}/{post.max_participants} participants
-                  </span>
+                <div className="p-4 flex flex-col gap-3 flex-1">
+                  <div>
+                    <h3 className="font-semibold text-white">{post.title}</h3>
+                    <p className="text-gray-400 text-sm mt-1 line-clamp-2">{post.description}</p>
+                  </div>
+                  <div className="space-y-1 text-sm text-gray-400">
+                    <div className="flex items-center gap-2"><CalendarIcon className="w-4 h-4" />{fmt(post.start_datetime)}</div>
+                    <div className="flex items-center gap-2"><MapPinIcon className="w-4 h-4" />{post.location}</div>
+                    <div className="flex items-center gap-2"><UserIcon className="w-4 h-4" />{post.user_name}</div>
+                    <div className="flex items-center gap-2"><UsersIcon className="w-4 h-4" />{post.current_participants}/{post.max_participants} participants</div>
+                  </div>
+                  {post.current_participants === post.max_participants && (
+                    <span className="badge bg-red-900/60 text-red-300 border border-red-700 w-fit">Event Full</span>
+                  )}
+                  <a href={`/post?id=${post.id}`} className="btn-primary text-sm text-center mt-auto">View Event</a>
                 </div>
-                <a href={`/post?id=${post.id}`}
-                  className="mt-2 w-full text-center bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 rounded transition-colors">
-                  View Event
-                </a>
               </div>
             ))}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
