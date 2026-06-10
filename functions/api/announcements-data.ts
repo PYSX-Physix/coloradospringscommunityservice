@@ -33,6 +33,85 @@ export interface AnnouncementData
 export const announcements: AnnouncementData[] =
 [
     {
+        id: 'june-10-2026',
+        version: '1.8.0',
+        date: 'June 10, 2026',
+        title: 'New Look, Fixes, & Policy Updates',
+        type: 'info',
+        message: 'This update brings a new look along with several bug fixes from the previous version of the site! Announcements are back as well so you can look through previous patches!',
+        items:
+        [
+            'Changed the UI framework from FluentUI (provided by Microsoft) to TailwindCSS',
+            'Fixed an issue where the date and time were blank upon opening the edit dialog',
+            'Fixed an issue where an organizer of an event could report themselves and their post'
+        ],
+        dismissible: true,
+        hasDetailPage: true,
+        article:
+        {
+            intro: 'Version 1.8.0 fixes and revamps almost the entire site! This patch brings along new changes, fixes to long time bugs, and new features and quality of life changes!',
+            sections:
+            [
+                {
+                    title: 'New UI Layout',
+                    content:
+                    [
+                        {
+                            type: 'text',
+                            content: 'We\'ve decided to revamp the sites look into something else rather than relying on a full built UI framework such as FluentUI by Microsoft. This new CSS framework created by Tailwind CSS gives us greater control of how we want to design and style our site in a easy way.'
+                        },
+                        {
+                            type: 'tip',
+                            content: 'While the new look and feel of the site may be different, the overall navigation and layout of the site is still the same before we made this signifigant change. The layout is planned to stay the same in order to give a sense of familiarity to users.'
+                        }
+                    ]
+                },
+                {
+                    title: 'Bug Fixes',
+                    content:
+                    [
+                        {
+                            type: 'card',
+                            title: 'Date and time parameters are blank when opening the edit dialog',
+                            content: 'This bug has been extremely persistent when using Fluent UI and that was part of the reason we migrated to Tailwind CSS. This bug is now fixed in this update.'
+                        },
+                        {
+                            type: 'card',
+                            title: 'Reporting yourself',
+                            content: 'We\'ve removed the ability to report yourself through an event or reporting your own event. There are different reasons why we did this such as spam, false reports, and security.' 
+                        }
+                    ]
+                },
+                {
+                    title: 'Known Issues',
+                    content:
+                    [
+                        {
+                            type: 'card',
+                            title: 'Menus and Overlays',
+                            content: 'We\'re aware of an issue where the notification, announcements, and file menus are not working as intended with showing in the bounds of specific elements. We\'re working on a patch as quickly as possible.'
+                        },
+                        {
+                            type: 'card',
+                            title: 'Layout Issues',
+                            content: 'There are some layout issues regarding the notifications and announcements buttons at the top left of the pages. This will be fixed in a hotfix.'
+                        }
+                    ]
+                },
+                {
+                    title: '',
+                    content:
+                    [
+                        {
+                            type: 'text',
+                            content: 'That\'s it! It is understandable that this is both a big and small update to the site due to the new design and the minor bug fixes made to the project. Please note that these issues took a while to fix which is why there was little updates during April and May hopefully with this new design out of the way we can get back on track with releasing regular updates.'
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
         id: 'march-17-2026',
         version: '1.7.0',
         date: 'March 17, 2026',

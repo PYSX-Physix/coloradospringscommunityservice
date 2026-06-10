@@ -39,7 +39,7 @@ export function Privacy() {
   return (
     <div className="max-w-3xl">
       <h1 className="text-3xl font-bold text-white mb-2">Privacy Policy</h1>
-      <p className="text-sm text-gray-400 mb-6">Last Updated: March 20, 2026</p>
+      <p className="text-sm text-gray-400 mb-6">Last Updated: June 10, 2026</p>
       <div className="divider" />
 
       <Section title="1. Introduction">
@@ -96,7 +96,7 @@ export function Privacy() {
       </Section>
 
       <div className="divider mt-8" />
-      <p className="text-xs text-gray-500 italic">Effective as of December 27, 2025, and applies to all users of the Colorado Springs Community Service Hub.</p>
+      <p className="text-xs text-gray-500 italic">Effective as of June 10, 2026, and applies to all users of the Colorado Springs Community Service Hub.</p>
     </div>
   );
 }
@@ -105,7 +105,7 @@ export function Terms() {
   return (
     <div className="max-w-3xl">
       <h1 className="text-3xl font-bold text-white mb-2">Terms of Service</h1>
-      <p className="text-sm text-gray-400 mb-6">Last Updated: December 27, 2025</p>
+      <p className="text-sm text-gray-400 mb-6">Last Updated: June 10, 2026</p>
       <div className="divider" />
 
       <Section title="1. Acceptance of Terms">
