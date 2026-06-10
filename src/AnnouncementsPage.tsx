@@ -1,144 +1,74 @@
-import {
-  Card,
-  CardHeader,
-  Text,
-  Badge,
-  Divider,
-  Button,
-  Title1,
-  Title3,
-  Body1
-} from "@fluentui/react-components";
-import {
-  MegaphoneLoud24Regular,
-  ChevronRight20Regular,
-  Info20Filled,
-  Warning20Filled
-} from "@fluentui/react-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { MegaphoneIcon, ChevronRightIcon, InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { getAnnouncementsByYear } from '../functions/api/announcements-data';
 import type { AnnouncementData } from '../functions/api/announcements-data';
 
-const typeIcons = {
-  info: <Info20Filled style={{ color: '#0078D4' }} />,
-  warning: <Warning20Filled style={{ color: '#F7630C' }} />
-};
-
-const typeColors = {
-  info: '#0078D4',
-  warning: '#F7630C'
-};
-
-function AnnouncementCard({ announcement }: { announcement: AnnouncementData }) {
+function AnnouncementCard({ a }: { a: AnnouncementData }) {
   const navigate = useNavigate();
-
   return (
-    <Card
-      style={{
-        marginBottom: '16px',
-        cursor: announcement.hasDetailPage ? 'pointer' : 'default'
-      }}
-      onClick={() => announcement.hasDetailPage && navigate(`/announcements/${announcement.id}`)}
+    <div
+      className={`card p-4 hover:border-gray-600 transition-colors ${a.hasDetailPage ? 'cursor-pointer' : ''}`}
+      onClick={() => a.hasDetailPage && navigate(`/announcements/${a.id}`)}
     >
-      <CardHeader
-        header={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-            <div style={{ 
-              padding: '8px', 
-              borderRadius: '8px', 
-              backgroundColor: `${typeColors[announcement.type]}15`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              {typeIcons[announcement.type]}
-            </div>
-            
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <Text weight="semibold" size={400}>{announcement.title}</Text>
-                <Badge appearance="tint" color="informative" size="small">
-                  {announcement.version}
-                </Badge>
-              </div>
-              <Text size={200} style={{ color: '#666' }}>
-                {announcement.date}
-              </Text>
-            </div>
-
-            {announcement.hasDetailPage && (
-              <Button
-                appearance="subtle"
-                icon={<ChevronRight20Regular />}
-                size="small"
-              >
-                Read More
-              </Button>
-            )}
-          </div>
-        }
-      />
-      
-      <div style={{ padding: '0 16px 16px 16px' }}>
-        <Text style={{ display: 'block', marginBottom: '12px' }}>
-          {announcement.message}
-        </Text>
-
-        {announcement.items && announcement.items.length > 0 && (
-          <ul style={{ margin: '0', paddingLeft: '20px' }}>
-            {announcement.items.map((item, index) => (
-              <li key={index} style={{ marginBottom: '4px' }}>
-                <Text size={300}>{item}</Text>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-function AnnouncementsPage() {
-  const announcementsByYear = getAnnouncementsByYear();
-  const years = Object.keys(announcementsByYear).sort((a, b) => parseInt(b) - parseInt(a));
-
-  return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
-        <MegaphoneLoud24Regular style={{ fontSize: '32px', color: '#0078D4' }} />
-        <Title1>Announcements & Updates</Title1>
-      </div>
-      
-      <Body1 style={{ marginBottom: '32px', color: '#666' }}>
-        Stay up to date with the latest features, improvements, and changes to the Colorado Springs Community Service Hub.
-      </Body1>
-
-      <Divider style={{ marginBottom: '32px' }} />
-
-      {years.map(year => (
-        <div key={year} style={{ marginBottom: '48px' }}>
-          <Title3 style={{ marginBottom: '16px', color: '#0078D4' }}>{year}</Title3>
-          
-          {announcementsByYear[year].map(announcement => (
-            <AnnouncementCard key={announcement.id} announcement={announcement} />
-          ))}
+      <div className="flex items-start gap-3">
+        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${a.type === 'warning' ? 'bg-yellow-900/50' : 'bg-blue-900/50'}`}>
+          {a.type === 'warning'
+            ? <ExclamationTriangleIcon className="w-5 h-5 text-yellow-400" />
+            : <InformationCircleIcon className="w-5 h-5 text-blue-400" />}
         </div>
-      ))}
-
-      <Divider style={{ margin: '32px 0' }} />
-      
-      <div style={{ 
-        textAlign: 'center', 
-        padding: '24px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px'
-      }}>
-        <Text size={300} style={{ color: '#666' }}>
-          Have feedback or suggestions? Let us know how we can improve the platform.
-        </Text>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="font-semibold text-white text-sm">{a.title}</span>
+            <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">{a.version}</span>
+          </div>
+          <p className="text-xs text-gray-500 mb-2">{a.date}</p>
+          <p className="text-sm text-gray-300">{a.message}</p>
+          {a.items && a.items.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {a.items.map((item, i) => (
+                <li key={i} className="text-xs text-gray-400 flex items-start gap-1">
+                  <span className="text-blue-400 mt-0.5 shrink-0">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        {a.hasDetailPage && (
+          <ChevronRightIcon className="w-4 h-4 text-gray-500 shrink-0 mt-1" />
+        )}
       </div>
     </div>
   );
 }
 
-export default AnnouncementsPage;
+export default function AnnouncementsPage() {
+  const byYear = getAnnouncementsByYear();
+  const years = Object.keys(byYear).sort((a, b) => parseInt(b) - parseInt(a));
+
+  return (
+    <div className="max-w-3xl space-y-8">
+      <div className="flex items-center gap-3">
+        <MegaphoneIcon className="w-8 h-8 text-blue-400" />
+        <div>
+          <h1 className="text-3xl font-bold text-white">Announcements & Updates</h1>
+          <p className="text-sm text-gray-400 mt-0.5">Stay up to date with the latest features and changes.</p>
+        </div>
+      </div>
+
+      <div className="divider" />
+
+      {years.map(year => (
+        <div key={year}>
+          <h2 className="text-lg font-semibold text-blue-400 mb-3">{year}</h2>
+          <div className="space-y-3">
+            {byYear[year].map(a => <AnnouncementCard key={a.id} a={a} />)}
+          </div>
+        </div>
+      ))}
+
+      <div className="card p-4 text-center">
+        <p className="text-sm text-gray-400">Have feedback or suggestions? Let us know how we can improve the platform.</p>
+      </div>
+    </div>
+  );
+}

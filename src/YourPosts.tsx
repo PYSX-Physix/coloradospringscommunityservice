@@ -1,416 +1,257 @@
-import React from "react";
-import { Button, Text, Divider,
-  Table, TableHeader, TableRow, TableHeaderCell, TableCell, TableBody, Title1,
-  TableCellLayout, Menu, MenuTrigger, MenuList, MenuPopover, MenuItem,
-  MenuDivider,
-  Spinner,
-  MenuItemLink,
-  TabList, Tab} from "@fluentui/react-components";
-import { EditRegular, EyeRegular, AddCircle32Color, MoreHorizontal20Regular, DeleteRegular, DocumentArrowDown20Regular, CalendarAddRegular } from "@fluentui/react-icons";
-
-import { useSession } from "./lib/auth-client";
+import React from 'react';
+import { useSession } from './lib/auth-client';
+import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from './hooks/useIsMobile';
+import {
+  PlusCircleIcon, EllipsisHorizontalIcon, PencilIcon, EyeIcon,
+  TrashIcon, ArrowDownTrayIcon, CalendarDaysIcon,
+} from '@heroicons/react/24/outline';
 import { downloadAttendanceSheet } from './utils/attendanceSheet';
-import { useNavigate } from "react-router-dom";
-
-import { useIsMobile } from "./hooks/useIsMobile";
-import YourPostsDialogs from "./YourPostsDialogs";
+import YourPostsDialogs from './YourPostsDialogs';
 
 interface PostData {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  start_datetime: string;
-  end_datetime: string;
-  max_participants: number;
-  current_participants: number;
-  user_name: string;
-  visible: number;
-  created_at: string;
-  image_url?: string;
+  id: number; title: string; description: string; location: string;
+  start_datetime: string; end_datetime: string; max_participants: number;
+  current_participants: number; user_name: string; visible: number;
+  created_at: string; image_url?: string;
 }
 
 type TabValue = 'created' | 'saved' | 'joined';
 
-function ShortText(text: string, isMobile: boolean): string {
-  const maxChars = isMobile ? 3 : 20;
-  if (text.length <= maxChars) return text;
-  return text.substring(0, maxChars) + "...";
+function truncate(text: string, isMobile: boolean) {
+  const max = isMobile ? 6 : 20;
+  return text.length <= max ? text : text.substring(0, max) + '…';
+}
+
+function ActionMenu({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+  return (
+    <div className="relative" ref={ref}>
+      <button onClick={() => setOpen(!open)} className="btn-ghost p-1.5">
+        <EllipsisHorizontalIcon className="w-5 h-5" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-52 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-10 overflow-hidden" onClick={() => setOpen(false)}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function YourPosts() {
-  type DeleteModalState = 'closed' | 'modal' | 'confirmation'
-  const [deleteModalState, setDeleteModalState] = React.useState<DeleteModalState>("closed")
+  type ModalState = 'closed' | 'modal' | 'confirmation';
+  const [deleteState, setDeleteState] = React.useState<ModalState>('closed');
+  const [createState, setCreateState] = React.useState<ModalState>('closed');
+  const [editState, setEditState] = React.useState<ModalState>('closed');
   const [deletePostId, setDeletePostId] = React.useState<number | null>(null);
-
-  type CreateModalState = 'closed' | 'modal' | 'confirmation'
-  const [createModalState, setCreateModalState] = React.useState<CreateModalState>("closed")
-
-  type EditModalState = 'closed' | 'modal' | 'confirmation'
-  const [editModalState, setEditModalState] = React.useState<EditModalState>("closed")
-
-  const [downloadingAttendance, setDownloadingAttendance] = React.useState<number | null>(null);
-
-  const [showCalendarExport, setShowCalendarExport] = React.useState(false);
+  const [downloading, setDownloading] = React.useState<number | null>(null);
+  const [showCalendar, setShowCalendar] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<PostData | null>(null);
-  const [currentEditingPost, setCurrentEditingPost] = React.useState<PostData | null>(null);
-
-  // Posts data from API
+  const [editingPost, setEditingPost] = React.useState<PostData | null>(null);
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [savedPosts, setSavedPosts] = React.useState<PostData[]>([]);
   const [joinedPosts, setJoinedPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<TabValue>('created');
   const isMobile = useIsMobile();
-
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
 
-
-  const handleDownloadAttendance = async (postId: number) => {
-    try {
-      setDownloadingAttendance(postId);
-      
-      const res = await fetch(`/api/posts/${postId}/attendance`, {
-        credentials: 'include',
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        alert(error.error || 'Failed to download attendance sheet');
-        return;
-      }
-
-      const data = await res.json();
-      
-      downloadAttendanceSheet(
-        {
-          title: data.event.title,
-          description: data.event.description,
-          location: data.event.location,
-          start_datetime: data.event.start_datetime,
-          end_datetime: data.event.end_datetime,
-          organizer: data.event.user_name,
-        },
-        data.participants
-      );
-    } catch (error) {
-      console.error('Download error:', error);
-      alert('Failed to download attendance sheet');
-    } finally {
-      setDownloadingAttendance(null);
-    }
-  };
-
-  // Fetch Posts function
   const fetchPosts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/posts/my-posts', {
-        credentials: 'include',
-      });
-      
-      if (!res.ok) {
-        throw new Error('Failed to fetch posts');
-      }
-      
-      const data = await res.json();
-      setPosts(data.posts || []);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      setPosts([]);
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch('/api/posts/my-posts', { credentials: 'include' });
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      setPosts(d.posts || []);
+    } catch { setPosts([]); } finally { setLoading(false); }
   }, []);
 
-  const fetchSavedPosts = React.useCallback(async () => {
+  const fetchSaved = React.useCallback(async () => {
     try {
       const res = await fetch('/api/saved-posts', { credentials: 'include' });
-      const data = await res.json();
-      setSavedPosts(data.posts || []);
-    } catch (error) {
-      console.error('Error fetching saved posts:', error);
-    }
+      const d = await res.json();
+      setSavedPosts(d.posts || []);
+    } catch { /* silent */ }
   }, []);
 
-  const fetchJoinedPosts = React.useCallback(async () => {
+  const fetchJoined = React.useCallback(async () => {
     try {
       const res = await fetch('/api/participants/my-events', { credentials: 'include' });
-      const data = await res.json();
-      setJoinedPosts(data.posts || []);
-    } catch (error) {
-      console.error('Error fetching joined posts:', error);
-    }
+      const d = await res.json();
+      setJoinedPosts(d.posts || []);
+    } catch { /* silent */ }
   }, []);
 
-  // Fetch posts on component mount
-  React.useEffect(() => {
-    fetchPosts();
-    fetchSavedPosts();
-    fetchJoinedPosts();
-  }, [fetchPosts, fetchSavedPosts, fetchJoinedPosts]);
+  React.useEffect(() => { fetchPosts(); fetchSaved(); fetchJoined(); }, [fetchPosts, fetchSaved, fetchJoined]);
+  React.useEffect(() => { if (!isPending && !session) navigate('/auth'); }, [session, isPending, navigate]);
 
-  // Redirect if not logged in
-  React.useEffect(() => {
-    if (!isPending && !session) {
-      navigate("/auth");
-    }
-  }, [session, isPending, navigate]);
-
-  // NOW do conditional returns AFTER all hooks
-  if (isPending) {
-    return <Spinner label="Loading..." />;
-  }
-
-  if (!session) {
-    return null;
-  }
-
-  // Get user info
-  // userId and userName are used in dialogs
-
-  // Format datetime for display
-  const formatDateTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+  const handleDownload = async (postId: number) => {
+    try {
+      setDownloading(postId);
+      const res = await fetch(`/api/posts/${postId}/attendance`, { credentials: 'include' });
+      if (!res.ok) { const e = await res.json(); alert(e.error || 'Failed'); return; }
+      const d = await res.json();
+      downloadAttendanceSheet({ title: d.event.title, description: d.event.description, location: d.event.location, start_datetime: d.event.start_datetime, end_datetime: d.event.end_datetime, organizer: d.event.user_name }, d.participants);
+    } catch { alert('Failed to download'); } finally { setDownloading(null); }
   };
 
-  // Format date for "Created On" column
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric'
-    });
-  };
+  if (isPending) return (
+    <div className="flex justify-center mt-12">
+      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+  if (!session) return null;
 
-  const columns = [
-    {columnKey: "title", label: "Title"},
-    {columnKey: "location", label: "Location"},
-    {columnKey: "created", label: "Created On"},
-    {columnKey: "start", label: "Starts"},
-    {columnKey: "ends", label: "Ends"},
-    {columnKey: "participants", label: "Participants"}
-  ];
+  const fmtDT = (s: string) => new Date(s).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+  const fmtD = (s: string) => new Date(s).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+
+  const COLS = ['Title', 'Location', 'Created', 'Starts', 'Ends', 'Participants'];
+
+  const TableShell = ({ rows }: { rows: PostData[]; }) => (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[640px]">
+        <thead>
+          <tr className="border-b border-gray-700">
+            {COLS.map(c => <th key={c} className="table-header">{c}</th>)}
+            <th className="table-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(post => (
+            <tr key={post.id} className="border-b border-gray-700/50 hover:bg-gray-750 transition-colors">
+              <td className="table-cell text-white font-medium">{truncate(post.title, isMobile)}</td>
+              <td className="table-cell">{truncate(post.location, isMobile)}</td>
+              <td className="table-cell">{truncate(fmtD(post.created_at), isMobile)}</td>
+              <td className="table-cell">{truncate(fmtDT(post.start_datetime), isMobile)}</td>
+              <td className="table-cell">{truncate(fmtDT(post.end_datetime), isMobile)}</td>
+              <td className="table-cell">{post.current_participants}/{post.max_participants}</td>
+              <td className="table-cell">
+                <ActionMenu>
+                  {activeTab === 'created' && (
+                    <>
+                      <button onClick={() => handleDownload(post.id)} disabled={downloading === post.id}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                        <ArrowDownTrayIcon className="w-4 h-4" />
+                        {downloading === post.id ? 'Downloading...' : 'Download Attendance'}
+                      </button>
+                      <div className="border-t border-gray-700" />
+                      <button onClick={() => { setEditingPost(post); setEditState('modal'); }}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                        <PencilIcon className="w-4 h-4" /> Edit
+                      </button>
+                      <a href={`/post?id=${post.id}`}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                        <EyeIcon className="w-4 h-4" /> View Post
+                      </a>
+                      <div className="border-t border-gray-700" />
+                      <button onClick={() => { setDeletePostId(post.id); setDeleteState('modal'); }}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700">
+                        <TrashIcon className="w-4 h-4" /> Delete
+                      </button>
+                    </>
+                  )}
+                  {activeTab === 'saved' && (
+                    <a href={`/post?id=${post.id}`}
+                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                      <EyeIcon className="w-4 h-4" /> View Post
+                    </a>
+                  )}
+                  {activeTab === 'joined' && (
+                    <>
+                      <button onClick={() => { setSelectedEvent(post); setShowCalendar(true); }}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                        <CalendarDaysIcon className="w-4 h-4" /> Add to Calendar
+                      </button>
+                      <a href={`/post?id=${post.id}`}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700">
+                        <EyeIcon className="w-4 h-4" /> View Post
+                      </a>
+                    </>
+                  )}
+                </ActionMenu>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  const tabData = { created: posts, saved: savedPosts, joined: joinedPosts };
+  const tabLabels: Record<TabValue, string> = { created: 'Created Events', saved: 'Saved Events', joined: 'Joined Events' };
+  const emptyMessages: Record<TabValue, string> = {
+    created: 'No posts yet. Create your first event!',
+    saved: 'No saved events yet. Browse events and save your favorites!',
+    joined: "You haven't joined any events yet.",
+  };
 
   return (
-    <div style={{display: "flex", flexDirection: "column"}}>
+    <div className="flex flex-col gap-4">
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <TabList selectedValue={activeTab} onTabSelect={(_, data) => setActiveTab(data.value as TabValue)} style={{ marginBottom: '16px' }}>
-          <Tab value="created">Created Events</Tab>
-          <Tab value="saved">Saved Events</Tab>
-          <Tab value="joined">Joined Events</Tab>
-        </TabList>
+      <div className="flex gap-1 bg-gray-800 border border-gray-700 rounded-xl p-1 w-fit">
+        {(Object.keys(tabLabels) as TabValue[]).map(t => (
+          <button
+            key={t}
+            onClick={() => setActiveTab(t)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === t ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+          >
+            {tabLabels[t]}
+          </button>
+        ))}
       </div>
 
-      <Divider style={{ marginBottom: '16px'}}/>
-      
-      {/* Created Events Tab */}
-      {activeTab === 'created' && (
-        <>
-          <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-            <Title1>Manage Events</Title1>
-            <Button 
-              size="large" 
-              icon={<AddCircle32Color/>} 
-              appearance="subtle" 
-              onClick={() => setCreateModalState("modal")}
-              style={{alignSelf: "start", marginLeft: '16px', marginTop: 'auto', marginBottom: 'auto'}}
-            />
-          </div>
+      <div className="divider" />
 
-          {loading ? (
-            <div style={{display: 'flex', justifyContent: 'center', marginTop: '32px'}}>
-              <Spinner label="Loading posts..." />
-            </div>
-          ) : posts.length === 0 ? (
-            <Text style={{marginTop: '32px'}}>No posts yet. Create your first event!</Text>
-          ) : (
-            <div style={{ overflowX: 'auto', width: '100%'}}>
-              <Table style={{marginTop: '16px', minWidth: '600px'}} aria-label="Your Posts Table" id="yourpoststable" sortable>
-                <TableHeader>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableHeaderCell key={column.columnKey}>
-                        {ShortText(column.label, isMobile)}
-                      </TableHeaderCell>
-                    ))}
-                    <TableHeaderCell>Actions</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {posts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                      <TableCell>{post.current_participants + "/" + post.max_participants}</TableCell>
-                      <TableCell role="gridcell">
-                        <TableCellLayout>
-                          <Menu>
-                            <MenuTrigger>
-                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                            </MenuTrigger>
-                            <MenuPopover>
-                              <MenuList>
-                                <MenuItem 
-                                  icon={<DocumentArrowDown20Regular />}
-                                  onClick={() => handleDownloadAttendance(post.id)}
-                                  disabled={downloadingAttendance === post.id}
-                                >
-                                  {downloadingAttendance === post.id ? 'Downloading...' : 'Download Attendance Sheet'}
-                                </MenuItem>
-                                <MenuDivider />
-                                <MenuItem icon={<EditRegular />} onClick={ () => { setCurrentEditingPost(post); setEditModalState("modal"); }}>Edit</MenuItem>
-                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                                <MenuDivider/>
-                                <MenuItem 
-                                  icon={<DeleteRegular/>} 
-                                  onClick={() => {
-                                    setDeletePostId(post.id);
-                                    setDeleteModalState("modal");
-                                  }}
-                                >
-                                  Delete
-                                </MenuItem>
-                              </MenuList>
-                            </MenuPopover>
-                          </Menu>
-                        </TableCellLayout>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </>
-      )}
+      {/* Tab header */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold text-white">{tabLabels[activeTab]}</h1>
+        {activeTab === 'created' && (
+          <button onClick={() => setCreateState('modal')} className="btn-ghost p-1" title="Create new event">
+            <PlusCircleIcon className="w-7 h-7 text-blue-400" />
+          </button>
+        )}
+      </div>
 
-      {/* Saved Events Tab */}
-      {activeTab === 'saved' && (
-        <>
-          <Title1>Saved Events</Title1>
-          {savedPosts.length === 0 ? (
-            <Text style={{marginTop: '32px'}}>No saved events yet. Browse events and save your favorites!</Text>
-          ) : (
-            <div style={{ overflowX: 'auto', width: '100%'}}>
-                <Table style={{marginTop: '16px'}} aria-label="Saved Posts Table">
-                <TableHeader>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableHeaderCell key={column.columnKey}>
-                        {ShortText(column.label, isMobile)}
-                      </TableHeaderCell>
-                    ))}
-                    <TableHeaderCell>Actions</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {savedPosts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                      <TableCell>
-                        <Button as="a" href={`/post?id=${post.id}`} icon={<EyeRegular/>}>
-                          View
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Joined Events Tab */}
-      {activeTab === 'joined' && (
-        <>
-          <Title1>Events You've Joined</Title1>
-          {joinedPosts.length === 0 ? (
-            <Text style={{marginTop: '32px'}}>You haven't joined any events yet. Browse events and sign up!</Text>
-          ) : (
-            <div style={{ overflowX: 'auto', width: '100%'}}>
-              <Table style={{marginTop: '16px'}} aria-label="Joined Events Table">
-                <TableHeader>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableHeaderCell key={column.columnKey}>
-                        {ShortText(column.label, isMobile)}
-                      </TableHeaderCell>
-                    ))}
-                    <TableHeaderCell>Actions</TableHeaderCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {joinedPosts.map((post) => (
-                    <TableRow key={post.id}>
-                      <TableCell>{ShortText(post.title, isMobile)}</TableCell>
-                      <TableCell>{ShortText(post.location, isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDate(post.created_at), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.start_datetime), isMobile)}</TableCell>
-                      <TableCell>{ShortText(formatDateTime(post.end_datetime), isMobile)}</TableCell>
-                      <TableCell>{post.current_participants}/{post.max_participants}</TableCell>
-                      <TableCell role="gridcell">
-                        <TableCellLayout>
-                          <Menu>
-                            <MenuTrigger>
-                              <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
-                            </MenuTrigger>
-                            <MenuPopover>
-                              <MenuList>
-                                <MenuItem icon={<CalendarAddRegular />} onClick={() => { setSelectedEvent(post); setShowCalendarExport(true); }}>Add to Calendar</MenuItem>
-                                <MenuItemLink icon={<EyeRegular/>} href={`/post?id=${post.id}`}>View Post</MenuItemLink>
-                              </MenuList>
-                            </MenuPopover>
-                          </Menu>
-                        </TableCellLayout>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            
-          )}
-        </>
+      {loading && activeTab === 'created' ? (
+        <div className="flex items-center gap-2 text-gray-400 py-4">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Loading posts...
+        </div>
+      ) : tabData[activeTab].length === 0 ? (
+        <p className="text-gray-400 py-4">{emptyMessages[activeTab]}</p>
+      ) : (
+        <div className="card overflow-hidden">
+          <TableShell rows={tabData[activeTab]} />
+        </div>
       )}
 
       <YourPostsDialogs
-        createModalState={createModalState}
-        setCreateModalState={setCreateModalState}
-        editModalState={editModalState}
-        setEditModalState={setEditModalState}
-        deleteModalState={deleteModalState}
-        setDeleteModalState={setDeleteModalState}
+        createModalState={createState}
+        setCreateModalState={setCreateState}
+        editModalState={editState}
+        setEditModalState={setEditState}
+        deleteModalState={deleteState}
+        setDeleteModalState={setDeleteState}
         deletePostId={deletePostId}
-        currentEditingPost={currentEditingPost}
+        currentEditingPost={editingPost}
         selectedEvent={selectedEvent}
         setSelectedEvent={setSelectedEvent}
-        showCalendarExport={showCalendarExport}
-        setShowCalendarExport={setShowCalendarExport}
+        showCalendarExport={showCalendar}
+        setShowCalendarExport={setShowCalendar}
         session={session}
-        onPostCreated={() => fetchPosts()}
-        onPostUpdated={() => fetchPosts()}
-        onPostDeleted={() => fetchPosts()}
+        onPostCreated={fetchPosts}
+        onPostUpdated={fetchPosts}
+        onPostDeleted={fetchPosts}
         isMobile={isMobile}
       />
     </div>
