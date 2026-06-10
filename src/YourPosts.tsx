@@ -7,7 +7,6 @@ import {
   TrashIcon, ArrowDownTrayIcon, CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import { downloadAttendanceSheet } from './utils/attendanceSheet';
-import CalendarExport from './components/CalendarExport';
 import YourPostsDialogs from './YourPostsDialogs';
 import { MenuPortal, MenuItemButton, MenuItemLink, MenuDivider } from './components/Menu';
 
@@ -213,7 +212,6 @@ function YourPosts() {
           <TableShell rows={tabData[activeTab]} />
         </div>
       )}
-
       <YourPostsDialogs
         createModalState={createState}
         setCreateModalState={setCreateState}
