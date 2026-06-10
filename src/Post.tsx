@@ -11,8 +11,9 @@ import CalendarExport from './components/CalendarExport';
 import { ReportUser } from './components/ReportUser';
 import ShareEvent from './components/ShareEvent';
 import { NoticeDialog } from './components/Dialog';
+import DefaultImage from './assets/default-art.jpeg'
 
-const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&h=400&fit=crop';
+const DEFAULT_IMG = DefaultImage;
 
 interface PostData {
   id: number; title: string; description: string; location: string;
