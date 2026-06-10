@@ -84,7 +84,7 @@ export default function AnnouncementDetail() {
       <div className="text-center space-y-3">
         <p className="text-gray-400 text-sm">Have questions or feedback about this update?</p>
         <div className="flex gap-3 justify-center">
-          <button onClick={() => navigate('/posts')} className="btn-primary">Browse Events</button>
+          <button onClick={() => navigate('/')} className="btn-primary">Browse Events</button>
           <button onClick={() => navigate('/announcements')} className="btn-secondary">All Announcements</button>
         </div>
       </div>
