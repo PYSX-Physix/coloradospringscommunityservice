@@ -85,7 +85,7 @@ const FAQS = [
 function AccordionItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = React.useState(false);
   return (
-    <div className="border-b border-gray-700 last:border-0">
+    <div className="border-b border-neutral-600 last:border-0">
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-4 text-left">
         <span className="text-sm font-medium text-white">{q}</span>
         {open ? <ChevronUpIcon className="w-4 h-4 text-gray-400 shrink-0" /> : <ChevronDownIcon className="w-4 h-4 text-gray-400 shrink-0" />}

@@ -83,7 +83,7 @@ function Home() {
   const path = location.pathname;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-[#212121]">
       {/* Mobile overlay */}
       {isMobile && isOpen && (
         <div
@@ -98,11 +98,11 @@ function Home() {
           ${isMobile ? 'fixed z-30' : 'relative'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           ${isMobile ? 'w-72' : 'w-64'}
-          h-full flex flex-col bg-gray-900 border-r border-gray-800 transition-transform duration-300 shrink-0
+          h-full flex flex-col bg-[#121212] border-r border-[#4b4b4b] transition-transform duration-300 shrink-0
         `}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-800">
+        <div className="p-4 border-b border-[#4b4b4b]">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest"></span>
             {isMobile && (
@@ -116,7 +116,7 @@ function Home() {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 transition-colors text-left"
+              className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#424242] transition-colors text-left"
             >
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
                 {(session?.user?.name || session?.user?.email || 'G')[0].toUpperCase()}
@@ -131,7 +131,7 @@ function Home() {
             </button>
 
             {userMenuOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[#212121] border border-[#4b4b4b] rounded-xl shadow-xl z-50 overflow-hidden">
                 {session ? (
                   <>
                     <Link to="/profile" onClick={() => { setUserMenuOpen(false); closeOnMobile(); }}
@@ -215,7 +215,7 @@ function Home() {
         </nav>
 
         {/* Footer */}
-        <div className="p-3 border-t border-gray-800">
+        <div className="p-3 border-t border-[#5b5b5b]">
           <NavItem href="/contribute" icon={CodeBracketIcon} label="Contribute" active={path === '/contribute'} onClick={closeOnMobile} />
           <div className="mt-2 px-3">
             <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">Beta</span>
