@@ -150,7 +150,7 @@ export default function AdminPanel() {
       <div className="card overflow-hidden">
         <div className="p-4 border-b border-gray-700">
           <h2 className="text-lg font-semibold text-white mb-3">Reports Management</h2>
-          <div className="flex gap-1 bg-gray-900/50 rounded-xl p-1 w-fit flex-wrap">
+          <div className="flex gap-1 bg-neutral-900 border-neutral-700 rounded-xl p-1 w-fit flex-wrap">
             {TABS.map(t => (
               <button
                 key={t}

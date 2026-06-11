@@ -176,7 +176,7 @@ function YourPosts() {
   return (
     <div className="flex flex-col gap-4">
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-800 border border-gray-700 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 bg-neutral-900 border border-neutral-700 rounded-xl p-1 w-fit">
         {(Object.keys(tabLabels) as TabValue[]).map(t => (
           <button
             key={t}
