@@ -83,7 +83,7 @@ function Home() {
   const path = location.pathname;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#212121]">
+    <div className="flex h-screen overflow-hidden bg-neutral-800">
       {/* Mobile overlay */}
       {isMobile && isOpen && (
         <div
@@ -98,11 +98,11 @@ function Home() {
           ${isMobile ? 'fixed z-30' : 'relative'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           ${isMobile ? 'w-72' : 'w-64'}
-          h-full flex flex-col bg-[#121212] border-r border-[#4b4b4b] transition-transform duration-300 shrink-0
+          h-full flex flex-col bg-neutral-900 border-r border-neutral-400 transition-transform duration-300 shrink-0
         `}
       >
         {/* Header */}
-        <div className="p-4 border-b border-[#4b4b4b]">
+        <div className="p-4 border-b border-neutral-400">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest"></span>
             {isMobile && (
@@ -116,7 +116,7 @@ function Home() {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#424242] transition-colors text-left"
+              className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-600 transition-colors text-left"
             >
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
                 {(session?.user?.name || session?.user?.email || 'G')[0].toUpperCase()}
