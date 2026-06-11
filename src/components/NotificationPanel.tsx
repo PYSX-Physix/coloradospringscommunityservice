@@ -98,7 +98,7 @@ export default function NotificationPanel() {
 
       <MenuPortal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} align="left" width={320}>
         <div className="max-h-96 overflow-y-auto">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700 sticky top-0 bg-gray-800">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-400 sticky top-0 bg-neutral-800">
             <span className="font-semibold text-white text-sm">Notifications</span>
             {unreadCount > 0 && (
               <button onClick={markAllAsRead} className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300">

@@ -22,7 +22,7 @@ export function Dialog({ open, onClose, title, children, footer, maxWidth = 'max
   return (
     <div className="dialog-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`dialog-surface ${maxWidth} w-full`} role="dialog" aria-modal="true">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
           <h2 className="text-lg font-semibold text-white">{title}</h2>
           <button onClick={onClose} className="btn-ghost p-1 -mr-1">
             <XMarkIcon className="w-5 h-5" />

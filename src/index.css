@@ -1,7 +1,6 @@
 @import "tailwindcss";
+@import "tailwindcss/preflight";
 
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 @layer base {
@@ -37,7 +36,7 @@
     @apply bg-[#323232] border border-[#6b6b6b] rounded-xl;
   }
   .input {
-    @apply w-full bg-neutral-900 border border-gray-600 rounded-lg px-3 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors;
+    @apply w-full bg- border border-gray-600 rounded-lg px-3 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors;
   }
   .label {
     @apply block text-sm font-medium text-gray-300 mb-1;

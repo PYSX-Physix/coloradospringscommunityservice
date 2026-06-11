@@ -85,7 +85,7 @@ export function MenuPortal({ open, onClose, triggerRef, children, align = 'right
         zIndex: 1000,
         visibility: pos.visible ? 'visible' : 'hidden',
       }}
-      className="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden"
+      className="bg-neutral-800 border border-neutral-400 rounded-xl shadow-2xl overflow-hidden"
     >
       {children}
     </div>,
@@ -128,5 +128,5 @@ export function MenuItemLink({ icon: Icon, danger, className = '', children, ...
 }
 
 export function MenuDivider() {
-  return <div className="border-t border-gray-700" />;
+  return <div className="border-t border-neutral-700" />;
 }

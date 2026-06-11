@@ -43,9 +43,9 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
   const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div className="card w-80 flex flex-col overflow-hidden hover:border-gray-600 transition-colors">
+    <div className="card w-80 flex flex-col overflow-hidden hover:border-neutral-400 transition-colors">
       {/* Image */}
-      <div className="relative h-44 overflow-hidden bg-gray-700">
+      <div className="relative h-44 overflow-hidden bg-neutral-700">
         <img
           src={post.image_url || DEFAULT_IMG}
           alt={post.title}
