@@ -98,7 +98,7 @@ function Home() {
           ${isMobile ? 'fixed z-30' : 'relative'}
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           ${isMobile ? 'w-72' : 'w-64'}
-          h-full flex flex-col bg-neutral-900 border-r border-neutral-400 transition-transform duration-300 shrink-0
+          h-full flex flex-col bg-neutral-900 border-r border-neutral-500 transition-transform duration-300 shrink-0
         `}
       >
         {/* Header */}
