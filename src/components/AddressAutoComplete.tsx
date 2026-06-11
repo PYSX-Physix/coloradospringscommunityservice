@@ -83,7 +83,7 @@ export function AddressAutocomplete({ value, onChange, required, label = 'Locati
         </div>
 
         {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-gray-600 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
             {suggestions.map(s => (
               <button
                 key={s.place_id}

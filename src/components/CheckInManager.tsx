@@ -50,7 +50,7 @@ export default function CheckInManager({ open, onClose, postId, participants, is
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-700">
+            <tr className="border-b border-neutral-700">
               <th className="table-header">Participant</th>
               <th className="table-header">Registered</th>
               <th className="table-header">Status</th>

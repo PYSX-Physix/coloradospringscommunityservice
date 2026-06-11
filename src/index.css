@@ -55,7 +55,7 @@
     @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4;
   }
   .dialog-surface {
-    @apply bg-neutral-700 border border-neutral-500 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto;
+    @apply bg-neutral-900 border border-neutral-500 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto;
   }
   .table-cell {
     @apply px-4 py-3 text-sm text-gray-300;
