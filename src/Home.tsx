@@ -3,228 +3,255 @@ import Search from './Search';
 import YourPosts from './YourPosts';
 import { Privacy, Terms } from './Policies';
 import AdminPanel from './admin';
-import About from './About'
+import About from './About';
 import Profile from './Profile';
 import Contribute from './Contribute';
-import { useSession, signOut } from "./lib/auth-client";
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import './Home.css';
-import {
-  AppItem,
-  NavDrawer,
-  NavDrawerBody,
-  NavDrawerHeader,
-  NavItem,
-  NavDivider,
-  MenuItemLink,
-  MenuTrigger,
-  MenuPopover,
-  MenuList,
-  Menu,
-  MenuItem,
-  NavSectionHeader,
-  NavCategory,
-  NavCategoryItem,
-  NavSubItem,
-  NavSubItemGroup,
-  MenuDivider,
-  Tooltip,
-  Hamburger,
-  NavDrawerFooter,
-  Tag
-} from "@fluentui/react-components";
-
-import {
-  Home20Color,
-  Person32Color,
-  SearchSparkle20Color,
-  ClipboardTextEdit20Color,
-  PersonColor,
-  SettingsColor,
-  Info20Filled,
-  ArrowExitRegular,
-  QuestionCircle20Color, Shield20Color,
-  Code20Color,
-  DocumentFolder20Color
-} from "@fluentui/react-icons";
+import { useSession, signOut } from './lib/auth-client';
+import { Route, Routes, useLocation, useNavigate, Link } from 'react-router-dom';
 import Post from './Post';
-import { AnnouncementPopover } from './Announcements';
 import { HelpHome } from './Help';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import NotificationPanel from './components/NotificationPanel';
 import { useIsMobile } from './hooks/useIsMobile';
 import Settings from './Settings';
+import AnnouncementsPage from './AnnouncementsPage';
+import AnnouncementDetail from './AnnouncementDetail';
+import { AnnouncementPopover } from './Announcements';
+import {
+  HomeIcon,
+  MagnifyingGlassIcon,
+  ClipboardDocumentListIcon,
+  InformationCircleIcon,
+  DocumentTextIcon,
+  QuestionMarkCircleIcon,
+  ShieldCheckIcon,
+  CodeBracketIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon,
+  MegaphoneIcon,
+} from '@heroicons/react/24/outline';
 
-const ANNOUCEMENTS = '0';
-const POSTSMENU = '1';
-const SEARCHMENU = '2';
-const SAVEDPOSTSMENU = '3';
-const YOURPOSTSMENU = '4';
-const ABOUTMENU = '5';
-const POLICIESMENU = '6';
-const PRIVACYPOLICY = '7';
-const TERMSOFSERVICE = '8';
-const HELPHOME = '10';
-const ADMINPANEL = '11';
-const CONTRIBUTE = '12';
-
+function NavItem({ href, icon: Icon, label, active, onClick }: {
+  href: string; icon: React.ElementType; label: string; active: boolean; onClick?: () => void;
+}) {
+  return (
+    <Link
+      to={href}
+      onClick={onClick}
+      className={active ? 'nav-item-active' : 'nav-item'}
+    >
+      <Icon className="w-5 h-5 shrink-0" />
+      <span>{label}</span>
+    </Link>
+  );
+}
 
 function Home() {
-  // Initialize drawer state from in-memory variable (or default based on screen size)
-  const getInitialDrawerState = () => {
-    const isMobileSize = window.innerWidth <= 500;
-    // Use a simple in-memory approach - drawer starts open on desktop, closed on mobile
-    return !isMobileSize;
-  };
-
+  const getInitialDrawerState = () => window.innerWidth > 768;
   const [isOpen, setIsOpen] = useState(getInitialDrawerState);
+  const [policiesOpen, setPoliciesOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
   const isAdmin = !!(session?.user as any)?.isAdmin;
 
+  const closeOnMobile = () => { if (isMobile) setIsOpen(false); };
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth");
+    navigate('/auth');
   };
 
-  // Determine which nav item should be active
-  const selectedValue = location.pathname === '/search' ? SEARCHMENU:
-  location.pathname === '/saved-posts' ? SAVEDPOSTSMENU:
-  location.pathname === '/my-posts' ? YOURPOSTSMENU:
-  location.pathname === '/about' ? ABOUTMENU:
-  location.pathname === '/policies' ? POLICIESMENU:
-  location.pathname === '/announcements' ? ANNOUCEMENTS:
-  location.pathname === '/policies/privacy-policy' ? PRIVACYPOLICY:
-  location.pathname === '/policies/terms-of-service' ? TERMSOFSERVICE:
-  location.pathname === '/help' ? HELPHOME:
-  location.pathname === '/admin' ? ADMINPANEL: 
-  location.pathname === '/contribute' ? CONTRIBUTE : POSTSMENU;
+  const path = location.pathname;
 
   return (
-    <div className='root'>
-      <NavDrawer
-          className="nav"
-          type="inline"
-          open={isOpen}
-          multiple={true}
-          selectedValue={selectedValue}
-        >
-          <NavDrawerHeader>
-            {isMobile && <Tooltip content="Close navigation" relationship='label'>
-              <Hamburger onClick={() => setIsOpen(!isOpen)} />
-            </Tooltip>}
+    <div className="flex h-screen overflow-hidden bg-neutral-800">
+      {/* Mobile overlay */}
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-20"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <Menu>
-                <MenuTrigger disableButtonEnhancement>
-                  <AppItem icon={<Person32Color />} as="a">
-                    {session?.user?.name || session?.user?.email || "Guest"}
-                  </AppItem>
-                </MenuTrigger>
-                <MenuPopover>
-                  <MenuList>
-                    {session ? (
-                      <>
-                        <MenuItemLink icon={<PersonColor />} href='/profile'>Profile</MenuItemLink>
-                        <MenuItemLink icon={<SettingsColor />} href='/settings'>Settings</MenuItemLink>
-                        <MenuDivider />
-                        <MenuItem icon={<ArrowExitRegular />} onClick={handleSignOut}>Sign Out</MenuItem>
-                      </>
-                    ) : (
-                      <MenuItemLink href='/auth'>Sign In</MenuItemLink>
-                    )}
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
-
-              {session && <div style={{ marginLeft: 'auto', marginTop: 'auto', marginBottom: 'auto', display: 'flex', gap: '8px' }}><NotificationPanel /><AnnouncementPopover /></div>}
-            </div>
-          </NavDrawerHeader>
-
-          <NavDrawerBody>
-            <NavDivider />
-            <NavSectionHeader>General</NavSectionHeader>
-            <NavItem as="a" href="/" value={POSTSMENU} icon={<Home20Color />} onClick={() => isMobile && setIsOpen(false)}>
-              Posts
-            </NavItem>
-            <NavItem as="a" href="/search" value={SEARCHMENU} icon={<SearchSparkle20Color />} onClick={() => isMobile && setIsOpen(false)}>
-              Search
-            </NavItem>
-            <NavItem as='a' href="/saved/my-posts" value={YOURPOSTSMENU} icon={<ClipboardTextEdit20Color />} onClick={() => isMobile && setIsOpen(false)}>
-              My Posts
-            </NavItem>
-            <NavDivider />
-            <NavSectionHeader>Info</NavSectionHeader>
-            <NavItem as='a' href='/about' value={ABOUTMENU} icon={<Info20Filled />} onClick={() => isMobile && setIsOpen(false)}>
-              About Us
-            </NavItem>
-            <NavCategory value={POLICIESMENU}>
-              <NavCategoryItem icon={<DocumentFolder20Color />} onClick={() => isMobile && setIsOpen(false)}>
-                Policies
-              </NavCategoryItem>
-              <NavSubItemGroup>
-                <NavSubItem as='a' href='/policies/privacy-policy' value={PRIVACYPOLICY} onClick={() => isMobile && setIsOpen(false)}>
-                  Privacy Policy
-                </NavSubItem>
-                <NavSubItem as='a' href='/policies/terms-of-service' value={TERMSOFSERVICE} onClick={() => isMobile && setIsOpen(false)}>
-                  Terms of Service
-                </NavSubItem>
-              </NavSubItemGroup>
-            </NavCategory>
-            <NavItem as='a' href='/help' value={HELPHOME} icon={<QuestionCircle20Color />} onClick={() => isMobile && setIsOpen(false)}>Help</NavItem>
-            {isAdmin && (
-              <>
-                <NavDivider />
-                <NavSectionHeader>Administration</NavSectionHeader>
-                <NavItem as='a' href='/admin' value={ADMINPANEL} icon={<Shield20Color />} onClick={() => isMobile && setIsOpen(false)}>
-                  Admin Panel
-                </NavItem>
-              </>
+      {/* Sidebar */}
+      <aside
+        className={`
+          ${isMobile ? 'fixed z-30' : 'relative'}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isMobile ? 'w-72' : 'w-64'}
+          h-full flex flex-col bg-neutral-900 border-r border-neutral-500 transition-transform duration-300 shrink-0
+        `}
+      >
+        {/* Header */}
+        <div className="p-4 border-b border-neutral-400">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-blue-400 uppercase tracking-widest"></span>
+            {isMobile && (
+              <button onClick={() => setIsOpen(false)} className="btn-ghost p-1">
+                <XMarkIcon className="w-5 h-5" />
+              </button>
             )}
-          </NavDrawerBody>
-          <NavDrawerFooter style={{ marginBottom: '6px' }}>
-            <NavItem as='a' href='/contribute' value={CONTRIBUTE} icon={<Code20Color/>}>Contribute</NavItem>
-            <Tag shape='circular' appearance='brand'>App in beta</Tag>
-          </NavDrawerFooter>
-        </NavDrawer>
-        <div className="content">
-          <div className="hamburger-container" style={{ 
-            display: (!isOpen || isMobile) ? 'block' : 'none' 
-          }}>
-            <Tooltip content={isOpen ? "Close navigation" : "Open navigation"} relationship='label'>
-              <Hamburger onClick={() => setIsOpen(!isOpen)} />
-            </Tooltip>
           </div>
-          <div className="content-scroll">
-            <Routes>
-              <Route path="/" element={<Posts />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/saved/my-posts" element={<YourPosts />} />
-              <Route path="/about" element={<About />} />
-              <Route path='/post' element={<Post />} />
-              <Route path='/policies/privacy-policy' element={<Privacy />} />
-              <Route path='/policies/terms-of-service' element={<Terms />} />
-              <Route path='/profile' element={<Profile />} />
-              <Route path='/help' element={<HelpHome />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path='/contribute' element={<Contribute />} />
-              <Route path='/settings' element={<Settings />} />
-            </Routes>
+
+          {/* User menu */}
+          <div className="relative" ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-600 transition-colors text-left"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                {(session?.user?.name || session?.user?.email || 'G')[0].toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-100 truncate">
+                  {session?.user?.name || session?.user?.email || 'Guest'}
+                </p>
+                <p className="text-xs text-gray-500">{session ? 'Signed in' : 'Not signed in'}</p>
+              </div>
+              <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[#212121] border border-[#4b4b4b] rounded-xl shadow-xl z-50 overflow-hidden">
+                {session ? (
+                  <>
+                    <Link to="/profile" onClick={() => { setUserMenuOpen(false); closeOnMobile(); }}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
+                      <UserCircleIcon className="w-4 h-4" /> Profile
+                    </Link>
+                    <Link to="/settings" onClick={() => { setUserMenuOpen(false); closeOnMobile(); }}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
+                      <Cog6ToothIcon className="w-4 h-4" /> Settings
+                    </Link>
+                    <div className="border-t border-gray-700" />
+                    <button onClick={handleSignOut}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-gray-700 transition-colors">
+                      <ArrowRightOnRectangleIcon className="w-4 h-4" /> Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <Link to="/auth" onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 transition-colors">
+                    Sign In
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Notification & Announcement icons */}
+          {session && (
+            <div className="flex items-center gap-2 mt-2 px-2">
+              <NotificationPanel />
+              <AnnouncementPopover />
+            </div>
+          )}
+        </div>
+
+        {/* Nav body */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+          <p className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">General</p>
+          <NavItem href="/" icon={HomeIcon} label="Posts" active={path === '/'} onClick={closeOnMobile} />
+          <NavItem href="/search" icon={MagnifyingGlassIcon} label="Search" active={path === '/search'} onClick={closeOnMobile} />
+          <NavItem href="/saved/my-posts" icon={ClipboardDocumentListIcon} label="My Posts" active={path === '/saved/my-posts'} onClick={closeOnMobile} />
+
+          <div className="divider" />
+          <p className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Info</p>
+          <NavItem href="/about" icon={InformationCircleIcon} label="About Us" active={path === '/about'} onClick={closeOnMobile} />
+
+          {/* Policies accordion */}
+          <button
+            onClick={() => setPoliciesOpen(!policiesOpen)}
+            className={`w-full nav-item justify-between ${path.startsWith('/policies') ? 'text-blue-300' : ''}`}
+          >
+            <span className="flex items-center gap-3">
+              <DocumentTextIcon className="w-5 h-5 shrink-0" />
+              <span>Policies</span>
+            </span>
+            <ChevronRightIcon className={`w-4 h-4 transition-transform ${policiesOpen ? 'rotate-90' : ''}`} />
+          </button>
+          {policiesOpen && (
+            <div className="ml-8 space-y-1">
+              <Link to="/policies/privacy-policy" onClick={closeOnMobile}
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${path === '/policies/privacy-policy' ? 'text-blue-300 bg-blue-900/30' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'}`}>
+                Privacy Policy
+              </Link>
+              <Link to="/policies/terms-of-service" onClick={closeOnMobile}
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${path === '/policies/terms-of-service' ? 'text-blue-300 bg-blue-900/30' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'}`}>
+                Terms of Service
+              </Link>
+            </div>
+          )}
+
+          <NavItem href="/help" icon={QuestionMarkCircleIcon} label="Help" active={path === '/help'} onClick={closeOnMobile} />
+          <NavItem href="/announcements" icon={MegaphoneIcon} label="Announcements" active={path.startsWith('/announcements')} onClick={closeOnMobile} />
+
+          {isAdmin && (
+            <>
+              <div className="divider" />
+              <p className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Administration</p>
+              <NavItem href="/admin" icon={ShieldCheckIcon} label="Admin Panel" active={path === '/admin'} onClick={closeOnMobile} />
+            </>
+          )}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-3 border-t border-[#5b5b5b]">
+          <NavItem href="/contribute" icon={CodeBracketIcon} label="Contribute" active={path === '/contribute'} onClick={closeOnMobile} />
+          <div className="mt-2 px-3">
+            <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50">Beta</span>
           </div>
         </div>
-        {isMobile && isOpen && (
-          <div
-            onClick={() => setIsOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              zIndex: 1,
-            }}
-          />
-        )}
+      </aside>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        {/* Topbar hamburger */}
+        <div className={`px-4 py-3 border-b border-gray-800 flex items-center gap-3 ${isOpen && !isMobile ? 'hidden' : 'flex'}`}>
+          <button onClick={() => setIsOpen(!isOpen)} className="btn-ghost p-1">
+            <Bars3Icon className="w-5 h-5" />
+          </button>
+          <span className="text-sm font-medium text-gray-400">CO Springs Community Service</span>
+        </div>
+
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6">
+          <Routes>
+            <Route path="/" element={<Posts />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/saved/my-posts" element={<YourPosts />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/post" element={<Post />} />
+            <Route path="/policies/privacy-policy" element={<Privacy />} />
+            <Route path="/policies/terms-of-service" element={<Terms />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/help" element={<HelpHome />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/contribute" element={<Contribute />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/announcements" element={<AnnouncementsPage />} />
+            <Route path="/announcements/:id" element={<AnnouncementDetail />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }

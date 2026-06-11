@@ -1,270 +1,173 @@
 import React from 'react';
 import {
-  Title3, Text, Button, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem,
-  Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions,
-  Field, RadioGroup, Radio, Divider, Textarea, Card, CardPreview, CardHeader, CardFooter,
-  Image, Tag
-} from "@fluentui/react-components";
-import { BookmarkAdd20Regular, BookmarkAdd20Filled, Warning20Regular, CheckmarkCircle48Color, MoreHorizontal20Regular, Share20Regular } from "@fluentui/react-icons";
-import { makeStyles } from "@fluentui/react-components";
+  BookmarkIcon as BookmarkOutline,
+  ShareIcon, ExclamationTriangleIcon, EllipsisHorizontalIcon,
+} from '@heroicons/react/24/outline';
+import { BookmarkIcon as BookmarkSolid, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useSavedPosts } from '../hooks/useSavedPosts';
 import { useReportPost } from '../hooks/useReportPost';
 import { useErrorNotice } from '../hooks/useErrorNotice';
 import type { PostUI } from '../utils/types';
 import { REPORT_CATEGORIES } from '../utils/types';
 import ShareEvent from './ShareEvent';
-import { NoticeDialog } from '../Post';
-import defaultArt from "../assets/default-art.jpeg"
+import { NoticeDialog } from './Dialog';
+import { Dialog } from './Dialog';
+import { MenuPortal, MenuItemButton } from './Menu';
 
-const cardStyles = makeStyles({
-  card: {
-    maxWidth: '400px',
-    height: 'fit-content'
-  }
-});
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop';
 
 interface PostCardProps {
   post: PostUI;
   onSaveToggle?: (postId: number, isSaved: boolean) => void;
 }
 
-/**
- * PostCard Component
- * 
- * Presentational component for rendering individual post in a card format.
- * Handles UI interactions for saving, sharing, and reporting posts.
- * 
- * Uses custom hooks for:
- * - useSavedPosts: Managing saved state with optimistic updates
- * - useReportPost: Managing report form state and submission
- * - useErrorNotice: Centralized error handling
- */
-const PostCard = React.memo(function PostCard({ post, onSaveToggle }: PostCardProps) {
-  const styles = cardStyles();
-  const [showShareDialog, setShowShareDialog] = React.useState(false);
+export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProps) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [showShare, setShowShare] = React.useState(false);
+  const menuTriggerRef = React.useRef<HTMLButtonElement>(null);
 
-  // Initialize hooks
-  const { isSaved, loading: saving, toggleSave } = useSavedPosts(
-    post.isSaved,
-    onSaveError
-  );
+  const { isSaved, loading: saving, toggleSave } = useSavedPosts(post.isSaved, onSaveError);
+  const { state: reportState, category: reportCategory, details: reportDetails, isSubmitting,
+    setReportState, setCategory, setDetails, submitReport } = useReportPost(onReportError);
+  const { notice, isOpen: noticeOpen, showError, closeError } = useErrorNotice();
 
-  const {
-    state: reportState,
-    category: reportCategory,
-    details: reportDetails,
-    isSubmitting: reportSubmitting,
-    setReportState,
-    setCategory: setReportCategory,
-    setDetails: setReportDetails,
-    submitReport,
-  } = useReportPost(onReportError);
-
-  const {
-    notice,
-    isOpen: noticeOpen,
-    showError,
-    closeError,
-  } = useErrorNotice();
-
-  /**
-   * Handle save toggle with optimistic updates
-   */
-  const handleSaveToggle = async () => {
+  async function handleSave() {
+    setMenuOpen(false);
     const result = await toggleSave(post.id);
     onSaveToggle?.(post.id, result);
-  };
-
-  /**
-   * Handle report form submission
-   */
-  const handleReportSubmit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    await submitReport(post.id);
-  };
-
-  /**
-   * Error callback for save operations
-   */
-  function onSaveError(error: string) {
-    showError('Failed to Save Post', error);
   }
 
-  /**
-   * Error callback for report operations
-   */
-  function onReportError(error: string) {
-    showError('Report Error', error);
-  }
+  function onSaveError(e: string) { showError('Failed to Save Post', e); }
+  function onReportError(e: string) { showError('Report Error', e); }
+
+  const isFull = post.current_participants >= post.max_participants;
 
   return (
-    <div>
-      <Card className={styles.card}>
-        <CardPreview>
-          <Image 
-            src={post.image_url || defaultArt} 
-            onError={(e) => {
-              e.currentTarget.src = defaultArt;
-            }}
-            alt={post.title}
-          />
-        </CardPreview>
-        <CardHeader
-          header={<Title3>{post.title}</Title3>}
-          description={<Text>{post.description}</Text>}
+    <div className="card w-80 flex flex-col overflow-hidden hover:border-neutral-400 transition-colors">
+      {/* Image */}
+      <div className="relative h-44 overflow-hidden bg-neutral-700">
+        <img
+          src={post.image_url || DEFAULT_IMG}
+          alt={post.title}
+          className="w-full h-full object-cover"
+          onError={e => { e.currentTarget.src = DEFAULT_IMG; }}
         />
-        <CardFooter>
-          {
-            post.current_participants === post.max_participants && <Tag shape='circular' appearance='brand'>Event Full</Tag>
-          }
-          <Button 
-            appearance="primary" 
-            as='a' 
-            href={`/post?id=${post.id}`}
-            aria-label={`View ${post.title} event details`}
-          >
+        {isFull && (
+          <div className="absolute top-2 right-2 badge bg-red-900/90 text-red-300 border border-red-700">
+            Event Full
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        <div>
+          <h3 className="font-semibold text-white text-base leading-snug line-clamp-2">{post.title}</h3>
+          <p className="text-gray-400 text-sm mt-1 line-clamp-3">{post.description}</p>
+        </div>
+
+        {/* Footer actions */}
+        <div className="mt-auto flex items-center gap-2 pt-2">
+          <a href={`/post?id=${post.id}`} className="btn-primary text-sm flex-1 text-center">
             View Event
-          </Button>
-          <Menu>
-            <MenuTrigger>
-              <Button 
-                appearance="subtle" 
-                icon={<MoreHorizontal20Regular />} 
-                aria-label="Post action menu"
-              />
-            </MenuTrigger>
-            <MenuPopover>
-              <MenuList>
-                <MenuItem 
-                  icon={isSaved ? <BookmarkAdd20Filled /> : <BookmarkAdd20Regular />}
-                  onClick={handleSaveToggle}
-                  disabled={saving}
-                  aria-label={isSaved ? 'Unsave post' : 'Save post'}
-                >
-                  {saving ? 'Updating...' : (isSaved ? 'Unsave Post' : 'Save Post')}
-                </MenuItem>
-                <MenuItem 
-                  icon={<Share20Regular/>} 
-                  onClick={() => setShowShareDialog(true)}
-                  aria-label="Share post"
-                >
-                  Share Post
-                </MenuItem>
-                <MenuItem 
-                  icon={<Warning20Regular />} 
-                  onClick={() => setReportState('form')}
-                  aria-label="Report post"
-                >
-                  Report Post
-                </MenuItem>
-              </MenuList>
-            </MenuPopover>
-          </Menu>
-        </CardFooter>
-      </Card>
+          </a>
+          <button
+            ref={menuTriggerRef}
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="btn-ghost p-2"
+            aria-label="More options"
+          >
+            <EllipsisHorizontalIcon className="w-5 h-5" />
+          </button>
+          <MenuPortal open={menuOpen} onClose={() => setMenuOpen(false)} triggerRef={menuTriggerRef} width={176}>
+            <MenuItemButton
+              icon={isSaved ? BookmarkSolid : BookmarkOutline}
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? 'Updating...' : isSaved ? 'Unsave Post' : 'Save Post'}
+            </MenuItemButton>
+            <MenuItemButton icon={ShareIcon} onClick={() => { setMenuOpen(false); setShowShare(true); }}>
+              Share Post
+            </MenuItemButton>
+            <MenuItemButton icon={ExclamationTriangleIcon} danger onClick={() => { setMenuOpen(false); setReportState('form'); }}>
+              Report Post
+            </MenuItemButton>
+          </MenuPortal>
+        </div>
+      </div>
 
-      {/* Report Form Dialog */}
-      <Dialog 
-        open={reportState === 'form'} 
-        onOpenChange={(_, data) => !data.open && setReportState('closed')}
+      {/* Report Dialog */}
+      <Dialog
+        open={reportState === 'form'}
+        onClose={() => setReportState('closed')}
+        title="Report Post"
+        footer={
+          <>
+            <button onClick={() => setReportState('closed')} className="btn-secondary">Cancel</button>
+            <button
+              onClick={async e => { e.preventDefault(); await submitReport(post.id); }}
+              disabled={isSubmitting}
+              className="btn-danger"
+            >
+              {isSubmitting ? 'Submitting...' : 'Report'}
+            </button>
+          </>
+        }
       >
-        <DialogSurface>
-          <form onSubmit={handleReportSubmit}>
-            <DialogBody>
-              <DialogTitle>Report Post</DialogTitle>
-              <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <Text>
-                  Reporting this post will require us to review this report. 
-                  Any reports that aren't legitimate will cause your account to be flagged and blocked from sending reports.
-                </Text>
-                <Divider />
-                
-                <Field label="Select a category" required>
-                  <RadioGroup 
-                    value={reportCategory}
-                    onChange={(_, data) => setReportCategory(data.value)}
-                    aria-label="Report category selection"
-                  >
-                    {REPORT_CATEGORIES.map((cat) => (
-                      <Radio 
-                        key={cat.value}
-                        value={cat.value} 
-                        label={cat.label} 
-                      />
-                    ))}
-                  </RadioGroup>
-                </Field>
-
-                <Field label="Additional Details" required>
-                  <Textarea 
-                    placeholder='Please provide details about the issue (minimum 10 characters)...'
-                    value={reportDetails}
-                    onChange={(_, data) => setReportDetails(data.value)}
-                    aria-label="Report description"
+        <p className="text-gray-400 text-sm mb-4">
+          Reporting this post will require review. False reports may cause your account to be flagged.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <label className="label">Select a category</label>
+            <div className="space-y-2">
+              {REPORT_CATEGORIES.map(cat => (
+                <label key={cat.value} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="report-cat"
+                    value={cat.value}
+                    checked={reportCategory === cat.value}
+                    onChange={() => setCategory(cat.value)}
+                    className="accent-blue-500"
                   />
-                </Field>
-              </DialogContent>
-
-              <DialogActions>
-                <Button 
-                  appearance='primary' 
-                  type='submit'
-                  disabled={reportSubmitting}
-                >
-                  {reportSubmitting ? 'Submitting...' : 'Report'}
-                </Button>
-                <Button 
-                  appearance='secondary' 
-                  onClick={() => setReportState('closed')}
-                  disabled={reportSubmitting}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </DialogBody>
-          </form>
-        </DialogSurface>
+                  <span className="text-sm text-gray-300">{cat.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label">Additional Details</label>
+            <textarea
+              className="input min-h-[80px] resize-y"
+              placeholder="Please provide details (min 10 characters)..."
+              value={reportDetails}
+              onChange={e => setDetails(e.target.value)}
+            />
+          </div>
+        </div>
       </Dialog>
 
-      {/* Report Confirmation Dialog */}
-      <Dialog 
-        open={reportState === 'confirmation'} 
-        onOpenChange={(_, data) => !data.open && setReportState('closed')}
+      {/* Report Confirmation */}
+      <Dialog
+        open={reportState === 'confirmation'}
+        onClose={() => setReportState('closed')}
+        title="Report Sent"
+        footer={<button onClick={() => setReportState('closed')} className="btn-primary">Close</button>}
       >
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Report Sent</DialogTitle>
-            <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <CheckmarkCircle48Color />
-              <Text>Your report has been successfully sent and will be under review shortly.</Text>
-            </DialogContent>
-            <DialogActions>
-              <Button 
-                appearance='primary' 
-                onClick={() => setReportState('closed')}
-              >
-                Close
-              </Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
+        <div className="flex items-center gap-3">
+          <CheckCircleIcon className="w-8 h-8 text-green-400 shrink-0" />
+          <p className="text-gray-300 text-sm">Your report has been sent and will be reviewed shortly.</p>
+        </div>
       </Dialog>
 
-      {/* Share Event Dialog */}
       <ShareEvent
-        open={showShareDialog}
-        onClose={() => setShowShareDialog(false)}
-        event={{
-          id: post.id,
-          title: post.title,
-          description: post.description,
-          location: post.location,
-          start_time: post.start_datetime,
-          image_url: post.image_url,
-        }}
+        open={showShare}
+        onClose={() => setShowShare(false)}
+        event={{ id: post.id, title: post.title, description: post.description, location: post.location, start_time: post.start_datetime, image_url: post.image_url }}
       />
 
-      {/* Error Notice Dialog */}
       <NoticeDialog
         open={noticeOpen}
         title={notice?.title || ''}
@@ -274,7 +177,3 @@ const PostCard = React.memo(function PostCard({ post, onSaveToggle }: PostCardPr
     </div>
   );
 });
-
-PostCard.displayName = 'PostCard';
-
-export default PostCard;

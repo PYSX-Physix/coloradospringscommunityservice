@@ -1,163 +1,94 @@
 import React from 'react';
-import { 
-  Divider, SearchBox, Title1, Text, Card, CardPreview,
-  CardHeader, CardFooter, Button, Spinner,
-  makeStyles,
-  Title3,
-  Tag
-} from '@fluentui/react-components';
-import { Calendar20Color, LocationRipple20Color, PeopleCommunity20Color, Person20Color, Search20Regular } from '@fluentui/react-icons';
-import defaultArt from "./assets/default-art.jpeg"
-
-
-const cardStyles = makeStyles({
-  card: {
-    maxWidth: '400px',
-    height: 'fit-content'
-  }
-});
+import { MagnifyingGlassIcon, CalendarIcon, MapPinIcon, UserIcon, UsersIcon } from '@heroicons/react/24/outline';
 
 interface PostData {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  start_datetime: string;
-  end_datetime: string;
-  max_participants: number;
-  current_participants: number;
-  user_name: string;
-  created_at: string;
-  image_url?: string;
+  id: number; title: string; description: string; location: string;
+  start_datetime: string; end_datetime: string; max_participants: number;
+  current_participants: number; user_name: string; created_at: string; image_url?: string;
 }
+
+const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop';
 
 function Search() {
   const [query, setQuery] = React.useState('');
   const [posts, setPosts] = React.useState<PostData[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [searched, setSearched] = React.useState(false);
-  const styles = cardStyles();
 
-  const handleSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setPosts([]);
-      setSearched(false);
-      return;
-    }
-
+  const handleSearch = async (q: string) => {
+    if (!q.trim()) { setPosts([]); setSearched(false); return; }
     try {
       setLoading(true);
       setSearched(true);
-      
-      const res = await fetch(`/api/posts/search?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(`/api/posts/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      
       setPosts(data.posts || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      setPosts([]);
-    } finally {
-      setLoading(false);
-    }
+    } catch { setPosts([]); } finally { setLoading(false); }
   };
 
-  // Debounce search
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query) {
-        handleSearch(query);
-      }
-    }, 500); // Wait 500ms after user stops typing
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => { if (query) handleSearch(query); }, 500);
+    return () => clearTimeout(t);
   }, [query]);
 
-  const formatDateTime = (isoString: string) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
+  const fmt = (s: string) => new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Title1>Search Events</Title1>
-      <Divider style={{ marginTop: '15px', marginBottom: '15px' }} />
-      
-      <SearchBox 
-        placeholder="Search by title, description, location, or organizer..." 
-        value={query}
-        onChange={(_, data) => setQuery(data.value)}
-        contentBefore={<Search20Regular />}
-        style={{ maxWidth: '600px', marginBottom: '24px' }}
-      />
+    <div className="flex flex-col gap-4 max-w-4xl">
+      <h1 className="text-3xl font-bold text-white">Search Events</h1>
+      <div className="divider" />
+
+      <div className="relative max-w-xl">
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+        <input
+          type="text"
+          className="input pl-10"
+          placeholder="Search by title, description, location, or organizer..."
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+      </div>
 
       {loading && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '32px' }}>
-          <Spinner label="Searching..." />
+        <div className="flex items-center gap-3 text-gray-400 mt-4">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Searching...
         </div>
       )}
 
       {!loading && searched && posts.length === 0 && (
-        <div style={{ textAlign: 'center', marginTop: '32px' }}>
-          <Text size={400}>No events found matching "{query}"</Text>
-          <Text size={200} style={{ display: 'block', marginTop: '8px', color: '#666' }}>
-            Try different keywords or check spelling
-          </Text>
+        <div className="text-center mt-8">
+          <p className="text-gray-300">No events found matching "{query}"</p>
+          <p className="text-gray-500 text-sm mt-1">Try different keywords or check spelling</p>
         </div>
       )}
 
       {!loading && posts.length > 0 && (
         <>
-          <Text size={300} style={{ marginBottom: '16px' }}>
-            Found {posts.length} event{posts.length !== 1 ? 's' : ''} matching "{query}"
-          </Text>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-            {posts.map((post) => (
-              <Card key={post.id} className={styles.card}>
-                <CardPreview>
-                  <img src={post.image_url || defaultArt} alt="Event Keyart" />
-                </CardPreview>
-                <CardHeader
-                  header={
-                    <Title3>{post.title}</Title3>
-                  }
-                  description={
-                    <Text>
-                      {post.description.length > 100 
-                        ? post.description.substring(0, 100) + '...' 
-                        : post.description}
-                    </Text>
-                  }
-                />
-                <CardFooter>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
-                    <Text size={200}>
-                      <Calendar20Color/> {formatDateTime(post.start_datetime)}
-                    </Text>
-                    <Text size={200}>
-                      <LocationRipple20Color/> {post.location}
-                    </Text>
-                    <Text size={200}>
-                      <Person20Color/> {post.user_name}
-                    </Text>
-                    <Text size={200}>
-                      <PeopleCommunity20Color/> {post.current_participants}/{post.max_participants} participants
-                    </Text>
-                    { post.current_participants === post.max_participants && (<Tag appearance='brand' shape='circular'>Event Full</Tag>)}
-                    <Button 
-                      appearance="primary" 
-                      as='a' 
-                      href={`/post?id=${post.id}`}
-                      style={{ marginTop: '8px' }}
-                    >
-                      View Event
-                    </Button>
+          <p className="text-sm text-gray-400">Found {posts.length} event{posts.length !== 1 ? 's' : ''} matching "{query}"</p>
+          <div className="flex flex-wrap gap-4">
+            {posts.map(post => (
+              <div key={post.id} className="card w-80 flex flex-col overflow-hidden hover:border-gray-600 transition-colors">
+                <div className="h-40 overflow-hidden bg-gray-700">
+                  <img src={post.image_url || DEFAULT_IMG} alt={post.title} className="w-full h-full object-cover" onError={e => { e.currentTarget.src = DEFAULT_IMG; }} />
+                </div>
+                <div className="p-4 flex flex-col gap-3 flex-1">
+                  <div>
+                    <h3 className="font-semibold text-white">{post.title}</h3>
+                    <p className="text-gray-400 text-sm mt-1 line-clamp-2">{post.description}</p>
                   </div>
-                </CardFooter>
-              </Card>
+                  <div className="space-y-1 text-sm text-gray-400">
+                    <div className="flex items-center gap-2"><CalendarIcon className="w-4 h-4" />{fmt(post.start_datetime)}</div>
+                    <div className="flex items-center gap-2"><MapPinIcon className="w-4 h-4" />{post.location}</div>
+                    <div className="flex items-center gap-2"><UserIcon className="w-4 h-4" />{post.user_name}</div>
+                    <div className="flex items-center gap-2"><UsersIcon className="w-4 h-4" />{post.current_participants}/{post.max_participants} participants</div>
+                  </div>
+                  {post.current_participants === post.max_participants && (
+                    <span className="badge bg-red-900/60 text-red-300 border border-red-700 w-fit">Event Full</span>
+                  )}
+                  <a href={`/post?id=${post.id}`} className="btn-primary text-sm text-center mt-auto">View Event</a>
+                </div>
+              </div>
             ))}
           </div>
         </>

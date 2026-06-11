@@ -1,6 +1,12 @@
-import React from "react";
-import { Input, Field } from "@fluentui/react-components";
-import { LocationRegular } from "@fluentui/react-icons";
+import React from 'react';
+import { MapPinIcon } from '@heroicons/react/24/outline';
+
+interface NominatimResult {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+}
 
 interface AddressAutocompleteProps {
   value: string;
@@ -10,180 +16,88 @@ interface AddressAutocompleteProps {
   placeholder?: string;
 }
 
-interface NominatimResult {
-  place_id: number;
-  display_name: string;
-  lat: string;
-  lon: string;
-  address: {
-    house_number?: string;
-    road?: string;
-    city?: string;
-    state?: string;
-    postcode?: string;
-  };
-}
-
-export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
-  value,
-  onChange,
-  required = false,
-  label = "Location:",
-  placeholder = "ex: 1234 Main Street, City, State"
-}) => {
+export function AddressAutocomplete({ value, onChange, required, label = 'Location', placeholder = 'ex: 1234 Main Street, City, State' }: AddressAutocompleteProps) {
   const [suggestions, setSuggestions] = React.useState<NominatimResult[]>([]);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const suggestionsRef = React.useRef<HTMLDivElement>(null);
-  const debounceTimer = React.useRef<number>(1);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const debounceTimer = React.useRef<number>(0);
 
-  const fetchAddressSuggestions = async (input: string) => {
-    if (input.length < 3) {
-      setSuggestions([]);
-      return;
-    }
-
+  const fetchSuggestions = async (input: string) => {
+    if (input.length < 3) { setSuggestions([]); return; }
     setIsLoading(true);
-    
     try {
-      // Using Nominatim (OpenStreetMap) - Free, no API key needed
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?` +
-        `format=json&` +
-        `q=${encodeURIComponent(input)}&` +
-        `addressdetails=1&` +
-        `limit=5&` +
-        `countrycodes=us`,
-        {
-          headers: {
-            'Accept': 'application/json',
-            'User-Agent': 'COSpringsCS/1.0'
-          }
-        }
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&addressdetails=1&limit=5&countrycodes=us`,
+        { headers: { 'Accept': 'application/json', 'User-Agent': 'COSpringsCS/1.0' } }
       );
-      
-      if (response.ok) {
-        const data = await response.json();
+      if (res.ok) {
+        const data = await res.json();
         setSuggestions(data);
         setShowSuggestions(data.length > 0);
       }
-    } catch (error) {
-      console.error('Error fetching address suggestions:', error);
-      setSuggestions([]);
-    } finally {
+    } catch { /* silent */ } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (newValue: string) => {
-    onChange(newValue);
-    
-    // Clear existing timer
-    if (debounceTimer.current) {
-      window.clearTimeout(debounceTimer.current);
-    }
-    
-    // Longer debounce for Nominatim to respect rate limits
-    debounceTimer.current = window.setTimeout(() => {
-      fetchAddressSuggestions(newValue);
-    }, 1000);
+  const handleChange = (val: string) => {
+    onChange(val);
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = window.setTimeout(() => fetchSuggestions(val), 1000);
   };
 
-  const handleSuggestionClick = (suggestion: NominatimResult) => {
-    onChange(suggestion.display_name);
+  const handleSelect = (s: NominatimResult) => {
+    onChange(s.display_name);
     setShowSuggestions(false);
     setSuggestions([]);
   };
 
   React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current && 
-        !suggestionsRef.current.contains(event.target as Node) &&
-        inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
-      ) {
-        setShowSuggestions(false);
-      }
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setShowSuggestions(false);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   return (
-    <Field label={label} required={required}>
-      <div style={{ position: 'relative' }}>
-        <Input
-          style={{width: '100%'}}
-          ref={inputRef}
-          placeholder={placeholder}
-          value={value}
-          onChange={(_, data) => handleInputChange(data.value)}
-          required={required}
-          contentBefore={<LocationRegular />}
-        />
-        
+    <div>
+      <label className="label">{label}{required && ' *'}</label>
+      <div className="relative" ref={containerRef}>
+        <div className="relative">
+          <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <input
+            ref={inputRef}
+            type="text"
+            className="input pl-9"
+            value={value}
+            onChange={e => handleChange(e.target.value)}
+            placeholder={placeholder}
+            required={required}
+          />
+          {isLoading && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          )}
+        </div>
+
         {showSuggestions && suggestions.length > 0 && (
-          <div
-            ref={suggestionsRef}
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              backgroundColor: '#242424',
-              border: '1px solid #242424',
-              borderRadius: '4px',
-              marginTop: '4px',
-              maxHeight: '250px',
-              overflowY: 'auto',
-              zIndex: 1000,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-            }}
-          >
-            {suggestions.map((suggestion) => (
-              <div
-                key={suggestion.place_id}
-                onClick={() => handleSuggestionClick(suggestion)}
-                style={{
-                  padding: '10px 12px',
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #242424',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#242424';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#242424';
-                }}
+          <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-gray-600 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
+            {suggestions.map(s => (
+              <button
+                key={s.place_id}
+                type="button"
+                onClick={() => handleSelect(s)}
+                className="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 flex items-start gap-2 border-b border-gray-700/50 last:border-0"
               >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                  <LocationRegular style={{ color: '#666', marginTop: '2px', flexShrink: 0 }} />
-                  <div style={{ fontSize: '14px', lineHeight: '1.4' }}>
-                    {suggestion.display_name}
-                  </div>
-                </div>
-              </div>
+                <MapPinIcon className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+                <span className="line-clamp-2">{s.display_name}</span>
+              </button>
             ))}
           </div>
         )}
-        
-        {isLoading && (
-          <div style={{
-            position: 'absolute',
-            right: '8px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: '12px',
-            color: '#666'
-          }}>
-            Loading...
-          </div>
-        )}
       </div>
-    </Field>
+    </div>
   );
-};
+}

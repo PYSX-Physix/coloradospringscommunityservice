@@ -1,83 +1,46 @@
-import React from 'react';
-import {
-  Title1,
-  Title2,
-  Title3,
-  Body1,
-  Text,
-  Badge,
-  Divider,
-  Card,
-  Button
-} from "@fluentui/react-components";
-import {
-  ArrowLeft20Regular,
-  Lightbulb20Filled
-} from "@fluentui/react-icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeftIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import { getAnnouncementById } from '../functions/api/announcements-data';
 import type { AnnouncementSection } from '../functions/api/announcements-data';
 
 function SectionContent({ section }: { section: AnnouncementSection }) {
   switch (section.type) {
-    case 'card':
-      return (
-        <div style={{ marginBottom: '16px' }}>
-          {section.title && <Title3 style={{ marginBottom: '8px' }}>{section.title}</Title3>}
-          <Body1>{section.content}</Body1>
-        </div>
-      );
-    
     case 'list':
       return (
-        <ol style={{ paddingLeft: '24px', lineHeight: '1.8', marginBottom: '16px' }}>
-          {section.items?.map((item, index) => (
-            <li key={index}>
-              <Body1>{item}</Body1>
-            </li>
-          ))}
+        <ol className="list-decimal list-inside space-y-1 text-gray-300 text-sm leading-relaxed mb-3">
+          {section.items?.map((item, i) => <li key={i}>{item}</li>)}
         </ol>
       );
-    
     case 'tip':
       return (
-        <Card style={{ padding: '16px', backgroundColor: '#FFF4CE', marginBottom: '16px', border: '1px solid #F7B955' }}>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-            <Lightbulb20Filled style={{ color: '#F7B955', marginTop: '2px' }} />
-            <Body1 style={{ fontStyle: 'italic' }}>{section.content}</Body1>
-          </div>
-        </Card>
+        <div className="flex items-start gap-3 bg-yellow-900/20 border border-yellow-800/40 rounded-lg p-3 mb-3">
+          <LightBulbIcon className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-yellow-200 italic">{section.content}</p>
+        </div>
       );
-    
-    case 'text':
-    default:
+    case 'card':
       return (
-        <Body1 style={{ marginBottom: '16px' }}>
-          {section.content}
-        </Body1>
+        <div className="mb-3">
+          {section.title && <p className="font-semibold text-white text-sm mb-1">{section.title}</p>}
+          <p className="text-gray-300 text-sm">{section.content}</p>
+        </div>
       );
+    default:
+      return <p className="text-gray-300 text-sm mb-3">{section.content}</p>;
   }
 }
 
-function AnnouncementDetail() {
+export default function AnnouncementDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  
   const announcement = getAnnouncementById(id || '');
 
   if (!announcement) {
     return (
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px', textAlign: 'center' }}>
-        <Title1 style={{ marginBottom: '16px' }}>Announcement Not Found</Title1>
-        <Body1 style={{ marginBottom: '24px' }}>
-          Sorry, we couldn't find the announcement you're looking for.
-        </Body1>
-        <Button
-          appearance="primary"
-          onClick={() => navigate('/announcements')}
-        >
-          Back to Announcements
-        </Button>
+      <div className="text-center py-16">
+        <h1 className="text-2xl font-bold text-white mb-2">Announcement Not Found</h1>
+        <p className="text-gray-400 mb-4">Sorry, we couldn't find the announcement you're looking for.</p>
+        <button onClick={() => navigate('/announcements')} className="btn-primary">Back to Announcements</button>
       </div>
     );
   }
@@ -87,88 +50,44 @@ function AnnouncementDetail() {
     return null;
   }
 
-  const badgeColor = announcement.type === 'warning' ? 'warning' : 'informative';
-
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
-      {/* Back button */}
-      <Button
-        appearance="subtle"
-        icon={<ArrowLeft20Regular />}
-        onClick={() => navigate('/announcements')}
-        style={{ marginBottom: '24px' }}
-      >
-        Back to Announcements
-      </Button>
+    <div className="max-w-3xl space-y-6">
+      <button onClick={() => navigate('/announcements')} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+        <ArrowLeftIcon className="w-4 h-4" /> Back to Announcements
+      </button>
 
-      {/* Header */}
-      <div style={{ marginBottom: '16px' }}>
-        <Badge appearance="tint" color={badgeColor} size="large" style={{ marginBottom: '12px' }}>
-          {announcement.version}
-        </Badge>
-        <Title1 style={{ marginBottom: '8px' }}>{announcement.title}</Title1>
-        <Text size={300} style={{ color: '#666' }}>
-          {announcement.date}
-        </Text>
+      <div>
+        <span className="badge bg-blue-900/60 text-blue-300 border border-blue-700/50 mb-3 inline-block">{announcement.version}</span>
+        <h1 className="text-3xl font-bold text-white mb-1">{announcement.title}</h1>
+        <p className="text-sm text-gray-500">{announcement.date}</p>
       </div>
 
-      <Divider style={{ margin: '24px 0' }} />
+      <div className="divider" />
 
-      {/* Introduction */}
-      <Body1 style={{ marginBottom: '32px', fontSize: '18px', lineHeight: '1.6' }}>
-        {announcement.article.intro}
-      </Body1>
+      <p className="text-gray-200 text-base leading-relaxed">{announcement.article.intro}</p>
 
-      {/* Article Sections */}
-      {announcement.article.sections.map((section, sectionIndex) => (
-        <div key={sectionIndex} style={{ marginBottom: '32px' }}>
-          <Title2 style={{ marginBottom: '16px' }}>{section.title}</Title2>
-          
+      {announcement.article.sections.map((section, si) => (
+        <div key={si}>
+          <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>
           {section.content.some(c => c.type === 'card') ? (
-            <Card style={{ padding: '24px', marginBottom: '16px' }}>
-              {section.content.map((content, contentIndex) => (
-                <React.Fragment key={contentIndex}>
-                  <SectionContent section={content} />
-                  {contentIndex < section.content.length - 1 && content.type === 'card' && (
-                    <Divider style={{ margin: '16px 0' }} />
-                  )}
-                </React.Fragment>
-              ))}
-            </Card>
-          ) : (
-            <div style={{ marginBottom: '16px' }}>
-              {section.content.map((content, contentIndex) => (
-                <SectionContent key={contentIndex} section={content} />
-              ))}
+            <div className="card p-4 space-y-3">
+              {section.content.map((c, ci) => <SectionContent key={ci} section={c} />)}
             </div>
+          ) : (
+            <div>{section.content.map((c, ci) => <SectionContent key={ci} section={c} />)}</div>
           )}
         </div>
       ))}
 
-      <Divider style={{ margin: '32px 0' }} />
+      <div className="divider" />
 
-      {/* Footer */}
-      <div style={{ textAlign: 'center' }}>
-        <Body1 style={{ color: '#666', marginBottom: '16px' }}>
-          Have questions or feedback about this update?
-        </Body1>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <Button
-            appearance="primary"
-            onClick={() => navigate('/posts')}
-          >
-            Browse Events
-          </Button>
-          <Button
-            appearance="secondary"
-            onClick={() => navigate('/announcements')}
-          >
-            All Announcements
-          </Button>
+      <div className="text-center space-y-3">
+        <p className="text-gray-400 text-sm">Have questions or feedback about this update?</p>
+        <div className="flex gap-3 justify-center">
+          <button onClick={() => navigate('/')} className="btn-primary">Browse Events</button>
+          <button onClick={() => navigate('/announcements')} className="btn-secondary">All Announcements</button>
         </div>
       </div>
     </div>
   );
 }
-
-export default AnnouncementDetail;
