@@ -34,7 +34,7 @@ export const announcements: AnnouncementData[] =
 [
     {
         id: 'june-10-2026',
-        version: '1.8.0',
+        version: '1.8.1',
         date: 'June 10, 2026',
         title: 'New Look, Fixes, & Policy Updates',
         type: 'info',
@@ -49,7 +49,7 @@ export const announcements: AnnouncementData[] =
         hasDetailPage: true,
         article:
         {
-            intro: 'Version 1.8.0 fixes and revamps almost the entire site! This patch brings along new changes, fixes to long time bugs, and new features and quality of life changes!',
+            intro: 'Version 1.8.1 fixes and revamps almost the entire site! This patch brings along new changes, fixes to long time bugs, and new features and quality of life changes!',
             sections:
             [
                 {
@@ -79,6 +79,11 @@ export const announcements: AnnouncementData[] =
                             type: 'card',
                             title: 'Reporting yourself',
                             content: 'We\'ve removed the ability to report yourself through an event or reporting your own event. There are different reasons why we did this such as spam, false reports, and security.' 
+                        },
+                        {
+                            type: 'card',
+                            title: 'Menus and Overlays',
+                            content: 'This issue has now been fixed using a different method than before.'
                         }
                     ]
                 },
@@ -86,11 +91,6 @@ export const announcements: AnnouncementData[] =
                     title: 'Known Issues',
                     content:
                     [
-                        {
-                            type: 'card',
-                            title: 'Menus and Overlays',
-                            content: 'We\'re aware of an issue where the notification, announcements, and file menus are not working as intended with showing in the bounds of specific elements. We\'re working on a patch as quickly as possible.'
-                        },
                         {
                             type: 'card',
                             title: 'Layout Issues',
