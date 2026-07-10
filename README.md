@@ -1,4 +1,8 @@
 # Colorado Springs Community Service Hub
+
+# NOTICE: This Branch is Depricated
+This branch has been deemed depricated due to the new UI system introduced with version 8.1.1. This branch will be left for history and preservation but will not be updated.
+
 ## About
 This project is mean't to help people find community service opportunities in the city of Colorado Springs. I made this site to make community service more centralized. This project is community contributed and is not affiliated with the state of Colorado or the city of Colorado Springs in any way.
 
