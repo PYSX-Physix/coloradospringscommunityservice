@@ -1,7 +1,7 @@
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftIcon, LightBulbIcon } from '@heroicons/react/24/outline';
-import { getAnnouncementById } from '../functions/api/announcements-data';
-import type { AnnouncementSection } from '../functions/api/announcements-data';
+import type { AnnouncementData, AnnouncementSection } from '../functions/api/announcements-data';
 
 function SectionContent({ section }: { section: AnnouncementSection }) {
   switch (section.type) {
@@ -33,8 +33,35 @@ function SectionContent({ section }: { section: AnnouncementSection }) {
 export default function AnnouncementDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const announcement = getAnnouncementById(id || '');
+  const [announcement, setAnnouncement] = React.useState<AnnouncementData | null | undefined>(undefined);
 
+  React.useEffect(() => {
+    if (!id) { setAnnouncement(null); return; }
+    let cancelled = false;
+
+    fetch(`/api/announcements/${id}`, { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data: { announcement: AnnouncementData }) => {
+        if (!cancelled) setAnnouncement(data.announcement ?? null);
+      })
+      .catch(() => { if (!cancelled) setAnnouncement(null); });
+
+    return () => { cancelled = true; };
+  }, [id]);
+
+  // Loading
+  if (announcement === undefined) {
+    return (
+      <div className="flex justify-center mt-16">
+        <div className="flex items-center gap-3 text-gray-400">
+          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Loading…
+        </div>
+      </div>
+    );
+  }
+
+  // Not found
   if (!announcement) {
     return (
       <div className="text-center py-16">
@@ -45,6 +72,7 @@ export default function AnnouncementDetail() {
     );
   }
 
+  // Has no detail page — redirect back
   if (!announcement.hasDetailPage || !announcement.article) {
     navigate('/announcements');
     return null;
@@ -68,7 +96,7 @@ export default function AnnouncementDetail() {
 
       {announcement.article.sections.map((section, si) => (
         <div key={si}>
-          <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>
+          {section.title && <h2 className="text-xl font-semibold text-white mb-4">{section.title}</h2>}
           {section.content.some(c => c.type === 'card') ? (
             <div className="card p-4 space-y-3">
               {section.content.map((c, ci) => <SectionContent key={ci} section={c} />)}

@@ -33,8 +33,10 @@ import {
   UserCircleIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
+  ListBulletIcon,
   MegaphoneIcon,
 } from '@heroicons/react/24/outline';
+import AdminAnnouncements from './admin/AdminAnnouncements';
 
 function NavItem({ href, icon: Icon, label, active, onClick }: {
   href: string; icon: React.ElementType; label: string; active: boolean; onClick?: () => void;
@@ -210,6 +212,7 @@ function Home() {
               <div className="divider" />
               <p className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Administration</p>
               <NavItem href="/admin" icon={ShieldCheckIcon} label="Admin Panel" active={path === '/admin'} onClick={closeOnMobile} />
+              <NavItem href='/admin/announcements' icon={ListBulletIcon} label="Manage Announcements" active={path === '/admin/announcements'} onClick={closeOnMobile}/>
             </>
           )}
         </nav>
@@ -249,6 +252,7 @@ function Home() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/announcements" element={<AnnouncementsPage />} />
             <Route path="/announcements/:id" element={<AnnouncementDetail />} />
+            <Route path='/admin/announcements' element={<AdminAnnouncements/>}/>
           </Routes>
         </main>
       </div>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MegaphoneIcon, ChevronRightIcon, InformationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { getAnnouncementsByYear } from '../functions/api/announcements-data';
@@ -42,7 +43,21 @@ function AnnouncementCard({ a }: { a: AnnouncementData }) {
 }
 
 export default function AnnouncementsPage() {
-  const byYear = getAnnouncementsByYear();
+  const [announcements, setAnnouncements] = React.useState<AnnouncementData[] | null>(null);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('/api/announcements', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data: { announcements: AnnouncementData[] }) => {
+        if (!cancelled) setAnnouncements(data.announcements ?? []);
+      })
+      .catch(() => { if (!cancelled) setError(true); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const byYear = announcements ? getAnnouncementsByYear(announcements) : {};
   const years = Object.keys(byYear).sort((a, b) => parseInt(b) - parseInt(a));
 
   return (
@@ -56,6 +71,25 @@ export default function AnnouncementsPage() {
       </div>
 
       <div className="divider" />
+
+      {error && (
+        <div className="card p-4 text-center text-sm text-red-300">
+          Couldn't load announcements right now. Please try again later.
+        </div>
+      )}
+
+      {!error && !announcements && (
+        <div className="flex justify-center mt-8">
+          <div className="flex items-center gap-3 text-gray-400">
+            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            Loading announcements…
+          </div>
+        </div>
+      )}
+
+      {!error && announcements?.length === 0 && (
+        <div className="card p-4 text-center text-sm text-gray-400">No announcements yet.</div>
+      )}
 
       {years.map(year => (
         <div key={year}>
