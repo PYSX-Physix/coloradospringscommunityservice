@@ -57,7 +57,7 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
           </div>
         )}
         { isPast && (
-          <div className="absolute top-2 right-2 badge bg-yellow-300 text-black border border-">
+          <div className="absolute top-2 right-2 badge bg-yellow-300 text-black border border-yellow-500">
             Event Ended
           </div>
         )}

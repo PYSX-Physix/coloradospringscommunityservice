@@ -15,6 +15,7 @@ export interface PostData {
 
 export interface PostUI extends PostData {
   isSaved: boolean;
+  isPast: boolean;
 }
 
 export const REPORT_CATEGORIES = [
