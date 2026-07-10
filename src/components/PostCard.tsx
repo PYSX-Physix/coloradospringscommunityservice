@@ -39,6 +39,7 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
   function onSaveError(e: string) { showError('Failed to Save Post', e); }
 
   const isFull = post.current_participants >= post.max_participants;
+  const isPast = new Date(post.end_datetime) < new Date();
 
   return (
     <div className="card w-80 flex flex-col overflow-hidden hover:border-neutral-400 transition-colors">
@@ -53,6 +54,11 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
         {isFull && (
           <div className="absolute top-2 right-2 badge bg-red-900/90 text-red-300 border border-red-700">
             Event Full
+          </div>
+        )}
+        { isPast && (
+          <div className="absolute top-2 right-2 badge bg-yellow-300 text-black border border-">
+            Event Ended
           </div>
         )}
       </div>

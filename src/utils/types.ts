@@ -10,6 +10,7 @@ export interface PostData {
   user_name: string;
   created_at: string;
   image_url?: string;
+  isArchived?: boolean;
 }
 
 export interface PostUI extends PostData {

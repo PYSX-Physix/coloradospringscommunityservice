@@ -34,7 +34,7 @@ function Posts() {
         } catch { /* silent */ }
       }
 
-      setPosts(posts.map(post => ({ ...post, isSaved: savedPostIds.includes(post.id) })));
+      setPosts(posts.map(post => ({ ...post, isSaved: savedPostIds.includes(post.id), isArchived: post.isArchived || false })));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load posts');
     } finally {

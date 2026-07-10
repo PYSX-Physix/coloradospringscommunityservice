@@ -83,9 +83,14 @@ function Search() {
                     <div className="flex items-center gap-2"><UserIcon className="w-4 h-4" />{post.user_name}</div>
                     <div className="flex items-center gap-2"><UsersIcon className="w-4 h-4" />{post.current_participants}/{post.max_participants} participants</div>
                   </div>
-                  {post.current_participants === post.max_participants && (
-                    <span className="badge bg-red-900/60 text-red-300 border border-red-700 w-fit">Event Full</span>
-                  )}
+                  <div className="flex gap-2 mt-2">
+                    {post.current_participants === post.max_participants && (
+                      <span className="badge bg-red-900/60 text-red-300 border border-red-700 w-fit">Event Full</span>
+                    )}
+                    {new Date(post.end_datetime) < new Date() && (
+                      <span className="badge bg-yellow-300 text-black border border-yellow-500 w-fit">Event Ended</span>
+                    )}
+                  </div>
                   <a href={`/post?id=${post.id}`} className="btn-primary text-sm text-center mt-auto">View Event</a>
                 </div>
               </div>
