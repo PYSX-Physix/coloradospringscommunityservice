@@ -3,16 +3,14 @@ import {
   BookmarkIcon as BookmarkOutline,
   ShareIcon, ExclamationTriangleIcon, EllipsisHorizontalIcon,
 } from '@heroicons/react/24/outline';
-import { BookmarkIcon as BookmarkSolid, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { BookmarkIcon as BookmarkSolid} from '@heroicons/react/24/solid';
 import { useSavedPosts } from '../hooks/useSavedPosts';
-import { useReportPost } from '../hooks/useReportPost';
 import { useErrorNotice } from '../hooks/useErrorNotice';
 import type { PostUI } from '../utils/types';
-import { REPORT_CATEGORIES } from '../utils/types';
 import ShareEvent from './ShareEvent';
 import { NoticeDialog } from './Dialog';
-import { Dialog } from './Dialog';
 import { MenuPortal, MenuItemButton } from './Menu';
+import { ReportUser } from './ReportUser';
 
 const DEFAULT_IMG = 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=400&h=200&fit=crop';
 
@@ -27,8 +25,9 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
   const menuTriggerRef = React.useRef<HTMLButtonElement>(null);
 
   const { isSaved, loading: saving, toggleSave } = useSavedPosts(post.isSaved, onSaveError);
-  const { state: reportState, category: reportCategory, details: reportDetails, isSubmitting,
-    setReportState, setCategory, setDetails, submitReport } = useReportPost(onReportError);
+  const [showReport, setShowReport] = React.useState(false);
+  const [reportedUserId, setReportedUserId] = React.useState<string | null>(null);
+  const [reportedUserName, setReportedUserName] = React.useState('');
   const { notice, isOpen: noticeOpen, showError, closeError } = useErrorNotice();
 
   async function handleSave() {
@@ -38,7 +37,6 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
   }
 
   function onSaveError(e: string) { showError('Failed to Save Post', e); }
-  function onReportError(e: string) { showError('Report Error', e); }
 
   const isFull = post.current_participants >= post.max_participants;
 
@@ -90,77 +88,23 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
             <MenuItemButton icon={ShareIcon} onClick={() => { setMenuOpen(false); setShowShare(true); }}>
               Share Post
             </MenuItemButton>
-            <MenuItemButton icon={ExclamationTriangleIcon} danger onClick={() => { setMenuOpen(false); setReportState('form'); }}>
+            <MenuItemButton icon={ExclamationTriangleIcon} danger onClick={() => { setMenuOpen(false); setShowReport(true); }}>
               Report Post
             </MenuItemButton>
           </MenuPortal>
         </div>
       </div>
 
-      {/* Report Dialog */}
-      <Dialog
-        open={reportState === 'form'}
-        onClose={() => setReportState('closed')}
-        title="Report Post"
-        footer={
-          <>
-            <button onClick={() => setReportState('closed')} className="btn-secondary">Cancel</button>
-            <button
-              onClick={async e => { e.preventDefault(); await submitReport(post.id); }}
-              disabled={isSubmitting}
-              className="btn-danger"
-            >
-              {isSubmitting ? 'Submitting...' : 'Report'}
-            </button>
-          </>
-        }
-      >
-        <p className="text-gray-400 text-sm mb-4">
-          Reporting this post will require review. False reports may cause your account to be flagged.
-        </p>
-        <div className="space-y-3">
-          <div>
-            <label className="label">Select a category</label>
-            <div className="space-y-2">
-              {REPORT_CATEGORIES.map(cat => (
-                <label key={cat.value} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="report-cat"
-                    value={cat.value}
-                    checked={reportCategory === cat.value}
-                    onChange={() => setCategory(cat.value)}
-                    className="accent-blue-500"
-                  />
-                  <span className="text-sm text-gray-300">{cat.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="label">Additional Details</label>
-            <textarea
-              className="input min-h-[80px] resize-y"
-              placeholder="Please provide details (min 10 characters)..."
-              value={reportDetails}
-              onChange={e => setDetails(e.target.value)}
-            />
-          </div>
-        </div>
-      </Dialog>
-
-      {/* Report Confirmation */}
-      <Dialog
-        open={reportState === 'confirmation'}
-        onClose={() => setReportState('closed')}
-        title="Report Sent"
-        footer={<button onClick={() => setReportState('closed')} className="btn-primary">Close</button>}
-      >
-        <div className="flex items-center gap-3">
-          <CheckCircleIcon className="w-8 h-8 text-green-400 shrink-0" />
-          <p className="text-gray-300 text-sm">Your report has been sent and will be reviewed shortly.</p>
-        </div>
-      </Dialog>
+      {reportedUserId && (
+        <ReportUser
+          open={showReport}
+          onClose={() => { setShowReport(false); setReportedUserId(null); setReportedUserName(''); }}
+          reportedUserId={reportedUserId}
+          reportedUserName={reportedUserName}
+          postId={post?.id}
+          postTitle={post?.title}
+        />
+      )}
 
       <ShareEvent
         open={showShare}

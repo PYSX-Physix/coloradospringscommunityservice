@@ -176,6 +176,7 @@ function Home() {
 
           <div className="divider" />
           <p className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Info</p>
+          <NavItem href="/announcements" icon={MegaphoneIcon} label="Announcements" active={path.startsWith('/announcements')} onClick={closeOnMobile} />
           <NavItem href="/about" icon={InformationCircleIcon} label="About Us" active={path === '/about'} onClick={closeOnMobile} />
 
           {/* Policies accordion */}
@@ -203,7 +204,6 @@ function Home() {
           )}
 
           <NavItem href="/help" icon={QuestionMarkCircleIcon} label="Help" active={path === '/help'} onClick={closeOnMobile} />
-          <NavItem href="/announcements" icon={MegaphoneIcon} label="Announcements" active={path.startsWith('/announcements')} onClick={closeOnMobile} />
 
           {isAdmin && (
             <>
