@@ -167,7 +167,7 @@ export default function AdminAnnouncements() {
       )}
 
       {!loading && announcements && announcements.length > 0 && (
-        <div className="card overflow-hidden">
+        <div className="card overflow-x-auto">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-gray-700">
