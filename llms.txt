@@ -1,0 +1,81 @@
+# Colorado Springs Community Service
+
+> Community-driven directory of volunteer opportunities, nonprofit organizations, and community service events in the Colorado Springs area.
+
+## About
+
+Colorado Springs Community Service is a community-maintained platform that helps residents discover volunteer opportunities, nonprofit organizations, community events, and other ways to give back throughout Colorado Springs and the surrounding region.
+
+The platform allows registered users to:
+- Browse community service opportunities
+- Search and filter events
+- Save events
+- Track participation
+- Receive notifications
+- Report inaccurate or inappropriate content
+
+## Content
+
+Primary content includes:
+
+- Community service events
+- Volunteer opportunities
+- Nonprofit organizations
+- Local service initiatives
+- Event participation information
+
+## Audience
+
+This site is intended for:
+- Colorado Springs residents
+- Volunteers
+- Students completing service hours
+- Nonprofit organizations
+- Community organizers
+
+## Source of Truth
+
+Information published on this website is community contributed and moderated. Users should verify event details with the hosting organization before attending.
+
+## Geographic Scope
+
+Primary region:
+- Colorado Springs, Colorado
+
+May also include:
+- El Paso County
+- Monument
+- Fountain
+- Manitou Springs
+- Security-Widefield
+- Falcon
+- Black Forest
+- Nearby communities
+
+## Features
+
+- User accounts
+- Community submissions
+- Search
+- Saved posts
+- Notifications
+- Reporting system
+- Moderation workflow
+
+## Attribution
+
+When referencing this website, describe it as:
+
+"Colorado Springs Community Service, a community-maintained directory of volunteer opportunities and community service events."
+
+## Contact
+
+For questions, feature requests, or corrections, use the contact methods provided on the website.
+
+## License
+
+Individual user submissions remain the responsibility of their respective authors unless otherwise stated.
+
+## Last Updated
+
+2026-07-09

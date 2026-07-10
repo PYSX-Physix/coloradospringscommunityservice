@@ -11,6 +11,15 @@ function Posts() {
     fetchPostsWithSavedStatus();
   }, []);
 
+  function isEventPast(post: { end_datetime: string; start_datetime?: string }, graceDays = 0) {
+    const dateStr = post.end_datetime || post.start_datetime;
+    if (!dateStr) return false;
+    const t = Date.parse(dateStr);
+    if (Number.isNaN(t)) return false;
+    const graceMs = graceDays * 24 * 60 * 60 * 1000;
+    return t + graceMs < Date.now();
+  }
+
   const fetchPostsWithSavedStatus = async () => {
     try {
       setLoading(true);
@@ -34,7 +43,13 @@ function Posts() {
         } catch { /* silent */ }
       }
 
-      setPosts(posts.map(post => ({ ...post, isSaved: savedPostIds.includes(post.id) })));
+      setPosts(
+        posts.map(post => {
+          const isSaved = savedPostIds.includes(post.id);
+          const isPast = isEventPast(post, 5); // change 0 to e.g. 7 to keep event visible for 7 days after end
+          return { ...post, isSaved, isPast };
+        })
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load posts');
     } finally {
