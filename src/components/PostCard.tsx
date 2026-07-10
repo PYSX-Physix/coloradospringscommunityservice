@@ -51,7 +51,7 @@ export default React.memo(function PostCard({ post, onSaveToggle }: PostCardProp
           className="w-full h-full object-cover"
           onError={e => { e.currentTarget.src = DEFAULT_IMG; }}
         />
-        <div className="absolute top-2 right-2 flex flex-col gap-2">
+        <div className="absolute top-2 right-2 flex flex-row gap-2">
           {isFull && (
             <div className="badge bg-red-900/90 text-red-300 border border-red-700">
               Event Full
