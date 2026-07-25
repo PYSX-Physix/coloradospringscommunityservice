@@ -8,11 +8,23 @@ const GROUP_LENGTH = 4;
 const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
 function randomGroup(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(GROUP_LENGTH));
+  const alphabetLen = ALPHABET.length;
+  const maxUnbiased = Math.floor(256 / alphabetLen) * alphabetLen;
   let group = "";
-  for (const byte of bytes) {
-    group += ALPHABET[byte % ALPHABET.length];
+
+  while (group.length < GROUP_LENGTH) {
+    const bytes = crypto.getRandomValues(new Uint8Array(GROUP_LENGTH - group.length));
+    for (const byte of bytes) {
+      if (byte >= maxUnbiased) {
+        continue;
+      }
+      group += ALPHABET[byte % alphabetLen];
+      if (group.length === GROUP_LENGTH) {
+        break;
+      }
+    }
   }
+
   return group;
 }
 
