@@ -13,6 +13,9 @@ DROP TABLE IF EXISTS posts;
 DROP VIEW IF EXISTS session;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS blacklisted_words;
+DROP TABLE IF EXISTS login_challenges;
+DROP TABLE IF EXISTS trusted_devices;
+DROP TABLE IF EXISTS recovery_codes;
 DROP TABLE IF EXISTS user;
 
 -- Users
@@ -23,7 +26,11 @@ CREATE TABLE user (
   name TEXT,
   isAdmin INTEGER DEFAULT 0,
   created_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL
+  updated_at INTEGER NOT NULL,
+  -- Two-factor authentication (TOTP)
+  two_factor_enabled INTEGER NOT NULL DEFAULT 0,
+  two_factor_secret TEXT,
+  two_factor_enabled_at INTEGER
 );
 
 -- Sessions
@@ -150,6 +157,43 @@ CREATE TABLE blacklisted_words (
   added_at INTEGER NOT NULL
 );
 
+-- Two-factor recovery codes
+-- Single-use backup codes issued when 2FA is enabled (or regenerated).
+-- Only the hash of each code is stored; the plaintext is shown once.
+CREATE TABLE recovery_codes (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  code_hash TEXT NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+-- Trusted devices (reserved for future "remember this device" support)
+CREATE TABLE trusted_devices (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  token_hash TEXT NOT NULL,
+  device_name TEXT,
+  expires_at INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  last_used INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+-- Login challenges
+-- Short-lived record created after a correct password when 2FA is enabled.
+-- No session exists yet; the challenge must be redeemed with a valid TOTP
+-- or recovery code within its expiry window to obtain a session.
+CREATE TABLE login_challenges (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
 -- ============================================================
 -- Indexes
 -- ============================================================
@@ -167,6 +211,10 @@ CREATE INDEX idx_reports_status         ON reports(status);
 CREATE INDEX idx_reports_post_id        ON reports(post_id);
 CREATE INDEX idx_notifications_user_id  ON notifications(user_id);
 CREATE INDEX idx_notifications_read     ON notifications(user_id, read);
+CREATE INDEX idx_recovery_codes_user_id ON recovery_codes(user_id);
+CREATE INDEX idx_trusted_devices_uid    ON trusted_devices(user_id);
+CREATE INDEX idx_login_challenges_uid   ON login_challenges(user_id);
+CREATE INDEX idx_login_challenges_exp   ON login_challenges(expires_at);
 
 -- ============================================================
 -- Migration — run these on an existing database instead of
@@ -207,3 +255,19 @@ CREATE INDEX idx_notifications_read     ON notifications(user_id, read);
 -- ALTER TABLE reports ADD COLUMN notes TEXT;
 -- ALTER TABLE reports ADD COLUMN reviewed_by TEXT;
 -- ALTER TABLE reports ADD COLUMN reviewed_at INTEGER;
+
+-- Two-factor authentication (2FA)
+-- user table
+-- ALTER TABLE user ADD COLUMN two_factor_enabled INTEGER NOT NULL DEFAULT 0;
+-- ALTER TABLE user ADD COLUMN two_factor_secret TEXT;
+-- ALTER TABLE user ADD COLUMN two_factor_enabled_at INTEGER;
+
+-- New tables (safe to run even if they already exist due to IF NOT EXISTS)
+-- CREATE TABLE IF NOT EXISTS recovery_codes ( ... );   -- copy full definition from above
+-- CREATE TABLE IF NOT EXISTS trusted_devices ( ... );
+-- CREATE TABLE IF NOT EXISTS login_challenges ( ... );
+
+-- CREATE INDEX IF NOT EXISTS idx_recovery_codes_user_id ON recovery_codes(user_id);
+-- CREATE INDEX IF NOT EXISTS idx_trusted_devices_uid    ON trusted_devices(user_id);
+-- CREATE INDEX IF NOT EXISTS idx_login_challenges_uid   ON login_challenges(user_id);
+-- CREATE INDEX IF NOT EXISTS idx_login_challenges_exp   ON login_challenges(expires_at);

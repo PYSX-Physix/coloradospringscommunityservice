@@ -11,6 +11,7 @@ export type AuthenticatedUser = {
   email: string;
   name: string | null;
   isAdmin: boolean;
+  twoFactorEnabled: boolean;
 };
 
 export type SessionRecord = {
@@ -103,7 +104,8 @@ export async function getSession(env: Env, request: Request): Promise<SessionRec
       s.user_agent,
       u.email,
       u.name,
-      u.isAdmin
+      u.isAdmin,
+      u.two_factor_enabled
      FROM sessions s
      JOIN user u ON u.id = s.user_id
      WHERE s.id = ?`
@@ -141,6 +143,7 @@ export async function getSession(env: Env, request: Request): Promise<SessionRec
       email: String(result.email),
       name: result.name ? String(result.name) : null,
       isAdmin: Number(result.isAdmin) === 1,
+      twoFactorEnabled: Number(result.two_factor_enabled) === 1,
     },
   };
 }

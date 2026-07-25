@@ -2,6 +2,7 @@ import { buildSessionCookie, createSession, hashIP } from "../../lib/auth";
 import { corsJson } from "../../lib/cors";
 import { rateLimit } from "../../lib/rateLimit";
 import { attachCSRFToSession } from "../../lib/csrf";
+import { createLoginChallenge } from "../../lib/auth/challenge";
 
 interface Env {
   DB: D1Database;
@@ -29,7 +30,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     }
 
     const user = await env.DB.prepare(
-      "SELECT id, email, name, password_hash, isAdmin FROM user WHERE email = ?"
+      "SELECT id, email, name, password_hash, isAdmin, two_factor_enabled FROM user WHERE email = ?"
     ).bind(email.toLowerCase()).first<Record<string, unknown>>();
 
     if (!user) {
@@ -39,6 +40,15 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
     const passwordValid = await verifyPassword(password, String(user.password_hash));
     if (!passwordValid) {
       return corsJson(request, { error: "Invalid credentials" }, 401);
+    }
+
+    if (Number(user.two_factor_enabled) === 1) {
+      const challenge = await createLoginChallenge(env, String(user.id));
+      return corsJson(request, {
+        requires2FA: true,
+        challengeId: challenge.id,
+        expiresAt: challenge.expiresAt,
+      });
     }
 
     const { sessionId } = await createSession(env, request, String(user.id), { hashedIp: ip });
@@ -52,6 +62,7 @@ export async function onRequestPost(context: { request: Request; env: Env }) {
         email: user.email,
         name: user.name,
         isAdmin: Number(user.isAdmin) === 1,
+        twoFactorEnabled: false,
       },
     }, 200, {
       "Set-Cookie": buildSessionCookie(sessionId),
