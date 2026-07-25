@@ -2,6 +2,10 @@ name = "coloradospringscommunityservice"
 compatibility_date = "2026-04-07"
 pages_build_output_dir = "dist"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "cospringscs-db-preview"
+database_id = "3acb55c2-d4b9-43f1-a701-9986cc2a62c4"
 
 [[env.production.d1_databases]]
 binding = "DB"

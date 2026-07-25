@@ -31,6 +31,13 @@ export async function onRequest(context: EventContext<Env, string, unknown>) {
     if (!session.user.isAdmin) {
       return corsJson(request, { error: "Admin access required" }, 403);
     }
+    if (!session.user.twoFactorEnabled) {
+      return corsJson(
+        request,
+        { error: "Two-factor authentication is required for admin accounts. Enable it in Settings to continue." },
+        403,
+      );
+    }
   }
 
   if (!isAuthBootstrapRoute && session && needsCsrfValidation(request)) {
